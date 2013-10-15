@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+    <paytpvcom_standard_redirect>
+	<reference name="content">
+	    <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
+	</reference>
+    </paytpvcom_standard_redirect>
+    <paytpvcom_standard_iframe>
+	<reference name="content">
+	    <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
+	</reference>
+    </paytpvcom_standard_iframe>
+</layout>

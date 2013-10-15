@@ -1,0 +1,107 @@
+<fieldset class="form-list">
+	<?php $_code=$this->getMethodCode() ?>
+</fieldset>
+<div id="payment_form_<?php echo $_code ?>" style="display:none;">
+	<table>
+		<colgroup>
+			<col width="25px">
+			<col width="*">
+		</colgroup>
+		<tr>
+			<td>&nbsp;</td>
+			<td><?php echo $this->__('When you confirm the order we will divert you to the paytpv.com payment site, which is the safest and easiest way of paying on-line.') ?></td>
+		</tr>
+	</table>
+	<table width="100%">
+		<colgroup>
+			<col width="50%">
+			<col width="50%">
+		</colgroup>
+		<tr align="center">
+			<td>
+				<img src="<?php echo $this->getSkinUrl('images/paytpvcom/verifiedbyvisa.png') ?>" border="0" />
+			</td>
+			<td>
+				<img src="<?php echo $this->getSkinUrl('images/paytpvcom/mastercard_secuercode.png') ?>" border="0" />
+			</td>
+		</tr>
+		<tr align="center">
+			<td>
+				<button class='form-button' onclick="Effect.BlindUp($('Mage_mastercard'));Effect.BlindDown($('Mage_visa'));return false;"><?php echo $this->__("+ Info"); ?></button>
+			</td>
+			<td>
+                <button class='form-button' onclick="Effect.BlindUp($('Mage_visa'));Effect.BlindDown($('Mage_mastercard'));return false;"><?php echo $this->__("+ Info"); ?></button>
+			</td>
+		</tr>
+	</table>
+    <div id="Mage_visa" style="display:none">
+    <table>
+        <tr>
+            <td><h3><?php echo $this->__("The card that offers extra security when buying on-line.") ?></h3></td>
+            <td>&nbsp;</td>
+            <td><img src='<?php echo $this->getSkinUrl('images/paytpvcom/verifiedbyvisa.png') ?>' /></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3'><?php echo $this->__("Verified by Visa is a new service that enables you to buy on-line with extra confidence.") ?></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3'><?php echo $this->__("By means of a simple verification process, Verified by Visa confirms your identity when you buy from an on-line store that uses the Verified by Visa system. It is practical and works with your existing Visa card.") ?></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3'><?php echo $this->__('Furthermore, Verified by Visa is easy to use. You only need to register your card and create your own password once. When you use this system to make an on-line purchase, a Verified by Visa window will appear. Simply enter your password and confirm. Your identity will be verified and the purchase will be secured.') ?></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3'><?php echo $this->__("To activate Verified by Visa on your Visa card, or for further details, contact your card issuer. <a href='http://www.visa.com/verified'>visa.com/verified</a>.") ?></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3' align='center'><button class='form-button' onclick='Effect.BlindUp($("Mage_visa"));return false;'><?php echo $this->__('Cerrar') ?></button></td>
+        </tr>
+    </table>
+    </div>
+    <div id="Mage_mastercard" style="display:none">
+    <table>
+        <tr>
+            <td colspan='2'><h3><?php echo $this->__("Introducing...'Mastercard SecureCode'") ?></h3></td>
+            <td><img src='<?php echo $this->getSkinUrl('images/paytpvcom/mastercard_secuercode.png') ?>' width='116' /></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3'><?php echo $this->__("MasterCard <sup>&reg;</sup> SecureCode<small><sup>TM</sup></small> is a new service provided by MasterCard and your card issuer which offers extra protection when you buy on-line. There is no need to get a new Mastercard or Maestro&reg;. You choose your own personal MasterCard SecureCode that you do not need to share with any on-line retailer. A private code means extra protection against unauthorised use of your credit or debit card when you buy on-line.") ?><td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan='3'><?php echo $this->__('Each time you pay on-line with your MasterCard or Maestro, a window from your card issuer will appear asking you for your personal SecureCode as if you were using a cash machine. Within seconds your card issuer will confirm it is you and allow you to complete your purchase.') ?></td>
+        </tr>
+        <tr>
+            <td colspan='3'>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><img src='<?php echo $this->getSkinUrl('images/paytpvcom/mastercard.png') ?>' width='72' /></td>
+            <td><?php echo $this->__("For more information about MasterCode SecureCode, visit <a href='http://www.mastercardsecurecode.com' target='_blank'>www.mastercardsecurecode.com</a>") ?></td>
+            <td><img src='<?php echo $this->getSkinUrl('images/paytpvcom/maestro.png') ?>' width='72' /></td>
+        </tr>
+        <tr>
+            <td colspan='3' align='center'><button class='form-button' onclick='Effect.BlindUp($("Mage_mastercard"));return false;'><?php echo $this->helper('page')->__('Cerrar')?></button></td>
+        </tr>
+    </table>
+    </div>
+</div>
