@@ -138,7 +138,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
 		$convertor = Mage::getModel( 'sales/convert_order' );
 		$invoice = $convertor->toInvoice( $order );
-		$currency = $order->getOrderCurrency();
+		$currency = $order->getOrderCurrencyCode();
 		$amount = round($order->getTotalDue() * 100);
 		if($currency=='JPY')
 			$amount = round($order->getTotalDue());
@@ -161,7 +161,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
 		$operation = "1";
 
-		$signature = md5( $client . $user . $terminal . "1" . $ord . $amount . $currency . md5( $pass ) );
+		$signature = md5( $client . $user . $terminal . $operation . $ord . $amount . $currency . md5( $pass ) );
 
 		$sArr = array
 			(

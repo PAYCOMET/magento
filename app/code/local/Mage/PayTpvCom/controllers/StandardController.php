@@ -104,7 +104,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 		$order->sendOrderUpdateEmail( true, $message );
 
 		$session->addError( $message );
-		$this->_redirect( 'checkout/cart' );
+		$this->_redirect( 'sales/order/reorder',array('order_id'=>$order->getId()) );
 
 		return;
 	}
