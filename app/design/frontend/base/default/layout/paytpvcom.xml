@@ -6,7 +6,12 @@
 	</reference>
     </paytpvcom_standard_redirect>
     <paytpvcom_standard_iframe>
-	<reference name="content">
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+            <!-- Mark root page block that template is applied -->
+            <action method="setIsHandle"><applied>1</applied></action>
+        </reference>
+        <reference name="content">
 	    <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
 	</reference>
     </paytpvcom_standard_iframe>
