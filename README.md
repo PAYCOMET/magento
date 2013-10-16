@@ -3,10 +3,10 @@ Módulo de pago de PayTpv para Magento
 
 Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las tiendas Magento.
 
-*Operativa offsite*
+* Operativa offsite
  -----------------
 A elegir la opción de pago por tarjeta de crédito y confirmar el pedido el cliente es reenviado a las páginas de PayTPV para que realice el pago.
-*Operativa iframe*
+* Operativa iframe
  ----------------
 A elegir la opción de pago por tarjeta de crédito y confirmar el pedido aparecen "incrustados" en la propia tienda los formularios para que el cliente inroduzca la información referente a la tarjeta, aún así esta información es enviada de forma cifrada a los servidores de PayTpv que cuentan con certificación PCI/DSS de nivel 1.
 *Operativa BankStore* **(Proximamente)**
