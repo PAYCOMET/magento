@@ -127,7 +127,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 			case "fr_FR": return "fr";
 			case "en_GB": return "en";
 			case "en_US": return "en";
-			case "ca_ES": return "ca";
+			case "it_IT": return "it";
+			case "de_DE": return "de";
 		}
 		return "es";
 	}
@@ -151,13 +152,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 		$terminal = $this->getConfigData( 'terminal' );
 
 		$pagina = Mage::app()->getWebsite()->getName();
-		$language_settings = strtolower( Mage::app()->getStore()->getCode() );
-
-		if ( $language_settings == "default" ) {
-			$language = "ES";
-		} else {
-			$language = "EN";
-		}
+		$language = $this->calcLanguage(Mage::app()->getLocale()->getLocaleCode());
 
 		$operation = "1";
 
