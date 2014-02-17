@@ -112,6 +112,71 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 	/**
 	 * Página a la que vuelvge el usuario
 	 */
+	public function callbackAction() {
+		$quote_id = Mage::app()->getRequest()->getParam('Order');
+		$iduser = Mage::app()->getRequest()->getParam('IdUser');
+		$tokenuser = Mage::app()->getRequest()->getParam('TokenUser');
+		$quote = Mage::getModel( 'sales/quote' )->load( $quote_id );
+		Mage::getModel( 'customer/customer' )->load( $quote->getCustomerId() )
+				->setPaytpvIduser($iduser)
+				->setPaytpvTokenuser($tokenuser)
+				->setPaytpvCc('')
+				->save();
+/*
+		update_post_meta( ( int ) $order->id, 'IdUser', get_user_meta( ( int ) $order->user_id, 'IdUser', true ) );
+		update_post_meta( ( int ) $order->id, 'TokenUser', get_user_meta( ( int ) $order->user_id, 'TokenUser', true ) );
+
+					$client = $this->get_client();
+					$result = $client->execute_purchase( $order, $order->get_order_total() );
+					$url = $order->get_cancel_order_url();
+					if ( ( int ) $result[ 'DS_RESPONSE' ] == 1 ) {
+						$order->add_order_note( __( 'PayTpv payment completed', 'wc_paytpv' ) );
+						$order->payment_complete();
+						$url = $this->get_return_url( $order );
+					}
+					wp_redirect( $url, 303 );
+					exit();
+				}
+
+*/
+		$model = Mage::getModel( 'paytpvcom/standard' );
+		$session = Mage::getSingleton( 'checkout/session' );
+
+		$order = Mage::getModel( 'sales/order' );
+		$order->load( Mage::getSingleton( 'checkout/session' )->getLastOrderId() );
+
+//		$session->addError(Mage::helper('payment')->__('Pago no realizado : %s',$session->getPayTpvComStandardQuoteId()));
+
+		$session->setQuoteId( $session->getPayTpvComStandardQuoteId() );
+		$params = $this->getRequest()->getParams();
+
+		$firmaValida = false;
+		$pagoOK = true;
+
+		if ( count( $params ) > 0 ) {
+			if ( $params[ 'h' ] == md5( $model->getConfigData( 'user' ) . $params[ 'r' ] . $model->getConfigData( 'pass' ) . $params[ "ret" ] ) )
+				$firmaValida = true;
+
+			if ( $firmaValida && $params[ 'ret' ] == 0 ) {
+				$orderStatus = $model->getConfigData( 'paid_status' );
+				$session->unsErrorMessage();
+				$session->addSuccess( Mage::helper( 'payment' )->__( 'Pago realizado con &eacute;xito' ) );
+
+				$order->setState( $orderStatus, $orderStatus, $comment, true );
+				$order->sendNewOrderEmail();
+				$order->setEmailSent( true );
+				$order->save();
+				Mage::getSingleton( 'checkout/session' )->getQuote()->setIsActive( true )->save();
+				$this->_redirect( 'checkout/onepage/success');
+			} else {
+				$this->cancelAction();
+			}
+		}
+	}
+
+	/**
+	 * Página a la que vuelvge el usuario
+	 */
 	public function reciboAction() {
 		$model = Mage::getModel( 'paytpvcom/standard' );
 		$session = Mage::getSingleton( 'checkout/session' );

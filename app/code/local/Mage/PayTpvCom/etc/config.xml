@@ -3,12 +3,28 @@
     <modules>
        <Mage_PayTpvCom>
 <!-- declare module's version information for database updates -->
-          <version>2.5.1</version>
+          <version>3.0.0</version>
        </Mage_PayTpvCom>
     </modules>
 
 
     <global>
+	<fieldsets>
+	    <customer_account>
+		<paytpv_id>
+		    <create>1</create>
+		    <update>1</update>
+		</paytpv_id>
+		<paytpv_token>
+		    <create>1</create>
+		    <update>1</update>
+		</paytpv_token>
+		<paytpv_cc>
+		    <create>1</create>
+		    <update>1</update>
+		</paytpv_cc>
+	    </customer_account>
+	</fieldsets>
 <!-- declare model group for new module -->
         <models>
 <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
@@ -26,6 +42,7 @@
                 <setup>
 <!-- which module to look for install/upgrade files in -->
                     <module>Mage_PayTpvCom</module>
+		    <class>Mage_Customer_Model_Entity_Setup</class>
                 </setup>
 <!-- specify database connection for this resource -->
                 <connection>
@@ -49,6 +66,11 @@
               <class>Mage_PayTpvCom_Block</class>
             </paytpvcom>
         </blocks>
+	<helpers>
+	    <paytpvcom>
+		<class>Mage_PayTpvCom_Helper</class>
+	    </paytpvcom>
+	</helpers>
     </global>
 
     <frontend>

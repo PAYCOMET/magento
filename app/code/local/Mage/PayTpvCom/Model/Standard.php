@@ -26,7 +26,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 	 */
 	protected $_code = 'paytpvcom';
 	protected $_formBlockType = 'paytpvcom/standard_form';
-	protected $_allowCurrencyCode = array( 'EUR','USD','GBP','JPY' );
+	protected $_allowCurrencyCode = array( 'EUR', 'USD', 'GBP', 'JPY' );
 
 	/**
 	 * Get paytpv.com session namespace
@@ -112,8 +112,18 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 				return Mage::getUrl( 'paytpvcom/standard/redirect' );
 			case 1:
 				return Mage::getUrl( 'paytpvcom/standard/iframe' );
+			case 2://Execute Purchase
+				if ( $this->executePurchase() )
+					return Mage::getUrl( 'checkout/onepage/success' );
+				else
+					return Mage::getUrl( 'paytpvcom/standard/cancel' );
 		}
 		return null;
+	}
+
+	private function executePurchase() {
+		$client = new SoapClient( 'https://secure.paytpv.com/gateway/xml_bankstore.php?wsdl' );
+		return false;
 	}
 
 	public function getRecurringProfileSetRedirectUrl() {
@@ -127,10 +137,43 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 			case "fr_FR": return "fr";
 			case "en_GB": return "en";
 			case "en_US": return "en";
-			case "it_IT": return "it";
-			case "de_DE": return "de";
+			case "ca_ES": return "ca";
 		}
 		return "es";
+	}
+
+	public function getCCFromQuote() {
+		$session = Mage::getSingleton( 'checkout/session' );
+		$quote_id = $session->getQuoteId();
+		$quote = Mage::getModel( 'sales/quote' )->load( $quote_id );
+		$customer = Mage::getModel( 'customer/customer' )->load( $quote->getCustomerId() );
+		$cc = $customer->getPaytpvCc();
+		if($cc)
+			return $cc;
+		$DS_IDUSER = $customer->getPaytpvIduser();
+		if(!$DS_IDUSER)
+			return false;
+
+		$DS_TOKEN_USER = $customer->getPaytpvTokenuser();
+		$client = new Zend_Soap_Client("https://www.paytpv.com/gateway/xml_bankstore.php?wsdl",
+				array('soap_version'=>SOAP_1_1,'encoding' => 'UTF-8'));
+		$DS_MERCHANT_MERCHANTCODE = $this->getConfigData( 'client' );
+		$DS_MERCHANT_TERMINAL = $this->getConfigData( 'terminal' );
+		$DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData( 'pass' ) );
+		$DS_ORIGINAL_IP = Mage::helper('core/http')->getRemoteAddr(true);
+		$res = $client->info_user(
+				$DS_MERCHANT_MERCHANTCODE,
+				$DS_MERCHANT_TERMINAL,
+				$DS_IDUSER,
+				$DS_TOKEN_USER,
+				$DS_MERCHANT_MERCHANTSIGNATURE,
+				$DS_ORIGINAL_IP
+		);
+		if($res['DS_MERCHANT_PAN']){
+			$customer->setPaytpvCc($res['DS_MERCHANT_PAN']);
+			$customer->save();
+		}
+		return $res['DS_MERCHANT_PAN'];
 	}
 
 	public function getStandardCheckoutFormFields() {
@@ -140,9 +183,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 		$convertor = Mage::getModel( 'sales/convert_order' );
 		$invoice = $convertor->toInvoice( $order );
 		$currency = $order->getOrderCurrencyCode();
-		$amount = round($order->getTotalDue() * 100);
-		if($currency=='JPY')
-			$amount = round($order->getTotalDue());
+		$amount = round( $order->getTotalDue() * 100 );
+		if ( $currency == 'JPY' )
+			$amount = round( $order->getTotalDue() );
 
 		$ord = $this->getCheckout()->getLastRealOrderId();
 
@@ -152,7 +195,13 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 		$terminal = $this->getConfigData( 'terminal' );
 
 		$pagina = Mage::app()->getWebsite()->getName();
-		$language = $this->calcLanguage(Mage::app()->getLocale()->getLocaleCode());
+		$language_settings = strtolower( Mage::app()->getStore()->getCode() );
+
+		if ( $language_settings == "default" ) {
+			$language = "ES";
+		} else {
+			$language = "EN";
+		}
 
 		$operation = "1";
 
@@ -188,6 +237,49 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 		return $rArr;
 	}
 
+	public function getStandardAddUserFields() {
+		$session = Mage::getSingleton( 'checkout/session' );
+		$quote_id = $session->getQuoteId();
+		$client = $this->getConfigData( 'client' );
+		$pass = $this->getConfigData( 'pass' );
+		$terminal = $this->getConfigData( 'terminal' );
+
+		$pagina = Mage::app()->getWebsite()->getName();
+		$language_settings = strtolower( Mage::app()->getStore()->getCode() );
+
+		if ( $language_settings == "default" ) {
+			$language = "ES";
+		} else {
+			$language = "EN";
+		}
+
+		$operation = "107";
+
+		$signature = md5( $client . $terminal . $operation . $quote_id . md5( $pass ) );
+
+		$sArr = array
+			(
+			'MERCHANT_MERCHANTCODE' => $client,
+			'MERCHANT_TERMINAL' => $terminal,
+			'OPERATION' => $operation,
+			'LANGUAGE' => $language,
+			'MERCHANT_MERCHANTSIGNATURE' => $signature,
+			'MERCHANT_ORDER' => $quote_id,
+			'URLOK' => Mage::getUrl( 'paytpvcom/standard/adduserok' ),
+			'URLKO' => Mage::getUrl( 'paytpvcom/standard/addusernok' ),
+			'3DSECURE' => '1'
+		);
+		//
+		// Make into request data
+		//
+        $sReq = '';
+		foreach ( $sArr as $k => $v ) {
+			$sReq .= '&' . $k . '=' . urldecode($v);
+		}
+
+		return $sReq;
+	}
+
 	//
 	// Simply return the url for the paytpv.com Payment window
 	//
@@ -197,6 +289,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
 	public function getPayTpvIframeUrl() {
 		return "https://www.paytpv.com/gateway/ifgateway.php";
+	}
+
+	public function getPayTpvBankStoreUrl() {
+		return "https://secure.paytpv.com/gateway/bnkgateway.php";
 	}
 
 	/* RECURRING PROFILES */
@@ -213,11 +309,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 			$errors[ ] = Mage::helper( 'paypal' )->__( 'Subscriber name is too long.' );
 		}
 		$refId = $profile->getInternalReferenceId(); // up to 127 single-byte alphanumeric
-		if ( strlen( $refId ) > 127 ) { //  || !preg_match('/^[a-z\d\s]+$/i', $refId)
+		if ( strlen( $refId ) > 127 ) { //  || !preg_match('/^[ a-z\d\s ]+$/i', $refId)
 			$errors[ ] = Mage::helper( 'paypal' )->__( 'Merchant reference ID format is not supported.' );
 		}
 		$scheduleDescr = $profile->getScheduleDescription(); // up to 127 single-byte alphanumeric
-		if ( strlen( $refId ) > 127 ) { //  || !preg_match('/^[a-z\d\s]+$/i', $scheduleDescr)
+		if ( strlen( $refId ) > 127 ) { //  || !preg_match('/^[ a-z\d\s ]+$/i', $scheduleDescr)
 			$errors[ ] = Mage::helper( 'paypal' )->__( 'Schedule description is too long.' );
 		}
 		if ( $errors ) {
@@ -235,7 +331,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 	public function submitRecurringProfile( Mage_Payment_Model_Recurring_Profile $profile, Mage_Payment_Model_Info $paymentInfo
 	) {
 		/* 	$client = new Zend_Soap_Client("https://www.paytpv.com/gateway/xml_bankstore.php?wsdl",
-		  array('compression' => SOAP_COMPRESSION_ACCEPT));
+		  array('compression
+
+
+
+
+
+
+
+		  ' => SOAP_COMPRESSION_ACCEPT));
 		  exit();
 		 */
 		$profile->setReferenceId( time() );
@@ -302,4 +406,5 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 	}
 
 }
+
 ?>
