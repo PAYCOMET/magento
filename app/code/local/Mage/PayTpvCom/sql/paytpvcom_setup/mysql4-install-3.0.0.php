@@ -12,7 +12,7 @@ $setup->addAttribute('customer', 'paytpv_iduser', array(
 	'default' => '0',
 	'visible_on_front' => 0
 ));
-$setup->addAttribute('customer', 'paytpv_tokeuser', array(
+$setup->addAttribute('customer', 'paytpv_tokenuser', array(
 	'type' => 'varchar',
 	'global' => 1,
 	'visible' => 0,
@@ -49,10 +49,10 @@ if (version_compare(Mage::getVersion(), '1.4.2', '>='))
 */
 $tablequote = $this->getTable('sales/quote');
 $installer->run("
-ALTER TABLE  $tablequote ADD
-	`customer_paytpv_iduser` INT NULL,
-	`customer_paytpv_tokenuser` VARCHAR(64) NULL,
-	`customer_paytpv_iduser` VARCHAR(32) NULL
+ALTER TABLE  $tablequote
+	ADD  `paytpv_iduser` INT NOT NULL ,
+	ADD  `paytpv_tokenuser` VARCHAR( 64 ) NULL DEFAULT NULL ,
+	ADD  `paytpv_cc` VARCHAR( 32 ) NULL DEFAULT NULL ;
 ");
 
 

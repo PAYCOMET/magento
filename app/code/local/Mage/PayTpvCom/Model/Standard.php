@@ -28,6 +28,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 	protected $_formBlockType = 'paytpvcom/standard_form';
 	protected $_allowCurrencyCode = array( 'EUR', 'USD', 'GBP', 'JPY' );
 
+	private $_client = null;
+
 	/**
 	 * Get paytpv.com session namespace
 	 *
@@ -121,9 +123,22 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 		return null;
 	}
 
-	private function executePurchase() {
-		$client = new SoapClient( 'https://secure.paytpv.com/gateway/xml_bankstore.php?wsdl' );
-		return false;
+	private function getClient(){
+		if(null==$this->_client)
+			$this->_client = new Zend_Soap_Client('https://secure.paytpv.com/gateway/xml_bankstore.php?wsdl' );
+			$this->_client->setSoapVersion(SOAP_1_1);
+		return $this->_client;
+	}
+
+	public function infoUser($idUser,$tokenUser) {
+		return $this->getClient()->info_user(
+			$idUser,
+			$tokenUser,
+			$_SERVER['REMOTE_ADDR']);
+	}
+
+	public function executePurchase() {
+		return $this->getClient()->execute_purchase();
 	}
 
 	public function getRecurringProfileSetRedirectUrl() {
@@ -272,12 +287,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 		//
 		// Make into request data
 		//
-        $sReq = '';
-		foreach ( $sArr as $k => $v ) {
-			$sReq .= '&' . $k . '=' . urldecode($v);
-		}
-
-		return $sReq;
+		return http_build_query($sArr);
 	}
 
 	//

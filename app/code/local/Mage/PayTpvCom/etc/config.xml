@@ -105,11 +105,11 @@
 	<events>
 	    <checkout_submit_all_after>
 		<observers>
-		    <paytpvcom_checkout>
+		    <mage_paytpvcom_observer>
 			<type>singleton</type>
-			<class>paytpvcom/observer</class>
+			<class>Mage_PayTpvCom_Model_Observer</class>
 			<method>submitAllAfter</method>
-		    </paytpvcom_checkout>
+		    </mage_paytpvcom_observer>
 		</observers>
 	    </checkout_submit_all_after>
 	</events>
