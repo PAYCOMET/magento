@@ -128,7 +128,7 @@
 <!-- order status for new orders paid by this payment method -->
                 <order_status>pending</order_status>
                 <paid_status>processing</paid_status>
-		<error_status>canceled</error_status>
+		        <error_status>canceled</error_status>
 <!-- default title for payment checkout page and order view page -->
                 <title>Tarjeta de credito paytpv</title>
             </paytpvcom>
