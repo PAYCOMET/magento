@@ -127,37 +127,27 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 	public function callbackAction()
 	{
 		Mage::log(http_build_query($_REQUEST), null, 'paytpvcom.log', true);
-		$quote_id = Mage::app()->getRequest()->getParam('Order');
-		$idUser = Mage::app()->getRequest()->getParam('IdUser');
-		$tokenUser = Mage::app()->getRequest()->getParam('TokenUser');
-		$quote = Mage::getModel('sales/quote')->load($quote_id);
+		$transactionType = Mage::app()->getRequest()->getParam('TransactionType');
 		$model = Mage::getModel('paytpvcom/standard');
-		if ($idUser && $tokenUser)
-		{
+		if ($transactionType==107)
+		{//Callback addUser
+			$quote_id = Mage::app()->getRequest()->getParam('Order');
+			$idUser = Mage::app()->getRequest()->getParam('IdUser');
+			$tokenUser = Mage::app()->getRequest()->getParam('TokenUser');
 			$infoUser = $model->infoUser($idUser, $tokenUser);
+			$quote = Mage::getModel('sales/quote')->load($quote_id)
+					->setPaytpvIduser($idUser)
+					->setPaytpvTokenuser($tokenUser)
+					->setPaytpvCc($infoUser['DS_MERCHANT_PAN'])
+					->save();
 			Mage::getModel('customer/customer')->load($quote->getCustomerId())
 					->setPaytpvIduser($idUser)
 					->setPaytpvTokenuser($tokenUser)
 					->setPaytpvCc($infoUser['DS_MERCHANT_PAN'])
 					->save();
+			return;
 		}
-		/*
-		  update_post_meta( ( int ) $order->id, 'IdUser', get_user_meta( ( int ) $order->user_id, 'IdUser', true ) );
-		  update_post_meta( ( int ) $order->id, 'TokenUser', get_user_meta( ( int ) $order->user_id, 'TokenUser', true ) );
 
-		  $client = $this->get_client();
-		  $result = $client->execute_purchase( $order, $order->get_order_total() );
-		  $url = $order->get_cancel_order_url();
-		  if ( ( int ) $result[ 'DS_RESPONSE' ] == 1 ) {
-		  $order->add_order_note( __( 'PayTpv payment completed', 'wc_paytpv' ) );
-		  $order->payment_complete();
-		  $url = $this->get_return_url( $order );
-		  }
-		  wp_redirect( $url, 303 );
-		  exit();
-		  }
-
-		 */
 		$session = Mage::getSingleton('checkout/session');
 
 		$order = Mage::getModel('sales/order');
