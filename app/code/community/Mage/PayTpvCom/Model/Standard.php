@@ -205,10 +205,6 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     private function processFail($order, $session, $message, $comment)
     {
-        /**
-         * Actualizamos al nuevo estado del pedido (el nuevo estado
-         * se configura en el backend de la extension paytpv)
-         */
         $state = $this->getConfigData('error_status');
         if ($state == Mage_Sales_Model_Order::STATE_CANCELED)
             $order->cancel();
@@ -321,8 +317,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 return "en";
             case "en_US":
                 return "en";
-            case "ca_ES":
-                return "ca";
+            case "it_IT":
+                return "it";
+            case "de_DE":
+                return "de";
         }
         return "es";
     }
@@ -376,14 +374,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $pass = $this->getConfigData('pass');
         $terminal = $this->getConfigData('terminal');
 
-        $pagina = Mage::app()->getWebsite()->getName();
-        $language_settings = strtolower(Mage::app()->getStore()->getCode());
-
-        if ($language_settings == "default") {
-            $language = "ES";
-        } else {
-            $language = "EN";
-        }
+        $language = $this->calcLanguage(Mage::app()->getLocale()->getLocaleCode());
 
         $operation = "1";
 

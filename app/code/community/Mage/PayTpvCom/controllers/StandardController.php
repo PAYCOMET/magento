@@ -159,14 +159,10 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
         $order = Mage::getModel('sales/order');
         $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
-
-//		$session->addError(Mage::helper('payment')->__('Pago no realizado : %s',$session->getPayTpvComStandardQuoteId()));
-
         $session->setQuoteId($session->getPayTpvComStandardQuoteId());
         $params = $this->getRequest()->getParams();
 
         $firmaValida = false;
-        $pagoOK = true;
 
         if (count($params) > 0) {
             if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
