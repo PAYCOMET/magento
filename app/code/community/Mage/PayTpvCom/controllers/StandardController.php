@@ -103,30 +103,9 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         Mage::log(http_build_query($_REQUEST), null, 'paytpvcom.log', true);
         $transactionType = Mage::app()->getRequest()->getParam('TransactionType');
         $model = Mage::getModel('paytpvcom/standard');
-        if ($transactionType==107) {//Callback addUser
-            $quote_id = Mage::app()->getRequest()->getParam('Order');
-            $idUser = Mage::app()->getRequest()->getParam('IdUser');
-            $tokenUser = Mage::app()->getRequest()->getParam('TokenUser');
-            $infoUser = $model->infoUser($idUser, $tokenUser);
-            $quote = Mage::getModel('sales/quote')->load($quote_id)
-                    ->setPaytpvIduser($idUser)
-                    ->setPaytpvTokenuser($tokenUser)
-                    ->setPaytpvCc($infoUser['DS_MERCHANT_PAN'])
-                    ->save();
-            Mage::getModel('customer/customer')->load($quote->getCustomerId())
-                    ->setPaytpvIduser($idUser)
-                    ->setPaytpvTokenuser($tokenUser)
-                    ->setPaytpvCc($infoUser['DS_MERCHANT_PAN'])
-                    ->save();
-            return;
-        }
-
         $session = Mage::getSingleton('checkout/session');
-
         $order = Mage::getModel('sales/order');
         $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
-
-//		$session->addError(Mage::helper('payment')->__('Pago no realizado : %s',$session->getPayTpvComStandardQuoteId()));
 
         $session->setQuoteId($session->getPayTpvComStandardQuoteId());
         $params = $this->getRequest()->getParams();

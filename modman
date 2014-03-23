@@ -18,6 +18,8 @@ app/design/frontend/base/default/template/paytpvcom/form_bankstore_ws.phtml	app/
 app/design/frontend/base/default/template/paytpvcom/form_bankstore_iframe.phtml	app/design/frontend/base/default/template/paytpvcom/form_bankstore_iframe.phtml
 app/design/frontend/base/default/template/paytpvcom/iframe.phtml	app/design/frontend/base/default/template/paytpvcom/iframe.phtml
 app/design/frontend/base/default/template/paytpvcom/form.phtml	app/design/frontend/base/default/template/paytpvcom/form.phtml
+app/locale/en_US/Mage_PayTpvCom.csv app/locale/en_US/Mage_PayTpvCom.csv
+app/locale/es_ES/Mage_PayTpvCom.csv app/locale/ea_ES/Mage_PayTpvCom.csv
 skin/frontend/base/default/images/paytpvcom/maestro.png	skin/frontend/base/default/images/paytpvcom/maestro.png
 skin/frontend/base/default/images/paytpvcom/mastercard.png	skin/frontend/base/default/images/paytpvcom/mastercard.png
 skin/frontend/base/default/images/paytpvcom/verifiedbyvisa.png	skin/frontend/base/default/images/paytpvcom/verifiedbyvisa.png

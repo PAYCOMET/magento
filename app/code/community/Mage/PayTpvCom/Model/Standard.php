@@ -188,7 +188,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this;
     }
 
-    public function processSuccess(&$order, $session)
+    private function processSuccess(&$order, $session)
     {
         $orderStatus = $this->getConfigData('paid_status');
         $session->unsErrorMessage();
@@ -203,7 +203,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/onepage/success'));
     }
 
-    public function processFail($order, $session, $message, $comment)
+    private function processFail($order, $session, $message, $comment)
     {
         /**
          * Actualizamos al nuevo estado del pedido (el nuevo estado
@@ -225,7 +225,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function getOrderPlaceRedirectUrl()
     {
         if (3 == $this->getConfigData('operativa'))
-            return;
+            return null;
 
         $it = $this->getConfigData('integracion');
         switch ($it) {
