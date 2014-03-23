@@ -1,15 +1,17 @@
 <?php
-class Mage_PayTpvCom_Block_Standard_Form extends Mage_Payment_Block_Form
+class Mage_PayTpvCom_Block_Standard_Form extends Mage_Payment_Block_Form_Cc
 {
     protected function _construct()
     {
-        $standard = Mage::getSingleton('paytpvcom/standard');
-        $op = $standard->getConfigData( 'operativa' );
-        if ($op==2) {
-            $this->setPaytpvCc(Mage::getSingleton('customer/session')->getCustomer()->getPaytpvCc());
-            $this->setTemplate('paytpvcom/form_bankstore.phtml');
-        }else
-            $this->setTemplate('paytpvcom/form.phtml');
         parent::_construct();
+        $standard = Mage::getSingleton('paytpvcom/standard');
+        $this->setPaytpvCc(Mage::getSingleton('customer/session')->getCustomer()->getPaytpvCc());
+        switch ($standard->getConfigData( 'operativa' )) {
+            case Mage_PayTpvCom_Model_Standard::OP_BANKSTORE;
+                $this->setTemplate('paytpvcom/form_bankstore_ws.phtml');
+                break;
+            default:
+                $this->setTemplate('paytpvcom/form.phtml');
+        }
     }
 }

@@ -9,11 +9,13 @@ app/code/community/Mage/PayTpvCom/Helper/Data.php	app/code/community/Mage/PayTpv
 app/code/community/Mage/PayTpvCom/Model/Api.php	app/code/community/Mage/PayTpvCom/Model/Api.php
 app/code/community/Mage/PayTpvCom/Model/Standard.php	app/code/community/Mage/PayTpvCom/Model/Standard.php
 app/code/community/Mage/PayTpvCom/Model/System/Config/Source/Operativas.php	app/code/community/Mage/PayTpvCom/Model/System/Config/Source/Operativas.php
+app/code/community/Mage/PayTpvCom/Model/System/Config/Source/Integraciones.php	app/code/community/Mage/PayTpvCom/Model/System/Config/Source/Integraciones.php
 app/code/community/Mage/PayTpvCom/Model/Observer.php	app/code/community/Mage/PayTpvCom/Model/Observer.php
 app/etc/modules/Mage_PayTpvCom.xml	app/etc/modules/Mage_PayTpvCom.xml
 app/design/frontend/base/default/layout/paytpvcom.xml	app/design/frontend/base/default/layout/paytpvcom.xml
 app/design/frontend/base/default/template/paytpvcom/redirect.phtml	app/design/frontend/base/default/template/paytpvcom/redirect.phtml
-app/design/frontend/base/default/template/paytpvcom/form_bankstore.phtml	app/design/frontend/base/default/template/paytpvcom/form_bankstore.phtml
+app/design/frontend/base/default/template/paytpvcom/form_bankstore_ws.phtml	app/design/frontend/base/default/template/paytpvcom/form_bankstore_ws.phtml
+app/design/frontend/base/default/template/paytpvcom/form_bankstore_iframe.phtml	app/design/frontend/base/default/template/paytpvcom/form_bankstore_iframe.phtml
 app/design/frontend/base/default/template/paytpvcom/iframe.phtml	app/design/frontend/base/default/template/paytpvcom/iframe.phtml
 app/design/frontend/base/default/template/paytpvcom/form.phtml	app/design/frontend/base/default/template/paytpvcom/form.phtml
 skin/frontend/base/default/images/paytpvcom/maestro.png	skin/frontend/base/default/images/paytpvcom/maestro.png

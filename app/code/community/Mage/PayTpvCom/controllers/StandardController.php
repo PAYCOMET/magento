@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Servired Standard Checkout Controller
+ * PayTPV Standard Checkout Controller
  *
  */
 class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Action implements Mage_Payment_Model_Recurring_Profile_MethodInterface
@@ -19,7 +19,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
     }
 
     /**
-     * Get singleton with servired strandard order transaction information
+     * Get singleton with PayTPV strandard order transaction information
      *
      * @return PayTpvCom_Model_Standard
      */
@@ -66,51 +66,31 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
     /**
      * Acción a realizar tras error en el pago
      */
-    public function cancelAction()
+    public function cancelAction($firmaValida=false)
     {
         $params = $this->getRequest()->getParams();
         $model = Mage::getModel('paytpvcom/standard');
-        $state = $model->getConfigData('error_status');
 
         $message = '';
-        $firmaValida = false;
         if (count($params) > 0) {
             if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
                 $firmaValida = true;
 
             if ($firmaValida && $params['ret'] != "0") {
-                $errnum = $params['ret'];
-                $message = "No se pudo completar el cobro con &eacute;xito (c&oacute;digo ".$errnum.").";
-                $message = Mage::helper('payment')->__($message);
-                $comment = Mage::helper('payment')->__('Pedido cancelado desde paytpv.com con error #%s - %s', $errnum, $message);
+                $message = Mage::helper('payment')->__("Payment failed (Err. code %s)",$params['ret']);
+                $comment = Mage::helper('payment')->__('Payment refused from PayTPV.com. Reason: #%s - %s', $params['ret'], $message);
             }
         }
 
         if (!$message) { // Informacion devuelta no valida
-            $message = "Se produjo un error durante el proceso de compra (c&oacute;digo -1).";
-            $errnum = -1;
-            $message = Mage::helper('payment')->__($message);
-            $comment = Mage::helper('payment')->__('Pedido cancelado con error #%s - %s', $errnum, $message);
+            $message = Mage::helper('payment')->__("Payment failed (Err. code %s)",-1);
+            $comment = Mage::helper('payment')->__("Payment failed (Err. code %s)",-1);
         }
 
         $session = Mage::getSingleton('checkout/session');
         $order = Mage::getModel('sales/order')->load($session->getLastOrderId());
 
-        /**
-         * Actualizamos al nuevo estado del pedido (el nuevo estado
-         * se configura en el backend de la extension paytpv)
-         */
-        if ($state == Mage_Sales_Model_Order::STATE_CANCELED)
-            $order->cancel();
-        else
-            $order->setState($state, $state, $comment, true);
-
-        $order->save();
-
-        $order->sendOrderUpdateEmail(true, $message);
-
-        $session->addError($message);
-        $this->_redirect('sales/order/reorder', array('order_id' => $order->getId()));
+        $model->processFail($order,$session,$message,$comment);
 
         return;
     }
@@ -159,16 +139,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $firmaValida = true;
 
             if ($firmaValida && $params['ret'] == 0) {
-                $orderStatus = $model->getConfigData('paid_status');
-                $session->unsErrorMessage();
-                $session->addSuccess(Mage::helper('payment')->__('Pago realizado con &eacute;xito'));
-
-                $order->setState($orderStatus, $orderStatus, $comment, true);
-                $order->sendNewOrderEmail();
-                $order->setEmailSent(true);
-                $order->save();
-                Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
-                $this->_redirect('checkout/onepage/success');
+                $model->processSuccess($order,$session);
             } else {
                 $this->cancelAction();
             }
@@ -225,8 +196,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             if ($firmaValida && $params['ret'] == 0) {
                 $orderStatus = $model->getConfigData('paid_status');
                 $session->unsErrorMessage();
-                $session->addSuccess(Mage::helper('payment')->__('Pago realizado con &eacute;xito'));
-
+                $comment = Mage::helper('payment')->__('Successful payment');
+                $session->addSuccess($comment);
                 $order->setState($orderStatus, $orderStatus, $comment, true);
                 $order->sendNewOrderEmail();
                 $order->setEmailSent(true);

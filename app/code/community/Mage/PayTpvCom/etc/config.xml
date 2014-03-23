@@ -102,17 +102,6 @@
                   </paytpvcom>
              </updates>
         </layout>
-	<events>
-	    <checkout_submit_all_after>
-		<observers>
-		    <paytpvcom>
-                        <type>singleton</type>
-                        <class>paytpvcom/observer</class>
-			<method>submitAllAfter</method>
-		    </paytpvcom>
-		</observers>
-	    </checkout_submit_all_after>
-	</events>
     </frontend>
 
 <!-- declare default configuration values for this module -->
@@ -129,6 +118,8 @@
                 <order_status>pending</order_status>
                 <paid_status>processing</paid_status>
 		        <error_status>canceled</error_status>
+                <useccv>1</useccv>
+                <payment_action>authorize_capture</payment_action>
 <!-- default title for payment checkout page and order view page -->
                 <title>Tarjeta de credito paytpv</title>
             </paytpvcom>
