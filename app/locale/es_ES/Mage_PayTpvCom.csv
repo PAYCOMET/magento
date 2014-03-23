@@ -1,0 +1,271 @@
+Payment failed (Err. code %s),Pago fallido (Cód. Error %s)
+Payment refused from PayTPV.com. Reason: #%s - %s,Pago denegado en PayTPV.com. Razón: #%s - %s
+Pago no realizado : %s,Pago no realizado : %s
+Data succesfully saved,Datos guardados con éxito
+Incorrect input data,Datos de entrada incorectos
+Successful payment,Pago exitoso
+Tarjeta de credito paytpv,Tarjeta de credito paytpv
+Enabled,Habilitado
+Title,Título
+Operation method,Tipo de opertiva
+Integration method,Tipo de integración
+Client Code,Código de cliente
+User Name,Nombre de usuario
+User Password,Contraseña de usuario
+Terminal number,Número de terminal
+Credit Card Types,Tipos de tarjeta
+Minimum Order Total,Importe mínimo del pedido
+Maximum Order Total,Importe máximo del pedido
+Sort Order,Orden
+Selected currency (%s) is not compatible with this payment method,La moneda seleccionada (%s) no es compatible con este método de pago
+Authorization failed. %s - %s,Fallo la pre-autorización. %s - %s
+Payment failed. %s - %s,Falló el pago. %s - %s
+Subscriber name is too long.,El nombre del suscriptor es demasiado largo.
+Merchant reference ID format is not supported.,Merchant reference ID format is not supported.
+Schedule description is too long.,Schedule description is too long.
+Error,Error
+Expired Card,Tarjeta caducada
+Blacklisted Card,Tarjeta en lista negra
+Operation not allowed for the type of card,Operación no permitida para el tipo de tarjeta
+Please contact the issuing bank,"Por favor, contacte con el banco emisor"
+Unexpected error,Error inesperado
+Insufficient credit for the post,Crédito insuficiente para realizar el cargo
+Card not discharged or not registered by the issuing bank,Tarjeta no dada de alta o no registrada por el banco emisor
+Format error in the captured data. CodValid,Error de formato en los datos capturados. CodValid
+Error card number,Error en el número de la tarjeta
+Error in ExpireDate,Error en FechaCaducidad
+Data error,Error en los datos
+Block CVC2 wrong,Bloque CVC2 incorrecto
+Credit card not valid,Tarjeta de crédito no válida
+The credit card has restrictions,La tarjeta tiene restricciones de crédito
+The card issuer could not identify the owner,El emisor de la tarjeta no pudo identificar al propietario
+Payment not allowed in off-line,Pago no permitido en operaciones fuera de línea
+Card expired. Please retain the card physically,Tarjeta caducada. Por favor retenga físicamente la tarjeta
+Blacklisted Card. Please retain the card physically,Tarjeta en lista negra. Por favor retenga físicamente la tarjeta
+Lost or stolen card. Please retain the card physically,Tarjeta perdida o robada. Por favor retenga físicamente la tarjeta
+CVC2 error. Please retain the card physically,Error en CVC2. Por favor retenga físicamente la tarjeta
+Error in pre-transaction process. Please try again later,Error en el proceso pre-transacción. Inténtelo más tarde
+Operation denied. Please retain the card physically,Operación denegada. Por favor retenga físicamente la tarjeta
+Closure agreement,Cierre con acuerdo
+Close without agreement,Cierre sin acuerdo
+Unable to close at this time,No es posible cerrar en este momento
+Invalid parameter,Parámetro no válido
+The transactions were not completed,Las transacciones no fueron finalizadas
+Internal reference duplicate,Referencia interna duplicada
+Previous operation not found. Failed to execute the return,Operación anterior no encontrada. No se pudo ejecutar la devolución
+Preauthorization Expired,Preautorización caducada
+Invalid operation in current currency,Operación no válida con la moneda actual
+Error message format,Error en formato del mensaje
+Message not recognized by the system,Mensaje no reconocido por el sistema
+Card not valid,Tarjeta no válida
+Gateway error message,Error en mensaje de pasarela
+Error gateway format,Error en formato de pasarela
+Nonexistent Card,Tarjeta inexistente
+Number zero or invalid,Cantidad cero o no válida
+Operation canceled,Operación cancelada
+Authentication Error,Error de autenticación
+Denied due to security level,Denegado debido al nivel de seguridad
+PUC error message. Contact PayTPV,Error en el mensaje PUC. Contacte con PAYTPV
+System Error,Error del sistema
+Duplicate transaction,Transacción duplicada
+MAC Error,Error de MAC
+Settlement rejected,Liquidación rechazada
+Date / time unsynchronized system,Fecha/hora del sistema no sincronizada
+Expiry date invalid,Fecha de caducidad no válida
+Could not find the preauthorization,No se pudo encontrar la preautorización
+Unable to find the requested data,No se encontraron los datos solicitados
+Can not perform the operation with the credit card provided,No se puede realizar la operación con la tarjeta de crédito proporcionada
+Transaction canceled previously,Transacción cancelada previamente
+Original transaction denied,Transacción original denegada
+Invalid confirmation data,Datos de confirmación no válidos
+Transaction still being,Transacción aún en proceso
+Unable to return,No es posible la devolución
+Unable to contact the issuing bank. Please try again later,No es posible contactar con el banco emisor. Inténtelo más tarde
+Transaction Type unknown,Tipo de transacción desconocido
+Operation not cancelable,Operación no cancelable
+Could not find the previous operation,No se pudo encontrar la operación previa
+Inconsistency in the validation data of the cancellation,Inconsistencia de datos en la validación de la cancelación
+The deferred payment there,El pago diferido no existe
+Card does not allow pre-authorizations,La tarjeta no admite preautorizaciones
+Confirmation data inconsistency,Inconsistencia de datos en confirmación
+Undefined return operation correctly,Operación de devolución no definida correctamente
+Operation denied,Operación denegada
+Account not found. Review your settings,Cuenta no encontrada. Revise su configuración
+User not found. Contact PAYTPV,Usuario no encontrado. Contacte con PAYTPV
+Gateway error response. Contact PAYTPV,Error en respuesta de pasarela. Contacte con PAYTPV
+Invalid signature. Please check your settings,"Firma no válida. Por favor, revise su configuración"
+Access not allowed,Acceso no permitido
+Credit Card Format Invalid,Formato de tarjeta de crédito no válido
+Error Validation Code field,Error en el campo Código de Validación
+Error in the Expiration Date field,Error en el campo Fecha de Caducidad
+Preauthorization reference not found,Referencia de preautorización no encontrada
+Preauthorization Data not found,Datos de preautorización no encontrados
+Could not send the return. Please try again later,No se pudo enviar la devolución. Por favor reinténtelo más tarde
+Could not connect to host,No se pudo conectar con el host
+Could not resolve the proxy,No se pudo resolver el proxy
+Failed host resolve,No se pudo resolver el host
+Initialization failed,Inicialización fallida
+No resource found HTTP,No se ha encontrado el recurso HTTP
+The range of options is not valid for the HTTP transfer,El rango de opciones no es válido para la transferencia HTTP
+No POST properly constructed,No se construyó correctamente el POST
+The user name is not well formatted,El nombre de usuario no se encuentra bien formateado
+Timed out waiting for the request,Se agotó el tiempo de espera en la petición
+Out of Memory,Sin memoria
+Could not connect to SSL server,No se pudo conectar al servidor SSL
+Protocol not supported,Protocolo no soportado
+The given URL is not properly formatted and can not be used,La URL dada no está bien formateada y no puede usarse
+The user in the URL is improperly formatted,El usuario en la URL se formateó de manera incorrecta
+Could not register any resources available to complete the operation,No se pudo registrar ningún recurso disponible para completar la operación
+Duplicate xref,Referencia externa duplicada
+The total return can not exceed the original transaction,El total de las devoluciones no puede superar la operación original
+The account is not active. Contact PAYTPV,La cuenta no se encuentra activa. Contacte con PAYTPV
+The account is not certified. Contact PAYTPV,La cuenta no se encuentra certificada. Contacte con PAYTPV
+The product is marked for deletion and can not be used,El producto está marcado para eliminar y no puede ser utilizado
+Insufficient permissions,Permisos insuficientes
+The product can not be used in the test environment,El producto no puede ser utilizado en el entorno de pruebas
+The product can not be used in the production environment,El producto no puede ser utilizado en el entorno de producción
+Unable to send the request back,No ha sido posible enviar la petición de devolución
+Error in the source IP field of the operation,Error en el campo IP de origen de la operación
+Error in XML,Error en formato XML
+The root element is not correct,El elemento raíz no es correcto
+Field Ds_Merchant_Amount wrong,Campo DS_MERCHANT_AMOUNT incorrecto
+Field Ds_Merchant_Order wrong,Campo DS_MERCHANT_ORDER incorrecto
+Field DS_MERCHANT_MERCHANTCODE wrong,Campo DS_MERCHANT_MERCHANTCODE incorrecto
+Field DS_MERCHANT_CURRENCY wrong,Campo DS_MERCHANT_CURRENCY incorrecto
+Field DS_MERCHANT_PAN wrong,Campo DS_MERCHANT_PAN incorrecto
+Field DS_MERCHANT_CVV2 wrong,Campo DS_MERCHANT_CVV2 incorrecto
+Field Ds_Merchant_TransactionType wrong,Campo DS_MERCHANT_TRANSACTIONTYPE incorrecto
+Field DS_MERCHANT_TERMINAL wrong,Campo DS_MERCHANT_TERMINAL incorrecto
+Field DS_MERCHANT_EXPIRYDATE wrong,Campo DS_MERCHANT_EXPIRYDATE incorrecto
+Field DS_MERCHANT_MERCHANTSIGNATURE wrong,Campo DS_MERCHANT_MERCHANTSIGNATURE incorrecto
+Field DS_ORIGINAL_IP wrong,Campo DS_ORIGINAL_IP incorrecto
+Customer not found,No se encuentra el cliente
+The new amount can not exceed pre-authorize the amount of the original pre-authorization,La nueva cantidad a preautorizar no puede superar la cantidad de la preautorización original
+Exceeded the daily limit per card,Limite diario por tarjeta excedido
+ACCOUNT field error,Error en el campo ACCOUNT
+USERCODE field error,Error en el campo USERCODE
+TERMINAL field error,Error en el campo TERMINAL
+OPERATION field error,Error en el campo OPERATION
+REFERENCE field error,Error en el campo REFERENCE
+AMOUNT field error,Error en el campo AMOUNT
+CURRENCY field error,Error en el campo CURRENCY
+SIGNATURE field error,Error en el campo SIGNATURE
+Operation unavailable,Operación no disponible
+Operation unavailable to the user specified,No se encuentra el cliente
+Invalid operation with a currency other than the Euro,Operación no válida con una moneda distinta del Euro
+Current currency conversion invalid,Conversión de la moneda actual no válida
+Invalid Quantity,Cantidad no válida
+Product not found,No se encuentra el producto
+Invalid operation with a different article of the Euro currency,Operación no válida con la moneda actual
+Info Button corrupt,Información del botón corrupta
+The subscription can not be greater than the expiry date of the card,La subscripción no puede ser mayor de la fecha de caducidad de la tarjeta
+DS_EXECUTE can not be true if DS_SUBSCRIPTION_STARTDATE is different today.,DS_EXECUTE no puede ser true si DS_SUBSCRIPTION_STARTDATE es diferente de hoy.
+PAYTPV_OPERATIONS_MERCHANTCODE field error,Error en el campo PAYTPV_OPERATIONS_MERCHANTCODE
+PAYTPV_OPERATIONS_TERMINAL should be Array,PAYTPV_OPERATIONS_TERMINAL debe ser Array
+PAYTPV_OPERATIONS_OPERATIONS should be Array,PAYTPV_OPERATIONS_OPERATIONS debe ser Array
+PAYTPV_OPERATIONS_SIGNATURE field error,Error en el campo PAYTPV_OPERATIONS_SIGNATURE
+It is one of the PAYTPV_OPERATIONS_TERMINAL,No se encuentra alguno de los PAYTPV_OPERATIONS_TERMINAL
+Error on the requested date range,Error en el intervalo de fechas solicitado
+The application can not have an interval greater than 2 years,La solicitud no puede tener un intervalo mayor a 2 años
+The status of the operation is incorrect,El estado de la operación es incorrecto
+Error in the amounts of search,Error en los importes de la búsqueda
+The type of operation requested does not exist,El tipo de operación solicitado no existe
+Sort Order unrecognized,Tipo de ordenación no reconocido
+Invalid PAYTPV_OPERATIONS_SORTORDER,PAYTPV_OPERATIONS_SORTORDER no válido
+Subscription start date wrong,Fecha de inicio de suscripción errónea
+Subscription end date wrong,Fecha de final de suscripción errónea
+Error in the periodicity of the subscription,Error en la periodicidad de la suscripción
+Invalid usuarioXML ,Falta el parámetro usuarioXML
+Invalid codigoCliente,Falta el parámetro codigoCliente
+Invalid usuarios parameter,Falta el parámetro usuarios
+Invalid firma parameter,Falta el parámetro firma
+Invalid usuarios parameter format,El parámetro usuarios no tiene el formato correcto
+Invalid type,Falta el parámetro type
+Invalid name,Falta el parámetro name
+Invalid surname,Falta el parámetro surname
+Invalid email,Falta el parámetro email
+Invalid password,Falta el parámetro password
+Invalid language,Falta el parámetro language
+Invalid maxamount ,Falta el parámetro maxamount o su valor no puede ser 0
+Invalid multicurrency,Falta el parámetro multicurrency
+Invalid permissions_specs. Format not allowed,El parámetro permissions_specs no tiene el formato correcto
+Invalid permissions_products. Format not allowed,El parámetro permissions_products no tiene el formato correcto
+Invalid email. Format not allowed,El parámetro email no parece una dirección válida
+Weak or invalid password,El parámetro password no tiene la fortaleza suficiente
+Invalid value for type parameter,El valor del parámetro type no está admitido
+Invalid value for language parameter,El valor del parámetro language no está admitido
+Invalid format for maxamount parameter,El formato del parámetro maxamount no está permitido
+Invalid multicurrency. Format not allowed,El valor del parámetro multicurrency no está admitido
+Invalid permission_id – permissions_specs. Not allowed,El valor del parámetro permission_id - permissions_specs no está admitido
+Invalid user,No existe el usuario
+Invalid credentials,El usuario no tiene permisos para acceder al método altaUsario
+Account not found,No se encuentra la cuenta de cliente
+User not found,No se pudo cargar el usuario de la cuenta
+Invalid signature,La firma no es correcta
+Account without products,No existen productos asociados a la cuenta
+Invalid product_id - permissions_products. Not allowed,El valor del parámetro product_id - permissions_products no está autorizado
+Invalid permission_id -permissions_products. Not allowed,El valor del parámetro permission_id -permissions_products no está admitido
+Minimun limit not allowed,Límite mínimo por operación no permitido
+Maximun limit not allowed,Límite máximo por operación no permitido
+Daily limit not allowed,Límite máximo diario no permitido
+Monthly limit not allowed,Límite máximo mensual no permitido
+Max amount (same card / last 24 h.) not allowed,Cantidad máxima por tarjeta / 24h. no permitida
+Max amount (same card / last 24 h. / same IP address) not allowed,Cantidad máxima por tarjeta / 24h. / misma dirección IP no permitida
+Day / IP address limit (all cards) not allowed,Límite de transacciones por dirección IP /día (diferentes tarjetas) no permitido
+Country (merchant IP address) not allowed,País no admitido (dirección IP del comercio)
+Card type (credit / debit) not allowed,Tipo de tarjeta (crédito / débito) no admitido
+Card brand not allowed,Marca de la tarjeta no admitida
+Card Category not allowed,Categoría de la tarjeta no admitida
+"Authorization from different country than card issuer, not allowed",Transacción desde país distinto al emisor de la tarjeta no admitida
+Denied. Filter: Card country issuer not allowed,Operación denegada. Filtro país emisor de la tarjeta no admitido
+"Denied. Filter: same card, different country last 48 h.","Operación denegada. Filtro misma tarjeta, distinto país en las últimas 48 horas"
+Number of erroneous consecutive attempts with the same card exceeded,Número de intentos consecutivos erróneos con la misma tarjeta excedidos
+Number of failed attempts (last 30 minutes) from the same ip address exceeded,Número de intentos fallidos (últimos 30 minutos) desde la misma dirección ip excedidos
+Wrong or not configured PayPal credentials,Las credenciales PayPal no son válidas o no están configuradas
+Incorrect token received,Recibido token incorrecto
+Can not perform the operation,No ha sido posible realizar la operación
+providerID not available,providerID no disponible
+operations parameter missing or not in a correct format,Falta el parámetro operaciones o no tiene el formato correcto
+paytpvMerchant parameter missing,Falta el parámetro paytpvMerchant
+merchatID parameter missing,Falta el parámetro merchatID
+terminalID parameter missing,Falta el parámetro terminalID
+tpvID parameter missing,Falta el parámetro tpvID
+operationType parameter missing,Falta el parámetro operationType
+operationResult parameter missing,Falta el parámetro operationResult
+operationAmount parameter missing,Falta el parámetro operationAmount
+operationCurrency parameter missing,Falta el parámetro operationCurrency
+operationDatetime parameter missing,Falta el parámetro operationDatetime
+originalAmount parameter missing,Falta el parámetro originalAmount
+pan parameter missing,Falta el parámetro pan
+expiryDate parameter missing,Falta el parámetro expiryDate
+reference parameter missing,Falta el parámetro reference
+signature parameter missing,Falta el parámetro signature
+originalIP parameter missing or not in a correct format,Falta el parámetro originalIP o no tiene el formato correcto
+authcode / errorCode parameter missing,Falta el parámetro authCode o errorCode
+Product of the operation missing,No se encuentra el producto de la operación
+The type of operation is not supported,El tipo de la operación no está admitido
+The result of the operation is not supported,El resultado de la operación no está admitido
+The transaction currency is not supported,La moneda de la operación no está admitida
+The date of the transaction is not in a correct format,La fecha de la operación no tiene el formato correcto
+The signature is not correct,La firma no es correcta
+Can not find the associated account information,No se encuentra información de la cuenta asociada
+Can not find the associated product information,No se encuentra información del producto asociado
+Can not find the associated user information,No se encuentra información del usuario asociado
+The product is not set as multicurrency,El producto no está configurado como multimoneda
+The amount of the transaction is not in a correct format,La cantidad de la operación no tiene el formato correcto
+The original amount of the transaction is not in a correct format,La cantidad original de la operación no tiene el formato correcto
+The card does not have the correct format,La tarjeta no tiene el formato correcto
+The expiry date of the card is not in a correct format,La fecha de caducidad de la tarjeta no tiene el formato correcto
+Can not initialize the service,No puede inicializarse el servicio
+Method not implemented,Método no implementado
+Service can not be completed,No puede finalizarse el servicio
+operationCode parameter missing,Falta el parámetro operationCode
+bankName parameter missing,bankName parameter missing
+csb parameter missing,csb parameter missing
+userReference parameter missing,userReference parameter missing
+Can not find the associated FUC,Can not find the associated FUC
+Missing Credit Card information,Missing Credit Card information
+TPV WEB,TPV WEB
+BANK STORE,BANK STORE
+OFFSITE,OFFSITE
+IFRAME,IFRAME
