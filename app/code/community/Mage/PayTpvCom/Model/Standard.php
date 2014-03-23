@@ -103,6 +103,19 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this;
     }
 
+    public function getConfigData($field, $storeId = null)
+    {
+        if ('order_status' == $field)
+            return parent::getConfigData('operativa', $storeId) == 3 ? 'processing' : 'pending';
+        if ('payment_action' == $field && parent::getConfigData('operativa', $storeId) == self::OP_TPVWEB)
+            return 'redirect';
+        if (null === $storeId) {
+            $storeId = $this->getStore();
+        }
+        $path = 'payment/' . $this->getCode() . '/' . $field;
+        return Mage::getStoreConfig($path, $storeId);
+    }
+
     public function authorize(Varien_Object $payment, $amount)
     {
         parent::authorize($payment, $amount);
