@@ -18,7 +18,7 @@
                         <!-- is this payment method active for the website? -->
                         <active translate="label">
                             <!-- label for the field -->
-                            <label>Habilitado</label>
+                            <label>Enabled</label>
                             <!-- input type for configuration value -->
                             <frontend_type>select</frontend_type>
                             <!-- model to take the option values from -->
@@ -31,7 +31,7 @@
                             <show_in_store>0</show_in_store>
                         </active>
                         <title translate="label">
-                            <label>Título</label>
+                            <label>Title</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
@@ -39,7 +39,7 @@
                             <show_in_store>0</show_in_store>
                         </title>
                         <operativa translate="label">
-                            <label>Tipo de operativa</label>
+                            <label>Operation method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_operativas</source_model>
                             <sort_order>3</sort_order>
@@ -48,7 +48,7 @@
                             <show_in_store>1</show_in_store>
                         </operativa>
                         <integracion translate="label">
-                            <label>Tipo de integracion</label>
+                            <label>Integration method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_integraciones</source_model>
                             <sort_order>3</sort_order>
@@ -58,7 +58,7 @@
                             <depends><operativa>0</operativa></depends>
                         </integracion>
                         <client translate="label">
-                            <label>Código de cliente</label>
+                            <label>Client Code</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
@@ -66,7 +66,7 @@
                             <show_in_store>0</show_in_store>
                         </client>
                         <user translate="label">
-                            <label>Nombre de usuario</label>
+                            <label>User Name</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
@@ -75,7 +75,7 @@
                             <depends><operativa>0</operativa></depends>
                         </user>
                         <pass translate="label">
-                            <label>Contraseña de usuario</label>
+                            <label>User Password</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>6</sort_order>
                             <show_in_default>1</show_in_default>
@@ -83,7 +83,7 @@
                             <show_in_store>0</show_in_store>
                         </pass>
                         <terminal translate="label">
-                            <label>Número de terminal</label>
+                            <label>Terminal number</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>7</sort_order>
                             <show_in_default>1</show_in_default>
@@ -110,6 +110,30 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                         </payment_action>-->
+                        <min_order_total translate="label">
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>990</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total translate="label">
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>995</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1000</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sort_order>
                     </fields>
                 </paytpvcom>
             </groups>
