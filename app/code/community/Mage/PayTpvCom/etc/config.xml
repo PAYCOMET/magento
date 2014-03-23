@@ -1,76 +1,75 @@
 <?xml version="1.0"?>
 <config>
     <modules>
-       <Mage_PayTpvCom>
-<!-- declare module's version information for database updates -->
-          <version>3.0.0</version>
-       </Mage_PayTpvCom>
+        <Mage_PayTpvCom>
+            <!-- declare module's version information for database updates -->
+            <version>3.0.1</version>
+        </Mage_PayTpvCom>
     </modules>
 
-
     <global>
-	<fieldsets>
-	    <customer_account>
-		<paytpv_id>
-		    <create>1</create>
-		    <update>1</update>
-		</paytpv_id>
-		<paytpv_token>
-		    <create>1</create>
-		    <update>1</update>
-		</paytpv_token>
-		<paytpv_cc>
-		    <create>1</create>
-		    <update>1</update>
-		</paytpv_cc>
-	    </customer_account>
-	</fieldsets>
-<!-- declare model group for new module -->
+        <fieldsets>
+            <customer_account>
+                <paytpv_id>
+                    <create>1</create>
+                    <update>1</update>
+                </paytpv_id>
+                <paytpv_token>
+                    <create>1</create>
+                    <update>1</update>
+                </paytpv_token>
+                <paytpv_cc>
+                    <create>1</create>
+                    <update>1</update>
+                </paytpv_cc>
+            </customer_account>
+        </fieldsets>
+        <!-- declare model group for new module -->
         <models>
-<!-- model group alias to be used in Mage::getModel('newmodule/...') -->
+            <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
             <paytpvcom>
-<!-- base class name for the model group -->
+                <!-- base class name for the model group -->
                 <class>Mage_PayTpvCom_Model</class>
             </paytpvcom>
         </models>
 
-<!-- declare resource setup for new module -->
+        <!-- declare resource setup for new module -->
         <resources>
-<!-- resource identifier -->
+            <!-- resource identifier -->
             <paytpvcom_setup>
-<!-- specify that this resource is a setup resource and used for upgrades -->
+                <!-- specify that this resource is a setup resource and used for upgrades -->
                 <setup>
-<!-- which module to look for install/upgrade files in -->
+                    <!-- which module to look for install/upgrade files in -->
                     <module>Mage_PayTpvCom</module>
-		    <class>Mage_Customer_Model_Entity_Setup</class>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
                 </setup>
-<!-- specify database connection for this resource -->
+                <!-- specify database connection for this resource -->
                 <connection>
-<!-- do not create new connection, use predefined core setup connection -->
+                    <!-- do not create new connection, use predefined core setup connection -->
                     <use>core_setup</use>
                 </connection>
             </paytpvcom_setup>
             <paytpvcom_write>
                 <connection>
-                  <use>core_write</use>
+                    <use>core_write</use>
                 </connection>
             </paytpvcom_write>
             <paytpvcom_read>
-               <connection>
-                <use>core_read</use>
-              </connection>
+                <connection>
+                    <use>core_read</use>
+                </connection>
             </paytpvcom_read>
         </resources>
         <blocks>
             <paytpvcom>
-              <class>Mage_PayTpvCom_Block</class>
+                <class>Mage_PayTpvCom_Block</class>
             </paytpvcom>
         </blocks>
-	<helpers>
-	    <paytpvcom>
-		<class>Mage_PayTpvCom_Helper</class>
-	    </paytpvcom>
-	</helpers>
+        <helpers>
+            <paytpvcom>
+                <class>Mage_PayTpvCom_Helper</class>
+            </paytpvcom>
+        </helpers>
     </global>
 
     <frontend>
@@ -96,33 +95,33 @@
             </modules>
         </translate>
         <layout>
-             <updates>
-                  <paytpvcom>
-                        <file>paytpvcom.xml</file>
-                  </paytpvcom>
-             </updates>
+            <updates>
+                <paytpvcom>
+                    <file>paytpvcom.xml</file>
+                </paytpvcom>
+            </updates>
         </layout>
     </frontend>
 
-<!-- declare default configuration values for this module -->
+    <!-- declare default configuration values for this module -->
     <default>
-<!-- 'payment' configuration section (tab) -->
+        <!-- 'payment' configuration section (tab) -->
         <payment>
-<!-- 'newmodule' configuration group (fieldset) -->
+            <!-- 'newmodule' configuration group (fieldset) -->
             <paytpvcom>
-<!-- by default this payment method is inactive -->
+                <!-- by default this payment method is inactive -->
                 <active>0</active>
-<!-- model to handle logic for this payment method -->
+                <!-- model to handle logic for this payment method -->
                 <model>paytpvcom/standard</model>
-<!-- order status for new orders paid by this payment method -->
+                <!-- order status for new orders paid by this payment method -->
                 <order_status>pending</order_status>
                 <paid_status>processing</paid_status>
-		        <error_status>canceled</error_status>
+                <error_status>canceled</error_status>
                 <useccv>1</useccv>
                 <payment_action>authorize_capture</payment_action>
-<!-- default title for payment checkout page and order view page -->
+                <!-- default title for payment checkout page and order view page -->
                 <title>Tarjeta de credito paytpv</title>
             </paytpvcom>
-         </payment>
+        </payment>
     </default>
 </config>

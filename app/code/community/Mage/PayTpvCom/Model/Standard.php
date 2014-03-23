@@ -28,7 +28,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     protected $_formBlockType = 'paytpvcom/standard_form';
     protected $_allowCurrencyCode = array('EUR', 'USD', 'GBP', 'JPY');
     protected $_canAuthorize = true;
-    protected $_canRefund = false;
+    protected $_canRefund = true;
     protected $_canCapture = true;
     protected $_canUseInternal = false; //Payments from backend
     protected $_canUseForMultishipping = true;
@@ -280,6 +280,31 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         );
     }
 
+    private function executeRefund(Varien_Object $payment)
+    {
+        $order = $payment->getOrder();
+        $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
+        $DS_IDUSER = $order->getPaytpvIduser();
+        $DS_TOKEN_USER = $order->getPaytpvTokenuser();
+        $DS_MERCHANT_ORDER = $order->getId();
+        $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
+        $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
+        $DS_MERCHANT_AUTHCODE = $payment->getLastTransId();
+        $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
+        $DS_ORIGINAL_IP = $order->getRemoteAddr();
+        return $this->getClient()->execute_refund(
+            $DS_MERCHANT_MERCHANTCODE,
+            $DS_MERCHANT_TERMINAL,
+            $DS_IDUSER,
+            $DS_TOKEN_USER,
+            $DS_MERCHANT_AUTHCODE,
+            $DS_MERCHANT_ORDER,
+            $DS_MERCHANT_CURRENCY,
+            $DS_MERCHANT_MERCHANTSIGNATURE,
+            $DS_ORIGINAL_IP
+        );
+    }
+
     private function addUser($payment_data, $original_ip = '')
     {
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
@@ -467,6 +492,26 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return "https://secure.paytpv.com/gateway/bnkgateway.php";
     }
 
+    public function refund(Varien_Object $payment, $amount)
+    {
+        parent::refund($payment, $amount);
+        /*@TODO comprobar devolución completa*/
+        $res = $this->executeRefund($payment);
+        if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
+            $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
+            $payment->setIsTransactionClosed(1);
+            $payment->setTransactionAdditionalInfo(
+                Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
+                $res);
+        } else {
+            if (!isset($res['DS_ERROR_ID']))
+                $res['DS_ERROR_ID'] = -1;
+            $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+            throw new Mage_Payment_Model_Info_Exception($message);
+        }
+        return $this;
+    } //refund api
+
     /* RECURRING PROFILES */
 
     /**
@@ -504,18 +549,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function submitRecurringProfile(Mage_Payment_Model_Recurring_Profile $profile, Mage_Payment_Model_Info $paymentInfo
     )
     {
-        /* 	$client = new Zend_Soap_Client("https://www.paytpv.com/gateway/xml_bankstore.php?wsdl",
-          array('compression
 
-
-
-
-
-
-
-          ' => SOAP_COMPRESSION_ACCEPT));
-          exit();
-         */
         $profile->setReferenceId(time());
         $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_PENDING);
     }
@@ -557,31 +591,6 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function canGetRecurringProfileDetails()
     {
 
-    }
-
-    /**
-     * API instance getter
-     * Sets current store id to current config instance and passes it to API
-     *
-     * @return Mage_PayTpvCom_Model_Api
-     */
-    public function getApi()
-    {
-        if (null === $this->_api) {
-            $this->_api = Mage::getModel($this->_apiType);
-        }
-        return $this->_api;
-    }
-
-    /**
-     * Destroy existing Api object
-     *
-     * @return Mage_PayTpvCom_Model_Standard
-     */
-    public function resetApi()
-    {
-        $this->_api = null;
-        return $this;
     }
 
     public function getErrorDesc($code)

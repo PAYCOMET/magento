@@ -1,4 +1,5 @@
 app/code/community/Mage/PayTpvCom/sql/paytpvcom_setup/mysql4-install-3.0.0.php	app/code/community/Mage/PayTpvCom/sql/paytpvcom_setup/mysql4-install-3.0.0.php
+app/code/community/Mage/PayTpvCom/sql/paytpvcom_setup/mysql4-upgrade-3.0.0-3.0.1.php	app/code/community/Mage/PayTpvCom/sql/paytpvcom_setup/mysql4-upgrade-3.0.0-3.0.1.php
 app/code/community/Mage/PayTpvCom/controllers/StandardController.php	app/code/community/Mage/PayTpvCom/controllers/StandardController.php
 app/code/community/Mage/PayTpvCom/etc/system.xml	app/code/community/Mage/PayTpvCom/etc/system.xml
 app/code/community/Mage/PayTpvCom/etc/config.xml	app/code/community/Mage/PayTpvCom/etc/config.xml
