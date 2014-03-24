@@ -1,6 +1,8 @@
 # Módulo de pago de PayTpv para Magento
 
+
 Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las tiendas Magento.
+
 
 ## Instalación
  
@@ -21,6 +23,7 @@ Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las ti
 Accederemos a la configuración del módulo a través de Administración -> Sistema -> Configuración -> Métodos de Pago -> "Tarjeta de crédito paytpv". Ahí tendremos que indicar el Código de cliente, Nombre de usuario (si aplica), Número de terminal y Contraseña de usuario de nuestro producto en PayTPV.com.
 
 En función del producto que tengamos contratado en PayTPV podremos configurar un tipo de operativa u otro.
+
 
 ### Operativa TPVWEB
 
