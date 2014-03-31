@@ -12,10 +12,25 @@ Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las ti
 2. Subir los ficheros por FTP
 3. Acceder a la configuración del módulo: sistema -> Configuración -> métodos de pago -> PayTPV
 4. Introducir los datos del producto asociado en nuestra cuenta de PayTPV
- 
+
+### Vía Magento Connect Manager
+- Para crear el paquete que instalaremos a través de Magento Connect Manager, primero clonamos el repositorio
+```  shell-script
+$ git clone https://github.com/PayTpv/Mage_PayTpv.git
+```
+- Añadimos a un fichero comprimido el fihero package.xml y los direcotiros app y skin. En línux podríamos usar el script build_package.sh
+```  shell-script
+$ cd Mage_PayTpv
+$ ./build_package.sh
+```   
+- Desde la administración de magento accedemos a Sistema -> Magento Connect -> Magento Connect Manager -> Direct package file upload Seleccionamos el fichero comprimido que acabamos de crear y le damos a "upload".
+  
 ### Vía modman
 - Instalar [modman](https://github.com/colinmollenhour/modman)
-- Usar el siguiente comando de línea desde el directorio de instalación de Magento: `modman clone https://github.com/PayTpv/Mage_PayTpv.git`
+- Usar el siguiente comando de línea desde el directorio de instalación de Magento:
+```
+$ modman clone https://github.com/PayTpv/Mage_PayTpv.git
+```
 
 
 ## Configuración
@@ -48,4 +63,3 @@ Si es la primera compra del cliente en nuestra tienda, al seleccionar "Tarjeta d
 Si el cliente ya ha pagado algún pedido anterior con este método de pago el cliente no tendrá que volver a introducir los datos de la tarjeta, simplemente con seleccionar el método de pago "Tarjeta de crédito" cuando confirme el pedido se le hará el cargo en la tarjeta. Aún así en la elección de método de pago se le da la opción al cliente de introducir los datos de otra tarjeta si quiere realizar el pago con una tarjeta diferente a la que haya utilizado con anterioridad en esta tienda.
   
 Con esta operativa conseguimos reducir los pasos para completar una compra al mínimo.
-  
