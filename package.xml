@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -10,7 +10,10 @@
     <description>PayTpv is a PCI/DSS Level 1 certified payment service processor.&#xD;
 &#xD;
 This module makes possible to use PayTpv services  in Magento</description>
-    <notes>3.0.1&#xD;
+    <notes>3.0.2&#xD;
+* Missing transaltions&#xD;
+&#xD;
+3.0.1&#xD;
 * Bankstore integration&#xD;
 * Refunds (only complete refunds)&#xD;
 &#xD;

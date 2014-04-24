@@ -23,7 +23,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
 		<?php
 			$cc = $this->getPaytpvCc();
 			if($cc != ''){ ?>
-				<p><?php echo sprintf($this->__('You have already %s credit card stored in you account, press "continue" to use it or ...'),$cc); ?></p>
+				<p><?php echo sprintf($this->__('You have already %s credit card stored in you account, press continue to use it or ...'),$cc); ?></p>
 		<?php } ?>
 				<p><?php echo $this->__('Please enter your credit card data in the form below. The payment information will be stored in PayTpv PCI-DSS certified company') ?></p>
 				<iframe src="<?php echo $iframe_src;?>"	name="paytpv"

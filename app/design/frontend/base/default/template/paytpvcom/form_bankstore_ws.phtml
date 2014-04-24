@@ -21,7 +21,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         <?php endif; ?>
 		<?php $cc = $this->getPaytpvCc();?>
         <?php if($cc != ''): ?>
-				<p><?php echo sprintf($this->__('You have already %s credit card stored in you account, press "continue" to use it or ...'),$cc); ?>
+				<p><?php echo sprintf($this->__('You have already %s credit card stored in you account, press continue to use it or ...'),$cc); ?>
                     <button type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').show();"><?php echo __('use another'); ?></button>
                 </p>
 		<?php endif; ?>
