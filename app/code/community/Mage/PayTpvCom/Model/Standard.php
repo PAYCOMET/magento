@@ -192,7 +192,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this;
     }
 
-    private function processSuccess(&$order, $session)
+    public function processSuccess(&$order, $session,$params=null)
     {
         $orderStatus = $this->getConfigData('paid_status');
         $session->unsErrorMessage();
@@ -202,12 +202,22 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order->setState($orderStatus, $orderStatus, $comment, true);
         $order->sendNewOrderEmail();
         $order->setEmailSent(true);
+
+        if(isset($params['IdUser']) && isset($params['TokenUser'])){
+            $order->setState($orderStatus, $orderStatus, $comment, true)
+                ->setPaytpvIduser($params['IdUser'])
+                ->setPaytpvTokenuser($params['TokenUser']);
+            $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+            $customer->setPaytpvIduser($params['TokenUser'])
+                 ->setPaytpvTokenuser()
+                 ->save();
+        }
         $order->save();
         Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
         Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/onepage/success'));
     }
 
-    private function processFail($order, $session, $message, $comment)
+    public function processFail($order, $session, $message, $comment)
     {
         $state = $this->getConfigData('error_status');
         if ($state == Mage_Sales_Model_Order::STATE_CANCELED)

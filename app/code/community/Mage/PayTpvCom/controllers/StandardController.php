@@ -111,14 +111,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $params = $this->getRequest()->getParams();
 
         $firmaValida = false;
-        $pagoOK = true;
 
         if (count($params) > 0) {
             if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
                 $firmaValida = true;
 
             if ($firmaValida && $params['ret'] == 0) {
-                $model->processSuccess($order,$session);
+                $model->processSuccess($order,$session,$params);
             } else {
                 $this->cancelAction();
             }
