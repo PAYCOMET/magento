@@ -29,6 +29,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     protected $_allowCurrencyCode = array('EUR', 'USD', 'GBP', 'JPY');
     protected $_canAuthorize = true;
     protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = false;
     protected $_canCapture = true;
     protected $_canUseInternal = false; //Payments from backend
     protected $_canUseForMultishipping = true;
@@ -105,13 +106,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getConfigData($field, $storeId = null)
     {
-        if ('order_status' == $field)
-            return parent::getConfigData('operativa', $storeId) == 3 ? 'processing' : 'pending';
-        if ('payment_action' == $field && parent::getConfigData('operativa', $storeId) == self::OP_TPVWEB)
-            return 'redirect';
         if (null === $storeId) {
             $storeId = $this->getStore();
         }
+        if ('order_status' == $field)
+            return parent::getConfigData('operativa', $storeId) == self::OP_BANKSTORE ? 'processing' : 'pending';
+        if ('payment_action' == $field &&
+            (parent::getConfigData('operativa', $storeId) == self::OP_TPVWEB ||
+                $this->isSecureTransaction())
+        )
+            return 'redirect';
         $path = 'payment/' . $this->getCode() . '/' . $field;
         return Mage::getStoreConfig($path, $storeId);
     }
@@ -220,14 +224,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getOrderPlaceRedirectUrl()
     {
-        if (3 == $this->getConfigData('operativa'))
+        if (self::OP_BANKSTORE == $this->getConfigData('operativa') && !$this->isSecureTransaction())
             return null;
 
         $it = $this->getConfigData('integracion');
         switch ($it) {
             case self::IT_OFFSITE:
                 return Mage::getUrl('paytpvcom/standard/redirect');
+                break;
             case self::IT_IFRAME:
+            default:
                 return Mage::getUrl('paytpvcom/standard/iframe');
         }
         return null;
@@ -435,15 +441,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $rArr;
     }
 
-    public function getStandardAddUserFields()
+    public function getBankStoreFormFields($operation=1)
     {
-        $session = Mage::getSingleton('checkout/session');
-        $quote_id = $session->getQuoteId();
+        $order_id = $this->getCheckout()->getLastRealOrderId();
+        $order = Mage::getModel('sales/order');
+        $order->loadByIncrementId($order_id);
         $client = $this->getConfigData('client');
         $pass = $this->getConfigData('pass');
         $terminal = $this->getConfigData('terminal');
 
-        $pagina = Mage::app()->getWebsite()->getName();
         $language_settings = strtolower(Mage::app()->getStore()->getCode());
 
         if ($language_settings == "default") {
@@ -451,32 +457,75 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         } else {
             $language = "EN";
         }
-
-        $operation = "107";
-
-        $signature = md5($client . $terminal . $operation . $quote_id . md5($pass));
-
+        $amount = $currency='';
+        if(1==$operation){
+            $amount = round($order->getTotalDue() * 100);;
+            $currency = $order->getOrderCurrencyCode();
+        }
+        $signature = md5($client . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
         $sArr = array
         (
             'MERCHANT_MERCHANTCODE' => $client,
             'MERCHANT_TERMINAL' => $terminal,
             'OPERATION' => $operation,
             'LANGUAGE' => $language,
+            'MERCHANT_ORDER' => $order_id,
+            'URLOK' => Mage::getUrl('paytpvcom/standard/recibo'),
+            'URLKO' => Mage::getUrl('paytpvcom/standard/cancel'),
+            'MERCHANT_AMOUNT' => $amount,
+            'MERCHANT_CURRENCY' => $currency,
             'MERCHANT_MERCHANTSIGNATURE' => $signature,
-            'MERCHANT_ORDER' => $quote_id,
-            'URLOK' => Mage::getUrl('paytpvcom/standard/adduserok'),
-            'URLKO' => Mage::getUrl('paytpvcom/standard/addusernok'),
             '3DSECURE' => '1'
         );
-        //
-        // Make into request data
-        //
-        return http_build_query($sArr);
+
+        return $sArr;
     }
 
-    //
-    // Simply return the url for the paytpv.com Payment window
-    //
+    public function getStandardFormTemplate()
+    {
+        if ($this->isSecureTransaction())
+            return 'paytpvcom/form.phtml';
+        return 'paytpvcom/form_bankstore_ws.phtml';
+    }
+
+    function isSecureTransaction()
+    {
+        $op = $this->getConfigData('operativa');
+        if (self::OP_TPVWEB == $op)
+            return true;
+        if ($this->getConfigData('secure_first') && $this->isFirstPurchase())
+            return true;
+        if ($this->getConfigData('secure_amount') < $this->getCurrentOrderAmount())
+            return true;
+        return false;
+    }
+
+    function isFirstPurchase()
+    {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        if (!$customer)
+            return true;
+        $orderCollection = Mage::getModel('sales/order')->getCollection()
+            ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
+            ->addFieldToFilter('status', array(
+                'nin' => array('pendind','cancel','canceled','refund'),
+                'notnull'=>true)
+            );
+        if (0 < $orderCollection->getSize()) {
+            return false;
+        }
+        return true;
+    }
+
+    function getCurrentOrderAmount()
+    {
+        $order = Mage::helper('checkout/cart')->getQuote();
+        return $order->getGrandTotal();
+    }
+
+//
+// Simply return the url for the paytpv.com Payment window
+//
     public function getPayTpvUrl()
     {
         return "https://www.paytpv.com/gateway/fsgateway.php";
@@ -524,15 +573,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     {
         $errors = array();
         if (strlen($profile->getSubscriberName()) > 32) { // up to 32 single-byte chars
-            $errors[] = Mage::helper('paypal')->__('Subscriber name is too long.');
+            $errors[] = Mage::helper('paytpv')->__('Subscriber name is too long.');
         }
         $refId = $profile->getInternalReferenceId(); // up to 127 single-byte alphanumeric
         if (strlen($refId) > 127) { //  || !preg_match('/^[ a-z\d\s ]+$/i', $refId)
-            $errors[] = Mage::helper('paypal')->__('Merchant reference ID format is not supported.');
+            $errors[] = Mage::helper('paytpv')->__('Merchant reference ID format is not supported.');
         }
         $scheduleDescr = $profile->getScheduleDescription(); // up to 127 single-byte alphanumeric
         if (strlen($refId) > 127) { //  || !preg_match('/^[ a-z\d\s ]+$/i', $scheduleDescr)
-            $errors[] = Mage::helper('paypal')->__('Schedule description is too long.');
+            $errors[] = Mage::helper('paytpv')->__('Schedule description is too long.');
         }
         if ($errors) {
             Mage::throwException(implode(' ', $errors));

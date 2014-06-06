@@ -8,24 +8,137 @@
     <extends/>
     <summary>PayTpv payment gateway</summary>
     <description>PayTpv is a PCI/DSS Level 1 certified payment service processor.&#xD;
-&#xD;
-This module makes possible to use PayTpv services  in Magento</description>
+        &#xD;
+        This module makes possible to use PayTpv services in Magento
+    </description>
     <notes>3.0.2&#xD;
-* Missing transaltions&#xD;
-&#xD;
-3.0.1&#xD;
-* Bankstore integration&#xD;
-* Refunds (only complete refunds)&#xD;
-&#xD;
-2.0.0&#xD;
-* Iframe &amp; offsite options for payments&#xD;
-* If payment fails the basket isn't emptied&#xD;
-* If payment is cancelled the order is cancelled and te stock can be restored&#xD;
-* Accepts EUR,USD,GBP and JPY</notes>
-    <authors><author><name>Mikel Martin</name><user>m1k3lm</user><email>mmartin@paytpv.com</email></author></authors>
+        * Missing transaltions&#xD;
+        &#xD;
+        3.0.1&#xD;
+        * Bankstore integration&#xD;
+        * Refunds (only complete refunds)&#xD;
+        &#xD;
+        2.0.0&#xD;
+        * Iframe &amp; offsite options for payments&#xD;
+        * If payment fails the basket isn't emptied&#xD;
+        * If payment is cancelled the order is cancelled and te stock can be restored&#xD;
+        * Accepts EUR,USD,GBP and JPY
+    </notes>
+    <authors>
+        <author>
+            <name>Mikel Martin</name>
+            <user>m1k3lm</user>
+            <email>mmartin@paytpv.com</email>
+        </author>
+    </authors>
     <date>2014-03-31</date>
     <time>00:02:24</time>
-    <contents><target name="magecommunity"><dir name="Mage"><dir name="PayTpvCom"><dir name="Block"><dir name="Standard"><file name="Form.php" /><file name="Iframe.php" /><file name="Redirect.php" /></dir></dir><dir name="Helper"><file name="Data.php" /></dir><dir name="Model"><file name="Api.php" /><file name="Observer.php" /><file name="Standard.php" /><dir name="System"><dir name="Config"><dir name="Source"><file name="Integraciones.php" /><file name="Operativas.php" /></dir></dir></dir></dir><dir name="controllers"><file name="StandardController.php" /></dir><dir name="etc"><file name="config.xml" /><file name="system.xml" /></dir><dir name="sql"><dir name="paytpvcom_setup"><file name="mysql4-install-3.0.0.php" /><file name="mysql4-upgrade-3.0.0-3.0.1.php" /></dir></dir></dir></dir></target><target name="mageskin"><dir name="frontend"><dir name="base"><dir name="default"><dir name="images"><dir name="paytpvcom"><file name="maestro.png" /><file name="mastercard.png" /><file name="mastercard_secuercode.png" /><file name="verifiedbyvisa.png" /></dir></dir></dir></dir></dir></target><target name="magedesign"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="paytpvcom.xml" /></dir><dir name="template"><dir name="paytpvcom"><file name="form.phtml" /><file name="form_bankstore_iframe.phtml" /><file name="form_bankstore_ws.phtml" /><file name="iframe.phtml" /><file name="redirect.phtml" /></dir></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Mage_PayTpvCom.xml" /></dir></target><target name="magelocale"><dir name="es_ES"><file name="Mage_PayTpvCom.csv" /></dir><dir name="en_US"><file name="Mage_PayTpvCom.csv" /></dir></target></contents>
+    <contents>
+        <target name="magecommunity">
+            <dir name="Mage">
+                <dir name="PayTpvCom">
+                    <dir name="Block">
+                        <dir name="Standard">
+                            <file name="Form.php"/>
+                            <file name="Iframe.php"/>
+                            <file name="Redirect.php"/>
+                        </dir>
+                    </dir>
+                    <dir name="Helper">
+                        <file name="Data.php"/>
+                    </dir>
+                    <dir name="Model">
+                        <file name="Api.php"/>
+                        <file name="Observer.php"/>
+                        <file name="Standard.php"/>
+                        <dir name="System">
+                            <dir name="Config">
+                                <dir name="Source">
+                                    <file name="Integraciones.php"/>
+                                    <file name="Operativas.php"/>
+                                </dir>
+                            </dir>
+                        </dir>
+                    </dir>
+                    <dir name="controllers">
+                        <file name="StandardController.php"/>
+                    </dir>
+                    <dir name="etc">
+                        <file name="config.xml"/>
+                        <file name="system.xml"/>
+                    </dir>
+                    <dir name="sql">
+                        <dir name="paytpvcom_setup">
+                            <file name="mysql4-install-3.0.0.php"/>
+                            <file name="mysql4-upgrade-3.0.0-3.0.1.php"/>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="mageskin">
+            <dir name="frontend">
+                <dir name="base">
+                    <dir name="default">
+                        <dir name="images">
+                            <dir name="paytpvcom">
+                                <file name="maestro.png"/>
+                                <file name="mastercard.png"/>
+                                <file name="mastercard_secuercode.png"/>
+                                <file name="verifiedbyvisa.png"/>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="magedesign">
+            <dir name="frontend">
+                <dir name="base">
+                    <dir name="default">
+                        <dir name="layout">
+                            <file name="paytpvcom.xml"/>
+                        </dir>
+                        <dir name="template">
+                            <dir name="paytpvcom">
+                                <file name="form.phtml"/>
+                                <file name="form_bankstore_iframe.phtml"/>
+                                <file name="form_bankstore_ws.phtml"/>
+                                <file name="iframe.phtml"/>
+                                <file name="redirect.phtml"/>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="mageetc">
+            <dir name="modules">
+                <file name="Mage_PayTpvCom.xml"/>
+            </dir>
+        </target>
+        <target name="magelocale">
+            <dir name="es_ES">
+                <file name="Mage_PayTpvCom.csv"/>
+            </dir>
+            <dir name="en_US">
+                <file name="Mage_PayTpvCom.csv"/>
+            </dir>
+        </target>
+    </contents>
     <compatible/>
-    <dependencies><required><php><min>5.0.0</min><max>5.9.9</max></php><package><name/><channel>connect.magentocommerce.com/core</channel><min/><max/></package></required></dependencies>
+    <dependencies>
+        <required>
+            <php>
+                <min>5.0.0</min>
+                <max>5.9.9</max>
+            </php>
+            <package>
+                <name/>
+                <channel>connect.magentocommerce.com/core</channel>
+                <min/>
+                <max/>
+            </package>
+        </required>
+    </dependencies>
 </package>

@@ -6,8 +6,13 @@ class Mage_PayTpvCom_Block_Standard_Iframe extends Mage_Core_Block_Template
     {
         parent::_construct();
         $standard = Mage::getModel( 'paytpvcom/standard' );
-        $iframeUrl = http_build_query( $standard->getStandardCheckoutFormFields() );
-        $this->assign( "iframeUrl", $standard->getPayTpvIframeUrl()."?" . $iframeUrl );
+        $iframeUrl = '';
+        if($standard::OP_BANKSTORE == $standard->getConfigData('operativa')){
+            $iframeUrl = $standard->getPayTpvBankStoreUrl()."?" .http_build_query( $standard->getBankStoreFormFields() );
+        }else
+            $iframeUrl = $standard->getPayTpvIframeUrl()."?" .http_build_query( $standard->getStandardCheckoutFormFields() );
+
+        $this->assign( "iframeUrl", $iframeUrl );
     }
 
 }

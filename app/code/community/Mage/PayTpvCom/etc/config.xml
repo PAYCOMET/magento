@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>3.0.1</version>
+            <version>3.1.0</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -120,7 +120,10 @@
                 <useccv>1</useccv>
                 <payment_action>authorize_capture</payment_action>
                 <!-- default title for payment checkout page and order view page -->
-                <title>Tarjeta de credito paytpv</title>
+                <title>Tarjeta de crédito paytpv</title>
+                <sort_order>-999</sort_order>
+                <secure_first>0</secure_first>
+                <secure_amount>100000</secure_amount>
             </paytpvcom>
         </payment>
     </default>
