@@ -112,11 +112,32 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
         $firmaValida = false;
 
-        if (count($params) > 0) {
+        if (isset($params['h'])) {//Notificación TPV WEB
             if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
                 $firmaValida = true;
 
             if ($firmaValida && $params['ret'] == 0) {
+                $model->processSuccess($order,$session,$params);
+            } else {
+                $this->cancelAction();
+            }
+        }
+        if (isset($params['ExtendedSignature'])) {//Notificación BANK STORE
+            if ($params['ExtendedSignature'] == md5(
+                    $model->getConfigData('client').
+                    $model->getConfigData('terminal').
+                    $params['TransactionType'].
+                    $params['Order'].
+                    $params['Amount'].
+                    $params['Currency'].
+                    md5($model->getConfigData('pass')).
+                    $params['BankDateTime'].
+                    $params['Response']
+                    )
+            )
+                $firmaValida = true;
+
+            if ($firmaValida && $params['Response'] == 0) {
                 $model->processSuccess($order,$session,$params);
             } else {
                 $this->cancelAction();
