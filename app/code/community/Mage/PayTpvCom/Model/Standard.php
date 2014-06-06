@@ -104,15 +104,20 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this;
     }
 
+    private function useIframe(){
+        if(self::OP_TPVWEB == parent::getConfigData('operativa', $storeId))
+            return true;
+        return $this->isSecureTransaction();
+    }
     public function getConfigData($field, $storeId = null)
     {
         if (null === $storeId) {
             $storeId = $this->getStore();
         }
-        $useIframe = parent::getConfigData('operativa', $storeId) == self::OP_TPVWEB || $this->isSecureTransaction();
+            
         if ('order_status' == $field)
-            return $useIframe ? 'pending' : 'processing';
-        if ('payment_action' == $field && $useIframe )
+            return $this->useIframe() ? 'pending' : 'processing';
+        if ('payment_action' == $field && $this->useIframe() )
             return 'redirect';
         $path = 'payment/' . $this->getCode() . '/' . $field;
         return Mage::getStoreConfig($path, $storeId);
