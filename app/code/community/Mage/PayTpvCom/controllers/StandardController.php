@@ -101,21 +101,17 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
     public function callbackAction()
     {
         Mage::log(http_build_query($_REQUEST), null, 'paytpvcom.log', true);
-        $transactionType = Mage::app()->getRequest()->getParam('TransactionType');
         $model = Mage::getModel('paytpvcom/standard');
-        $session = Mage::getSingleton('checkout/session');
         $order = Mage::getModel('sales/order');
-        $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
-
-        $session->setQuoteId($session->getPayTpvComStandardQuoteId());
         $params = $this->getRequest()->getParams();
-
         $firmaValida = false;
 
         if (isset($params['h'])) {//Notificación TPV WEB
             if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
                 $firmaValida = true;
-
+            $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
+            $session = Mage::getSingleton('checkout/session');
+            $session->setQuoteId($session->getPayTpvComStandardQuoteId());
             if ($firmaValida && $params['ret'] == 0) {
                 $model->processSuccess($order,$session,$params);
             } else {
@@ -136,9 +132,9 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     )
             )
                 $firmaValida = true;
-
-            if ($firmaValida && $params['Response'] == 0) {
-                $model->processSuccess($order,$session,$params);
+            $order->loadByIncrementId($params['Order']);
+            if ($firmaValida && $params['Response'] == 'OK') {
+                $model->processSuccess($order,null,$params);
             } else {
                 $this->cancelAction();
             }

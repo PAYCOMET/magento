@@ -198,9 +198,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function processSuccess(&$order, $session,$params=null)
     {
         $orderStatus = $this->getConfigData('paid_status');
-        $session->unsErrorMessage();
-        $session->addSuccess(Mage::helper('payment')->__('Successful payment'));
-
+        if($session){
+            $session->unsErrorMessage();
+            $session->addSuccess(Mage::helper('payment')->__('Successful payment'));
+        }
         $comment = Mage::helper('payment')->__('Successful payment');
         $order->setState($orderStatus, $orderStatus, $comment, true);
         $order->sendNewOrderEmail();
@@ -521,7 +522,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $orderCollection = Mage::getModel('sales/order')->getCollection()
             ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
             ->addFieldToFilter('status', array(
-                'nin' => array('pendind','cancel','canceled','refund'),
+                'nin' => array('pending','cancel','canceled','refund'),
                 'notnull'=>true)
             );
         if (0 < $orderCollection->getSize()) {
