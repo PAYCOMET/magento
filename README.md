@@ -14,6 +14,11 @@ Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las ti
 4. Introducir los datos del producto asociado en nuestra cuenta de PayTPV
 
 ### Vía Magento Connect Manager
+#### Versión estable
+- Descargamos el fichero Mage_PayTpv-xxx.tgz desde [https://github.com/PayTpv/Mage_PayTpv/releases/latest] 
+- Desde la administración de magento accedemos a Sistema -> Magento Connect -> Magento Connect Manager -> Direct package file upload Seleccionamos el fichero recién descargado y lo subimos.
+
+#### Versión en desarrollo
 - Para crear el paquete que instalaremos a través de Magento Connect Manager, primero clonamos el repositorio
 ```  shell-script
 $ git clone https://github.com/PayTpv/Mage_PayTpv.git
