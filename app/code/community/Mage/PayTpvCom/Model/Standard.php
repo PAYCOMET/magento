@@ -480,7 +480,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             'OPERATION' => $operation,
             'LANGUAGE' => $language,
             'MERCHANT_ORDER' => $order_id,
-            'URLOK' => Mage::getUrl('paytpvcom/standard/recibo'),
+            'URLOK' => Mage::getUrl('checkout/onepage/success'),
             'URLKO' => Mage::getUrl('paytpvcom/standard/cancel'),
             'MERCHANT_AMOUNT' => $amount,
             'MERCHANT_CURRENCY' => $currency,
