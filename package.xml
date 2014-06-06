@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>3.0.2</version>
+    <version>3.1.0</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -11,7 +11,9 @@
         &#xD;
         This module makes possible to use PayTpv services in Magento
     </description>
-    <notes>3.0.2&#xD;
+    <notes>3.1.0&#xD;
+        * Hybrid terminals&#xD;
+        3.0.2&#xD;
         * Missing transaltions&#xD;
         &#xD;
         3.0.1&#xD;
