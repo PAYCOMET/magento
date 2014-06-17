@@ -278,7 +278,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_IDUSER = $order->getPaytpvIduser();
         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
         $DS_MERCHANT_AMOUNT = round($amount * 100);
-        $DS_MERCHANT_ORDER = $order->getId();
+        $DS_MERCHANT_ORDER = $order->getIncrementId();
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
@@ -307,7 +307,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
         $DS_IDUSER = $order->getPaytpvIduser();
         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
-        $DS_MERCHANT_ORDER = $order->getId();
+        $DS_MERCHANT_ORDER = $order->getIncrementId();
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_AUTHCODE = $payment->getLastTransId();
