@@ -174,9 +174,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
             $customer
                 ->setPaytpvIduser($order->getPaytpvIduser())
-                ->setPaytpvTokenuser($order->getPaytpvTokenuser())
-                ->setPaytpvCc('************' . substr($payment_data['cc_number'], -4))
-                ->save();
+                ->setPaytpvTokenuser($order->getPaytpvTokenuser());
+            if(isset($payment_data['cc_number']) && $payment_data['cc_number']!='')
+                $customer->setPaytpvCc('************' . substr($payment_data['cc_number'], -4));
+            $customer->save();
             $orderStatus = $this->getConfigData('paid_status');
             $comment = Mage::helper('payment')->__('Successful payment');
             $order->setState($orderStatus, $orderStatus, $comment, true);
