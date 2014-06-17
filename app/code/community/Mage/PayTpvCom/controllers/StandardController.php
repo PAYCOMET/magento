@@ -257,7 +257,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         return $this->getStandard()->updateRecurringProfile($profile);
     }
 
-    public function updateRecurringProfileStatus(\Mage_Payment_Model_Recurring_Profile $profile)
+    public function updateRecurringProfileStatus(Mage_Payment_Model_Recurring_Profile $profile)
     {
 
     }
