@@ -239,8 +239,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getOrderPlaceRedirectUrl()
     {
-        if (self::OP_BANKSTORE == $this->getConfigData('operativa') && !$this->isSecureTransaction())
-            return null;
+        if (self::OP_BANKSTORE == $this->getConfigData('operativa'))
+            if (!$this->isSecureTransaction())
+                return null;
+            else
+                return Mage::getUrl('paytpvcom/standard/iframe');
 
         $it = $this->getConfigData('integracion');
         switch ($it) {
