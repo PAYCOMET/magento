@@ -37,10 +37,20 @@ $ ./build_package.sh
 $ modman clone https://github.com/PayTpv/Mage_PayTpv.git
 ```
 
+## Configuración del producto en PayTPV
 
-## Configuración
+Accedemos a nuestro area de clientes en https://paytpv.com/ → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda magento.
 
-Accederemos a la configuración del módulo a través de Administración -> Sistema -> Configuración -> Métodos de Pago -> "Tarjeta de crédito paytpv". Ahí tendremos que indicar el Código de cliente, Nombre de usuario (si aplica), Número de terminal y Contraseña de usuario de nuestro producto en PayTPV.com.
+En _tipo de notificación_ Marcamos _Notificación por URL_ o _Notificación por URL y por email_, finalmente en _URL Notificación_ ponemos lo siguiente:
+```
+{tudominio.com}/{dir_magento}/index.php/paytpvcom/standard/callback
+```
+
+Poniendo nuestro dominio en lugar de {tudominio.com} y el directorio en el que esté instaldo magento en lugar de {dir_magento}. Si Magento está instalado en la raíz se omitirá {dir_magento}/ 
+
+## Configuración del Módulo
+
+Accederemos a la configuración del módulo a través de Administración → Sistema → Configuración → Métodos de Pago → "Tarjeta de crédito paytpv". Ahí tendremos que indicar el Código de cliente, Nombre de usuario (si aplica), Número de terminal y Contraseña de usuario de nuestro producto en PayTPV.com.
 
 En función del producto que tengamos contratado en PayTPV podremos configurar un tipo de operativa u otro.
 
