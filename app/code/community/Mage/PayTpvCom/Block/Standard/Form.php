@@ -5,9 +5,10 @@ class Mage_PayTpvCom_Block_Standard_Form extends Mage_Payment_Block_Form_Cc
     {
         parent::_construct();
         $standard = Mage::getSingleton('paytpvcom/standard');
-		if(Mage::getSingleton('customer/session')->getCustomer()->getPaytpvRecall()){
+		if(Mage::getSingleton('customer/session')->getCustomer()->getPaytpvRecall()==1){
 			$this->setPaytpvCc(Mage::getSingleton('customer/session')->getCustomer()->getPaytpvCc());
 		}
+
         $this->setTemplate($standard->getStandardFormTemplate());
     }
 }

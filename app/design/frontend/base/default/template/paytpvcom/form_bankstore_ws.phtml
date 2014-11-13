@@ -135,7 +135,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
     <?php endif; ?>
 	<li>
 		<p>
-			<input type="checkbox" checked='true' id='recall' value='true'/><label for='recall'><?php echo __('Remember this information for next purchase'); ?></label>
+			<input type="checkbox" checked='true' name="payment[recall]"  id='recall' value='true'/><label for='recall'><?php echo __('Remember this information for next purchase'); ?></label>
 		</p>
 	</li>
     <?php if($cc != ''): ?>
