@@ -161,7 +161,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order = $payment->getOrder();
         $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
 		$payment_data = Mage::app()->getRequest()->getParam('payment', array());
-		$customer->stPaytpvRcall('true'==$payment_data['recall']);
+		$customer->setPaytpvRecall('true'==$payment_data['recall']);
         if ($payment_data['cc_number'] && $payment_data['cc_number']) {
             $this->authorize($payment, 0);
         } else {
