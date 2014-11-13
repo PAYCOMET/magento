@@ -105,7 +105,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     }
 
     private function useIframe(){
-        if(self::OP_TPVWEB == parent::getConfigData('operativa', $storeId))
+        if(self::OP_TPVWEB == parent::getConfigData('operativa'))
             return true;
         return $this->isSecureTransaction();
     }
@@ -160,7 +160,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         parent::capture($payment, $amount);
         $order = $payment->getOrder();
         $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
-        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+		$payment_data = Mage::app()->getRequest()->getParam('payment', array());
+		$customer->stPaytpvRcall('true'==$payment_data['recall']);
         if ($payment_data['cc_number'] && $payment_data['cc_number']) {
             $this->authorize($payment, 0);
         } else {

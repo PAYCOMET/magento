@@ -133,6 +133,11 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         </script>
     </li>
     <?php endif; ?>
+	<li>
+		<p>
+			<input type="checkbox" checked='true' id='recall' value='true'/><label for='recall'><?php echo __('Remember this information for next purchase'); ?></label>
+		</p>
+	</li>
     <?php if($cc != ''): ?>
         <li>
             <p>
@@ -146,6 +151,3 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
 		</tr>
 	</table>
 </div>
-<script>
-    document.getElementById('p_method_<?php echo $_code ?>').click();
-</script>
