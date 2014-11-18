@@ -79,4 +79,4 @@ Si el cliente ya ha pagado algún pedido anterior con este método de pago el cl
   
 Con esta operativa conseguimos reducir los pasos para completar una compra al mínimo.
 
-*Nota:* Esta operativa al realizarse por ebServices necesita que esté activado el móudlo SOAP en la configuración de php
+*Nota:* Esta operativa, al realizarse por WebServices, necesita que esté activado el móudlo SOAP en la configuración de PHP.
