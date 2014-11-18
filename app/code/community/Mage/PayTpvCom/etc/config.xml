@@ -120,7 +120,7 @@
                 <useccv>1</useccv>
                 <payment_action>authorize_capture</payment_action>
                 <!-- default title for payment checkout page and order view page -->
-                <title>Tarjeta de crédito paytpv</title>
+                <title>Tarjeta de crédito/débito (PAYTPV)</title>
                 <sort_order>-999</sort_order>
                 <secure_first>0</secure_first>
                 <secure_amount>100000</secure_amount>

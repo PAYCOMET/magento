@@ -21,8 +21,8 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         <?php endif; ?>
 		<?php $cc = $this->getPaytpvCc();?>
         <?php if($cc != ''): ?>
-				<p><?php echo sprintf($this->__('You have already %s credit card stored in you account, press continue to use it or ...'),$cc); ?>
-                    <button type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').show();"><?php echo __('use another'); ?></button>
+				<p>
+					<?php echo sprintf($this->__('You have already %s credit card stored in you account<br/>press continue to use it or&hellip;'),substr($cc,-7)); ?><button class="button2" type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').show();"><span><?php echo __('use another'); ?></span></button>
                 </p>
 		<?php endif; ?>
 
@@ -135,14 +135,18 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
     <?php endif; ?>
 	<li>
 		<p>
-			<input type="checkbox" checked='true' name="payment[recall]"  id='recall' value='true'/><label for='recall'><?php echo __('Remember this information for next purchase'); ?></label>
+			<input class="checkbox" type="checkbox" checked='true' name="payment[recall]"  id='recall' value='true'/><label for='recall'><?php echo __('Remember this information for next purchase'); ?></label>
 		</p>
 	</li>
     <?php if($cc != ''): ?>
         <li>
-            <p>
-                <button type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').hide();"><?php echo __('Use stored one'); ?></button>
-            </p>
+			<p>
+				<button class="button" type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').hide();">
+					<span>
+						<?php echo __('Use stored one'); ?>
+					</span>
+				</button>
+			</p>
         </li>
     <?php endif; ?>
 

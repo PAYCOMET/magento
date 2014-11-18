@@ -269,5 +269,7 @@ TPV WEB,TPV WEB
 BANK STORE,BANK STORE
 OFFSITE,OFFSITE
 IFRAME,IFRAME
-"You have already %s credit card stored in you account, press continue to use it or ...","Ya está la trajeta %s resgistrada en su cuenta, pulse continuar para usarla o ..."
+"Use stored one","Utilizar mi tarjeta almacenada"
+"You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está rgistrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
 "Remember this information for next purchase","Recordar esta información en la próxima compra"
+"use another","usar otra"
