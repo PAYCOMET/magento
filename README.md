@@ -78,3 +78,5 @@ Si es la primera compra del cliente en nuestra tienda, al seleccionar "Tarjeta d
 Si el cliente ya ha pagado algún pedido anterior con este método de pago el cliente no tendrá que volver a introducir los datos de la tarjeta, simplemente con seleccionar el método de pago "Tarjeta de crédito" cuando confirme el pedido se le hará el cargo en la tarjeta. Aún así en la elección de método de pago se le da la opción al cliente de introducir los datos de otra tarjeta si quiere realizar el pago con una tarjeta diferente a la que haya utilizado con anterioridad en esta tienda.
   
 Con esta operativa conseguimos reducir los pasos para completar una compra al mínimo.
+
+*Nota:* Esta operativa, al realizarse por WebServices, necesita que esté activado el móudlo SOAP en la configuración de PHP.
