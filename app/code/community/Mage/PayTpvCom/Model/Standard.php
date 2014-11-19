@@ -159,12 +159,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     {
         parent::capture($payment, $amount);
         $order = $payment->getOrder();
-        $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+		$customer_id = $order->getCustomerId();
+        $customer = Mage::getModel('customer/customer')->load($customer_id);
 		$payment_data = Mage::app()->getRequest()->getParam('payment', array());
-		$customer->setPaytpvRecall('true'==$payment_data['recall'])->save();
         if ($payment_data['cc_number'] && $payment_data['cc_number']) {
             $this->authorize($payment, 0);
-        } else {
+        } else if($customer_id) {
             $order
                 ->setPaytpvIduser($customer->getPaytpvIduser())
                 ->setPaytpvTokenuser($customer->getPaytpvTokenuser())
@@ -173,12 +173,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         $res = $this->executePurchase($order, $amount);
         if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
-            $customer
-                ->setPaytpvIduser($order->getPaytpvIduser())
-                ->setPaytpvTokenuser($order->getPaytpvTokenuser());
-            if(isset($payment_data['cc_number']) && $payment_data['cc_number']!='')
-                $customer->setPaytpvCc('************' . substr($payment_data['cc_number'], -4));
-            $customer->save();
+			if($customer_id){
+				$customer
+					->setPaytpvIduser($order->getPaytpvIduser())
+					->setPaytpvTokenuser($order->getPaytpvTokenuser())
+					->setPaytpvRecall('true'==$payment_data['recall']);
+				if(isset($payment_data['cc_number']) && $payment_data['cc_number']!='')
+					$customer->setPaytpvCc('************' . substr($payment_data['cc_number'], -4));
+				$customer->save();
+			}
+
             $orderStatus = $this->getConfigData('paid_status');
             $comment = Mage::helper('payment')->__('Successful payment');
             $order->setState($orderStatus, $orderStatus, $comment, true);
