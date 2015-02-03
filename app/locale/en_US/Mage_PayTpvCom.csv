@@ -300,7 +300,7 @@ Remove Card,Remove Card
 "The first purchase when ordering shall carry out, and the following is defined as the frequency subscription","The first purchase when ordering shall carry out, and the following is defined as the frequency subscription"
 "By subscribing you agree to the ","By subscribing you agree to the "
 "You will be redirected to your bank for secure payment. Wait a moment, please ...","You will be redirected to your bank for secure payment. Wait a moment, please ...
-There is still no card associated,There is still no card associated"
+There is still no card associated.,There is still no card associated.
 BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT
 "The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.",The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.""
 You must accept the terms and conditions of service,You must accept the terms and conditions of service
