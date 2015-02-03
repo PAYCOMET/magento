@@ -1,10 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout version="0.1.0">
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/paytpv.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+    </checkout_onepage_index>
+
+    <paytpvcom_standard_bankstore>
+        <remove name="right.reports.product.viewed"/>
+        <remove name="sale.reorder.sidebar"/>
+        <remove name="catalog.compare.sidebar" />  <!--product compare-->
+        
+        <!--Change root template to 2columns-right.phtml-->
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <!--use the right block-->
+        
+        <reference name="content">
+            <block type="paytpvcom/standard_bankstore" name="bankstore" template="paytpvcom/bankstore.phtml"/>
+        </reference>
+        
+    </paytpvcom_standard_bankstore>
+
+
+    <paytpvcom_standard_bankstorerecurring>
+        <remove name="right.reports.product.viewed"/>
+        <remove name="sale.reorder.sidebar"/>
+        <remove name="catalog.compare.sidebar" />  <!--product compare-->
+        
+        <!--Change root template to 2columns-right.phtml-->
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        
+    </paytpvcom_standard_bankstorerecurring>
+
     <paytpvcom_standard_redirect>
-	<reference name="content">
-	    <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
-	</reference>
+    	<reference name="content">
+    	    <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
+    	</reference>
     </paytpvcom_standard_redirect>
+
+
+
     <paytpvcom_standard_iframe>
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
@@ -12,7 +66,45 @@
             <action method="setIsHandle"><applied>1</applied></action>
         </reference>
         <reference name="content">
-	    <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
-	</reference>
+    	    <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
+    	</reference>
     </paytpvcom_standard_iframe>
+
+    <paytpvcom_standard_tarjetas>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="paytpvcom/standard_tarjetas" name="tarjetas" template="paytpvcom/tarjetas.phtml"></block>  
+        </reference>
+    </paytpvcom_standard_tarjetas>
+    
+    <customer_account>
+        <!-- Mage_Wishlist -->
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="paytpvcom">
+                <name>paytpvcom</name>
+                <path>paytpvcom/standard/tarjetas/</path>
+                <label>My Cards</label>
+            </action>
+        </reference>
+    </customer_account>
+
+
+    
+
+
 </layout>

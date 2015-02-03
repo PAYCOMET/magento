@@ -64,6 +64,101 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
     }
 
     /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function BankstoreAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        if ($session->getLastOrderId()) {
+            $session->setPayTpvComStandardQuoteId($session->getQuoteId());
+            $this->loadLayout();
+            $this->renderLayout();
+        }
+        return;
+    }
+
+     /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function BankstorerecurringAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        $this->loadLayout();
+        $this->renderLayout();
+        return;
+    }
+
+
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function TarjetasAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        $this->loadLayout();
+        $this->renderLayout();
+        
+        return;
+    }
+
+
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function ActionsAction()
+    {
+        $params = $this->getRequest()->getParams();
+        $model = Mage::getModel('paytpvcom/standard');
+
+        switch ($params["action"]){
+            case "removeCard":
+                if ($model->removeCard($params["customer_id"]))
+                    die('0');
+                else die('1');
+                
+                break;
+            case "cancelSuscription":
+                if ($model->cancelSuscription($params["suscription_id"]))
+                    die('0');
+                else die('1');
+                break;
+            case "addCard":
+                $response = $model->addCard($params);
+                die($response);
+                break;
+        }       
+        return;
+    }
+
+
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function conditionsAction()
+    {
+        $params = $this->getRequest()->getParams();
+        $model = Mage::getModel('paytpvcom/standard');
+
+        $locale = Mage::app()->getLocale()->getLocaleCode();
+        $arr_Locale = array("es_ES","en_US");
+
+        if (!in_array($arr_Locale,$locale))
+            $locale = "es_ES";
+
+        $file = Mage::getBaseDir('locale') . DS .  $locale . DS . "template" . DS . "paytpvcom" . DS . "conditions.html";
+
+        print(file_get_contents($file));
+
+    }
+
+
+
+    /**
      * Acción a realizar tras error en el pago
      */
     public function cancelAction($firmaValida=false)
@@ -118,25 +213,177 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $this->cancelAction();
             }
         }
-        if (isset($params['ExtendedSignature'])) {//Notificación BANK STORE
-            if ($params['ExtendedSignature'] == md5(
-                    $model->getConfigData('client').
-                    $model->getConfigData('terminal').
-                    $params['TransactionType'].
-                    $params['Order'].
-                    $params['Amount'].
-                    $params['Currency'].
-                    md5($model->getConfigData('pass')).
-                    $params['BankDateTime'].
-                    $params['Response']
-                    )
-            )
-                $firmaValida = true;
-            $order->loadByIncrementId($params['Order']);
-            if ($firmaValida && $params['Response'] == 'OK') {
+        // NOTIFICACIÓN BANK STORE
+        // (execute_purchase)
+        if ($params['TransactionType']==1
+            AND $params['Order']
+            AND $params['Response']
+            AND $params['ExtendedSignature'])
+        {
+            $importe  = number_format($params['Amount']/ 100, 2);
+            $ref = $params['Order'];
+            $result = $params['Response']=='OK'?0:-1;
+            $sign = $params['ExtendedSignature'];
+            $esURLOK = false;
+            $sign = $params['ExtendedSignature'];
+            $local_sign = md5(  $model->getConfigData('client').
+                                $model->getConfigData('terminal').
+                                $params['TransactionType'].
+                                $ref.
+                                $params['Amount'].
+                                $params['Currency'].
+                                md5($model->getConfigData('pass')).
+                                $params['BankDateTime'].
+                                $params['Response']);   
+            
+            $sign=$local_sign;
+            if ($sign!=$local_sign || $params['Response']!="OK") die('Error en el pago');
+            else{
+                $id_order = $ref;
+                $order->loadByIncrementId($id_order);
+
+                if(isset($params['IdUser']) && isset($params['TokenUser'])){
+                    
+                    // Creamos la factura
+                    $payment = $order->getPayment();
+                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
+                    $payment->setTransactionId($params['AuthCode'])
+                    ->setCurrencyCode($order->getBaseCurrencyCode())
+                    ->setPreparedMessage("Paytpv")
+                    ->setParentTransactionId($params['AuthCode'])
+                    ->setShouldCloseParentTransaction(true)
+                    ->setIsTransactionClosed(1)
+                    ->registerCaptureNotification($importe);
+
+                    $order
+                        ->setPaytpvIduser($params['IdUser'])
+                        ->setPaytpvTokenuser($params['TokenUser']);
+                    $order->save();
+
+                    $model->processSuccess($order,null,$params);
+                }
+                
+            } 
+
+        // (add_user)
+        }else if ($params['TransactionType']==107){
+            
+            $ref = $params['Order'];
+            $sign = $params['Signature'];
+            $esURLOK = false;
+            $local_sign = md5(  $model->getConfigData('client').
+                                $model->getConfigData('terminal').
+                                $params['TransactionType'].
+                                $ref.
+                                $params['DateTime'].md5($model->getConfigData('pass')));
+
+            if ($sign!=$local_sign) die('Error 2');
+
+            $id_customer = $ref;
+            $result = $model->infoUser($params['IdUser'],$params['TokenUser']);
+            $model->save_card($params['IdUser'],$params['TokenUser'],$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$id_customer);
+            
+            die('Usuario Registrado');
+        // (create_subscription)
+        }else if ($params['TransactionType']==9){
+            $suscripcion = 1;  // Inicio Suscripcion
+            $importe  = number_format($params['Amount']/ 100, 2);
+            $ref = $params['Order'];
+
+            // Miramos a ver si es la orden inicial o un pago de la suscripcion (orden[Iduser]Fecha)
+            $datos = explode("[",$ref);
+            $ref = $datos[0];
+
+            if (sizeof($datos)>1){
+                $datos2 = explode("]",$params['Order']);
+                $fecha = $datos2[1];
+
+                $fecha_act = date("Ymd");
+                // Si la fecha no es la de hoy es un pago de cuota suscripcion
+                if ($fecha!=$fecha_act)
+                    $suscripcion = 2;   // Pago cuota suscripcion
+
+                $datos3 = explode("]",$datos[1]);
+                $paytpv_iduser = $datos3[0];
+            }else{
+                $paytpv_iduser = $params['IdUser'];
+            }
+
+
+
+            // Por si es un pago de suscripcion.
+            $result = $params['Response']=='OK'?0:-1;
+            $sign = $params['ExtendedSignature'];
+            $esURLOK = false;
+            $local_sign = md5(  $model->getConfigData('client').
+                                $model->getConfigData('terminal').
+                                $params['TransactionType'].
+                                $params['Order'].
+                                $params['Amount'].
+                                $params['Currency'].
+                                md5($model->getConfigData('pass')).
+                                $params['BankDateTime'].
+                                $params['Response']);
+
+            if ($sign!=$sign) die('Error 3');
+            else{
+
+                $recurringProfileCollection = Mage::getModel('sales/recurring_profile')
+                    ->getCollection()
+                    ->addFieldToFilter('additional_info', array(
+                        array('like' => '%'.$paytpv_iduser .'%'),
+                    ));
+                
+                $profile = $recurringProfileCollection->getFirstItem();
+                $paytpv_tokenuser = substr($profile->getReferenceId(),2);
+
+                // Pago cuota suscripcion
+                if ($suscripcion==2){
+
+                    $order = $this->_createOrder($profile);
+
+                    $payment = $order->getPayment();
+                    $payment->setTransactionId($params['AuthCode']. '-rebill')->setIsTransactionClosed(1);
+                    $order->save();
+                    $profile->addOrderRelation($order->getId());
+                    
+                // Suscripcion
+                }else{
+                    $profile->load();
+                    // add order assigned to the recurring profile with initial fee
+                    if ($profile->getInitAmount()){
+                        $productItemInfo = new Varien_Object;
+                        $productItemInfo->setPaymentType(Mage_Sales_Model_Recurring_Profile::PAYMENT_TYPE_INITIAL);
+                        $productItemInfo->setPrice($profile->getInitAmount());
+                        
+                        $order = $profile->createOrder($productItemInfo);
+
+                        $payment = $order->getPayment();
+                        $payment->setTransactionId($params['AuthCode']. '-initial')->setIsTransactionClosed(1);
+                        $order->save();
+                        $profile->addOrderRelation($order->getId());
+                        $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_ACTIVE);
+                        $profile->save();
+                    }
+                }
+
+                // Creamos la factura
+                $payment = $order->getPayment();
+                $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
+                $payment->setTransactionId($params['AuthCode'])
+                ->setCurrencyCode($order->getBaseCurrencyCode())
+                ->setPreparedMessage("Paytpv")
+                ->setParentTransactionId($params['AuthCode'])
+                ->setShouldCloseParentTransaction(true)
+                ->setIsTransactionClosed(1)
+                ->registerCaptureNotification($importe);
+
+                $order->setPaytpvIduser($paytpv_iduser)
+                      ->setPaytpvTokenuser($paytpv_tokenuser);
+
+                $order->save();
+
                 $model->processSuccess($order,null,$params);
-            } else {
-                $this->cancelAction();
             }
         }
     }
@@ -200,6 +447,117 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             }
         }
     }
+
+
+    /**
+     * Página a la que vuelvge el usuario
+     */
+    public function reciboBankstoreAction()
+    {
+        $model = Mage::getModel('paytpvcom/standard');
+        $session = Mage::getSingleton('checkout/session');
+
+        $order = Mage::getModel('sales/order');
+        $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
+        $session->setQuoteId($session->getPayTpvComStandardQuoteId());
+        $params = $this->getRequest()->getParams();
+
+        if (count($params) > 0){
+            if ($params['ret'] == 0) {
+                $orderStatus = $model->getConfigData('paid_status');
+                $session->unsErrorMessage();
+                $comment = Mage::helper('payment')->__('Successful payment');
+                $session->addSuccess($comment);
+                
+                Mage::getSingleton('checkout/cart')->truncate();
+                Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
+                $this->_redirect('checkout/onepage/success');
+            } else {
+                $this->cancelAction();
+            }
+        }
+    }
+
+    protected function _createOrder(Mage_Sales_Model_Recurring_Profile $profile){
+        
+        $orderInfo          = is_string($profile->getOrderInfo())           ? unserialize($profile->getOrderInfo()) : $profile->getOrderInfo();
+        $orderItemInfo      = is_string($profile->getOrderItemInfo())       ? unserialize($profile->getOrderItemInfo()) : $profile->getOrderItemInfo();
+        $billingAddressInfo = is_string($profile->getBillingAddressInfo())  ? unserialize($profile->getBillingAddressInfo()) : $profile->getBillingAddressInfo();
+        $shippingAddressInfo= is_string($profile->getShippingAddressInfo()) ? unserialize($profile->getShippingAddressInfo()) : $profile->getShippingAddressInfo();
+        
+        $item = Mage::getModel('sales/order_item')
+            ->setName(          'Suscripcion Perfil Repetitivo #' . $profile->getReferenceId())
+            ->setQtyOrdered(    $orderItemInfo['qty'] )
+            ->setBaseOriginalPrice($profile->getBillingAmount() )
+            ->setPrice(         $profile->getBillingAmount() )
+            ->setBasePrice(     $profile->getBillingAmount() )
+            ->setRowTotal(      $profile->getBillingAmount() )
+            ->setBaseRowTotal(  $profile->getBillingAmount() )
+            ->setTaxAmount(     $profile->getTaxAmount() )
+            ->setShippingAmount($profile->getShippingAmount() )
+            ->setPaymentType(   Mage_Sales_Model_Recurring_Profile::PAYMENT_TYPE_REGULAR)
+            ->setIsVirtual(     $orderItemInfo['is_virtual'] )
+            ->setWeight(        $orderItemInfo['weight'] )
+            ->setId(null);
+        
+        $grandTotal = $profile->getBillingAmount() + $profile->getShippingAmount() + $profile->getTaxAmount();
+
+        $order = Mage::getModel('sales/order');
+
+        $billingAddress = Mage::getModel('sales/order_address')
+            ->setData($billingAddressInfo)
+            ->setId(null);
+
+        $shippingAddress = Mage::getModel('sales/order_address')
+            ->setData($shippingAddressInfo)
+            ->setId(null);
+
+        $payment = Mage::getModel('sales/order_payment')
+            ->setMethod($profile->getMethodCode());
+
+        $transferDataKays = array(
+            'store_id',             'store_name',           'customer_id',          'customer_email',
+            'customer_firstname',   'customer_lastname',    'customer_middlename',  'customer_prefix',
+            'customer_suffix',      'customer_taxvat',      'customer_gender',      'customer_is_guest',
+            'customer_note_notify', 'customer_group_id',    'customer_note',        'shipping_method',
+            'shipping_description', 'base_currency_code',   'global_currency_code', 'order_currency_code',
+            'store_currency_code',  'base_to_global_rate',  'base_to_order_rate',   'store_to_base_rate',
+            'store_to_order_rate'
+        );
+
+        foreach ($transferDataKays as $key) {
+            if (isset($orderInfo[$key])) {
+                $order->setData($key, $orderInfo[$key]);
+            } elseif (isset($shippingAddressInfo[$key])) {
+                $order->setData($key, $shippingAddressInfo[$key]);
+            }
+        }
+
+        $order
+            ->setState(             Mage_Sales_Model_Order::STATE_NEW )
+            ->setBaseToOrderRate(   $orderInfo['base_to_quote_rate'])
+            ->setStoreToOrderRate(  $orderInfo['store_to_quote_rate'])
+            ->setOrderCurrencyCode( $orderInfo['quote_currency_code'])
+            ->setBaseSubtotal(      $profile->getBillingAmount() )
+            ->setSubtotal(          $profile->getBillingAmount() )
+            ->setBaseShippingAmount($profile->getShippingAmount() )
+            ->setShippingAmount(    $profile->getShippingAmount() )
+            ->setBaseTaxAmount(     $profile->getTaxAmount() )
+            ->setTaxAmount(         $profile->getTaxAmount() )
+            ->setBaseGrandTotal(    $grandTotal)
+            ->setGrandTotal(        $grandTotal)
+            ->setIsVirtual(         $orderItemInfo['is_virtual'] )
+            ->setWeight(            $orderItemInfo['weight'] )
+            ->setTotalQtyOrdered(   $orderItemInfo['qty'] )
+            ->setBillingAddress(    $billingAddress )
+            ->setShippingAddress(   $shippingAddress )
+            ->setPayment(           $payment );
+        
+        $order->addItem($item);
+
+        return $order;
+    }
+
 
     /* RECURRING PROFILES */
 

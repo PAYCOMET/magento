@@ -1,157 +1,279 @@
+<style>
+
+    .paytpv
+    {
+        padding-left:17px;
+        display: block;
+        border: 1px solid #d6d4d4;
+        border-radius: 4px;
+    }
+    .paytpv_tarjetas{
+        padding: 5px 15px 15px 15px;
+        font-size: 90%;
+    }
+
+    .alert {
+        font-size: 80%;
+        padding: 0px 35px 8px 14px;
+        margin: 10px 20px 0px 0px;
+        /* text-shadow: 0 1px 0 rgba(255,255,255,0.5); */
+        background-color: #fcf8e3;
+        border: 1px solid #fbeed5;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+       }
+
+    .alert-info {
+        color: #3a87ad;
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+    }
+
+    #directpay{
+        font-size: 12px;
+         padding: 8px 35px 8px 14px;
+        margin: 10px 20px 0px 0px;
+        /* text-shadow: 0 1px 0 rgba(255,255,255,0.5); */
+        background-color: #fcf8e3;
+        border: 1px solid #fbeed5;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+
+    }
+
+    #directpay p{
+        padding_top: 10px;
+    }
+
+     #directpay .password{
+        border: 1px solid #3a87ad;
+    }
+
+    .button_left {
+        float: left; 
+    }
+
+    .button_right {
+        float: right;
+        height: 50px;
+    }
+
+    .nota {
+        color: #3a87ad;
+        font-size: 90%;
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+        margin: 5px 0px;
+    }
+
+    .suscripcion{
+        list-style:none;
+    }
+
+    .suscription_period{
+        padding: 0px 0px;
+    }
+    .suscripcion li{
+        color: rgb(3, 173, 212);
+    }
+
+    #tipo-pago p{
+        padding-bottom: 10px;
+    }
+
+    .hidden{
+        display:none;
+    }
+
+    .suscription_field{
+        display:inline-block;
+        width: 120px;
+    }
+
+
+</style>
 <?php
 $standard = Mage::getSingleton('paytpvcom/standard');
-$cc = $standard->getCCFromQuote();
+
+
 $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUserFields();
 ?>
 <fieldset class="form-list">
 	<?php $_code=$this->getMethodCode() ?>
 </fieldset>
-<div id="payment_form_<?php echo $_code ?>" style="display:none;">
-	<table>
-		<colgroup>
-			<col width="25px">
-			<col width="*">
-		</colgroup>
-		<tr>
-			<td>&nbsp;</td>
-			<td>
-		<?php $message = $this->getMessage();?>
-        <?php if($message != ''): ?>
-				<p><?php echo $message; ?></p>
-        <?php endif; ?>
-		<?php $cc = $this->getPaytpvCc();?>
-        <?php if($cc != ''): ?>
-				<p>
-					<?php echo sprintf($this->__('You have already %s credit card stored in you account<br/>press continue to use it or&hellip;'),substr($cc,-7)); ?><button class="button2" type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').show();"><span><?php echo __('use another'); ?></span></button>
-                </p>
-		<?php endif; ?>
 
-<ul class="form-list" id="payment_form_<?php echo $_code ?>_cc" <?php if($cc != ''){?>style="display:none;"<?php } ?>>
-    <li style="display:none">
-        <label for="<?php echo $_code ?>_cc_owner" class="required"><em>*</em><?php echo $this->__('Name on Card') ?></label>
+
+<ul id="payment_form_<?php echo $_code ?>" class="form-list" style="display:none;">
+    <?php if ($method_checkout!="guest" && !$isRecurring):?>
+    
+    <li id="saved_cards">
+        <label for="card"><?php print $this->__('Pay by Credit Card');?>:</label>
         <div class="input-box">
-            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" id="<?php echo $_code ?>_cc_owner" name="payment[cc_owner]" value="PAYTPV BLANK" />
+        <select name="payment[card]" id="card" onChange="checkCardWS(this)">
+              <?php 
+              $saveCard = 0;
+              foreach ($this->getCustomerCards() as $card){
+                 $saveCard = 1;
+                 print "<option value=".$card['paytpv_iduser'].">".$card["paytpv_cc"] . " (".$card["paytpv_brand"].")</option>";
+              }
+              ?>
+              <option value='0'><?php print $this->__('NEW CARD');?></option>
+        </select>
         </div>
-    </li>
-    <li>
-        <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label>
-        <div class="input-box">
-            <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" title="<?php echo $this->__('Credit Card Type') ?>" class="required-entry validate-cc-type-select">
-                <option value=""><?php echo $this->__('--Please Select--') ?></option>
-            <?php $_ccType = $this->getInfoData('cc_type') ?>
-            <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
-                <option value="<?php echo $_typeCode ?>"<?php if($_typeCode==$_ccType): ?> selected="selected"<?php endif ?>><?php echo $_typeName ?></option>
-            <?php endforeach ?>
-            </select>
-        </div>
-    </li>
-    <li>
-        <label for="<?php echo $_code ?>_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
-        <div class="input-box">
-            <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" />
-        </div>
-    </li>
-    <li>
-        <label for="<?php echo $_code ?>_expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
-        <div class="input-box">
-            <div class="v-fix">
-                <select id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]" class="month validate-cc-exp required-entry">
-                <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
-                <?php foreach ($this->getCcMonths() as $k=>$v): ?>
-                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
-                <?php endforeach ?>
-                </select>
+        <?php if ($commerce_password==1){?>
+            <div id="user_validation" class="<?php if ($saveCard==0) print "hidden";?>">
+                <label for="userpwd"><?php echo $this->__('For security, enter your user password Store') . ":"?></label>  
+                <div class="input-box">
+                <input type="password" style="width:200px" name="payment[userpwd]" id="userpwd">
+                </div>
             </div>
-            <div class="v-fix">
-                <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
-                <select id="<?php echo $_code ?>_expiration_yr" name="payment[cc_exp_year]" class="year required-entry">
-                <?php foreach ($this->getCcYears() as $k=>$v): ?>
-                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
-                <?php endforeach ?>
-                </select>
-            </div>
-        </div>
+        <?php } ?>
+    
     </li>
-    <?php echo $this->getChildHtml() ?>
-    <?php if($this->hasVerification()): ?>
-    <li>
-        <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
-        <div class="input-box">
-            <div class="v-fix">
-                <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" />
-            </div>
-            <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
-        </div>
-    </li>
+
+    <?php endif;?>
+        
+	<?php $message = $this->getMessage();?>
+    <?php if($message != ''): ?>
+			<p><?php echo $message; ?></p>
     <?php endif; ?>
-    <?php if ($this->hasSsCardType()): ?>
-    <li id="<?php echo $_code ?>_cc_type_ss_div">
-        <ul class="inner-form">
-            <li class="form-alt"><label for="<?php echo $_code ?>_cc_issue" class="required"><em>*</em><?php echo $this->__('Switch/Solo/Maestro Only') ?></label></li>
+    
+    <li id="payment_form_<?php echo $_code ?>_cc" <?php if($saveCard > 0){?>style="display:none;"<?php } ?>>
+        <ul>
+            <?php if ($show_nameoncard):?>
             <li>
-                <label for="<?php echo $_code ?>_cc_issue"><?php echo $this->__('Issue Number') ?>:</label>
-                <span class="input-box">
-                    <input type="text" title="<?php echo $this->__('Issue Number') ?>" class="input-text validate-cc-ukss cvv" id="<?php echo $_code ?>_cc_issue" name="payment[cc_ss_issue]" value="" />
-                </span>
+                <label for="<?php echo $_code ?>_cc_owner" class="required"><em>*</em><?php echo $this->__('Name on Card') ?></label>
+                <div class="input-box">
+                    <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" id="<?php echo $_code ?>_cc_owner" name="payment[cc_owner]" value="<?php echo $this->escapeHtml($this->getInfoData('cc_owner')) ?>" />
+                </div>
             </li>
-
+            <?php endif; ?>
+            <?php if ($show_cctypes):?>
             <li>
-                <label for="<?php echo $_code ?>_start_month"><?php echo $this->__('Start Date') ?>:</label>
+                <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label>
+                <div class="input-box">
+                    <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" title="<?php echo $this->__('Credit Card Type') ?>" class="required-entry validate-cc-type-select">
+                        <option value=""><?php echo $this->__('--Please Select--') ?></option>
+                    <?php $_ccType = $this->getInfoData('cc_type') ?>
+                    <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+                        <option value="<?php echo $_typeCode ?>"<?php if($_typeCode==$_ccType): ?> selected="selected"<?php endif ?>><?php echo $_typeName ?></option>
+                    <?php endforeach ?>
+                    </select>
+                </div>
+            </li>
+            <?php endif; ?>
+            <li>
+                <label for="<?php echo $_code ?>_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
+                <div class="input-box">
+                    <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number<?php if ($show_cctypes) print " validate-cc-type";?>" value="" />
+                </div>
+            </li>
+            <li>
+                <label for="<?php echo $_code ?>_expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
                 <div class="input-box">
                     <div class="v-fix">
-                        <select id="<?php echo $_code ?>_start_month" name="payment[cc_ss_start_month]" class="validate-cc-ukss month">
+                        <select id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]" class="month validate-cc-exp required-entry">
+                        <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
                         <?php foreach ($this->getCcMonths() as $k=>$v): ?>
-                            <option value="<?php echo $k?$k:'' ?>"<?php if($k==$this->getInfoData('cc_ss_start_month')): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                            <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
                         <?php endforeach ?>
                         </select>
                     </div>
                     <div class="v-fix">
-                        <select id="<?php echo $_code ?>_start_year" name="payment[cc_ss_start_year]" class="validate-cc-ukss year">
-                        <?php foreach ($this->getSsStartYears() as $k=>$v): ?>
-                            <option value="<?php echo $k?$k:'' ?>"<?php if($k==$this->getInfoData('cc_ss_start_year')): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                        <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
+                        <select id="<?php echo $_code ?>_expiration_yr" name="payment[cc_exp_year]" class="year required-entry">
+                        <?php foreach ($this->getCcYears() as $k=>$v): ?>
+                            <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
                         <?php endforeach ?>
                         </select>
                     </div>
                 </div>
             </li>
-            <li class="adv-container">&nbsp;</li>
+            <?php echo $this->getChildHtml() ?>
+            <?php if($this->hasVerification()): ?>
+            <li>
+                <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+                <div class="input-box">
+                    <div class="v-fix">
+                        <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" />
+                    </div>
+                    <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+                </div>
+            </li>
+            <?php endif; ?>
+            <?php if ($this->hasSsCardType()): ?>
+            <li id="<?php echo $_code ?>_cc_type_ss_div">
+                <ul class="inner-form">
+                    <li class="form-alt"><label for="<?php echo $_code ?>_cc_issue" class="required"><em>*</em><?php echo $this->__('Switch/Solo/Maestro Only') ?></label></li>
+                    <li>
+                        <label for="<?php echo $_code ?>_cc_issue"><?php echo $this->__('Issue Number') ?>:</label>
+                        <span class="input-box">
+                            <input type="text" title="<?php echo $this->__('Issue Number') ?>" class="input-text validate-cc-ukss cvv" id="<?php echo $_code ?>_cc_issue" name="payment[cc_ss_issue]" value="" />
+                        </span>
+                    </li>
+
+                    <li>
+                        <label for="<?php echo $_code ?>_start_month"><?php echo $this->__('Start Date') ?>:</label>
+                        <div class="input-box">
+                            <div class="v-fix">
+                                <select id="<?php echo $_code ?>_start_month" name="payment[cc_ss_start_month]" class="validate-cc-ukss month">
+                                <?php foreach ($this->getCcMonths() as $k=>$v): ?>
+                                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$this->getInfoData('cc_ss_start_month')): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                                <?php endforeach ?>
+                                </select>
+                            </div>
+                            <div class="v-fix">
+                                <select id="<?php echo $_code ?>_start_year" name="payment[cc_ss_start_year]" class="validate-cc-ukss year">
+                                <?php foreach ($this->getSsStartYears() as $k=>$v): ?>
+                                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$this->getInfoData('cc_ss_start_year')): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                                <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="adv-container">&nbsp;</li>
+                </ul>
+                <script type="text/javascript">
+                //<![CDATA[
+                var SSChecked<?php echo $_code ?> = function() {
+                    var elm = $('<?php echo $_code ?>_cc_type');
+                    if (['SS','SM','SO'].indexOf(elm.value) != -1) {
+                        $('<?php echo $_code ?>_cc_type_ss_div').show();
+                    } else {
+                        $('<?php echo $_code ?>_cc_type_ss_div').hide();
+                    }
+                };
+
+                Event.observe($('<?php echo $_code ?>_cc_type'), 'change', SSChecked<?php echo $_code ?>);
+                SSChecked<?php echo $_code ?>();
+                //]]>
+                </script>
+            </li>
+            <?php endif; ?>
+            <?php if ($method_checkout!="guest" && !$isRecurring):?>
+            <li>
+                <div class="input-box">
+                <div id="storingStep" class="alert alert-info"  <?php if ($saveCard==1) print " display:none";?>>
+                    <!--
+                    <h4><?php print $this->__('STREAMLLINE YOUR FUTURE PURCHASES!');?></h4>
+                    <?php print $this->__('Link a card to your account to make all procedures easily and quickly.');?>
+                    <br>
+                    -->
+                    <input type="checkbox" name="payment[remember]" id="savecard" class="input-checkbox" checked> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
+                </div>
+                </div>
+            <li>
+            <?php endif; ?>
+            <?php if ($isRecurring):?>
+                <div class="alert alert-info"><?php print $this->__('The first purchase when ordering shall carry out, and the following is defined as the frequency subscription');?>.
+                    <?php print $this->__('By subscribing you agree to the ');?> <a href="#conditions" class="open_conditions" href="#"><?php print $this->__('terms and conditions of service');?></a>.
+                </div>
+
+            <?php endif; ?>
         </ul>
-        <script type="text/javascript">
-        //<![CDATA[
-        var SSChecked<?php echo $_code ?> = function() {
-            var elm = $('<?php echo $_code ?>_cc_type');
-            if (['SS','SM','SO'].indexOf(elm.value) != -1) {
-                $('<?php echo $_code ?>_cc_type_ss_div').show();
-            } else {
-                $('<?php echo $_code ?>_cc_type_ss_div').hide();
-            }
-        };
+    <li>
 
-        Event.observe($('<?php echo $_code ?>_cc_type'), 'change', SSChecked<?php echo $_code ?>);
-        SSChecked<?php echo $_code ?>();
-        //]]>
-        </script>
-    </li>
-    <?php endif; ?>
-	<li>
-		<p>
-			<input class="checkbox" type="checkbox" checked='true' name="payment[recall]"  id='recall' value='true'/><label for='recall'><?php echo __('Remember this information for next purchase'); ?></label>
-		</p>
-	</li>
-    <?php if($cc != ''): ?>
-        <li>
-			<p>
-				<button class="button" type="button" onclick="$('payment_form_<?php echo $_code ?>_cc').hide();">
-					<span>
-						<?php echo __('Use stored one'); ?>
-					</span>
-				</button>
-			</p>
-        </li>
-    <?php endif; ?>
-
+    <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl();?>">
 </ul>
-			</td>
-		</tr>
-	</table>
-</div>

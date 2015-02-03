@@ -7,16 +7,28 @@ Successful payment,Successful payment
 Tarjeta de credito paytpv,Tarjeta de credito paytpv
 Enabled,Enabled
 Title,Title
-Operation method,Operation method
+Credit Card Paytpv,Credit Card Paytpv
+"Operation method","Operation method"
 Integration method,Integration method
 Client Code,Client Code
 User Name,User Name
 User Password,User Password
 Terminal number,Terminal number
+Secure,Secure
+No Secure,No Secure
+Both,Both
+Use 3D Secure,Use 3D Secure
+Use 3D Secure first purchase,Use 3D Secure first pruchase
+Use 3D Secure in purchases above,Use 3D Secure in purchases above
+Commerce password required in saved cards purchase,Commerce password required in saved cards purchase
+Active Subscriptions,Active Subscriptions
+Show Name on Card,Show Name on Card
+Show Credit Card Types,Show Credit Card Types
 Credit Card Types,Credit Card Types
 Minimum Order Total,Minimum Order Total
 Maximum Order Total,Maximum Order Total
 Sort Order,Sort Order
+Position of payment method,Position of payment method
 Selected currency (%s) is not compatible with this payment method,Selected currency (%s) is not compatible with this payment method
 Authorization failed. %s - %s,Authorization failed. %s - %s
 Payment failed. %s - %s,Payment failed. %s - %s
@@ -269,3 +281,27 @@ TPV WEB,TPV WEB
 BANK STORE,BANK STORE
 OFFSITE,OFFSITE
 IFRAME,IFRAME
+"Use stored one","Utilizar mi tarjeta almacenada"
+"You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está rgistrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
+"Remember this information for next purchase","Remember this information for next purchase"
+"use another","usar otra"
+STREAMLLINE YOUR FUTURE PURCHASES!,STREAMLLINE YOUR FUTURE PURCHASES!
+Link a card to your account to make all procedures easily and quickly.,Link a card to your account to make all procedures easily and quickly.
+When you link a Tarjet accepts ,When you link a Tarjet accepts 
+terms and conditions of service,terms and conditions of service
+Link card,Link card
+Available Cards,Available Cards
+My Cards,My Cards
+Pay by Credit Card,Pay by Credit Card
+For security, enter your user password Store,For security, enter your user password Store
+NEW CARD,NEW CARD
+Remove Card,Remove Card
+"Yes, remember my card accepting ","Yes, remember my card accepting "
+"The first purchase when ordering shall carry out, and the following is defined as the frequency subscription","The first purchase when ordering shall carry out, and the following is defined as the frequency subscription"
+"By subscribing you agree to the ","By subscribing you agree to the "
+"You will be redirected to your bank for secure payment. Wait a moment, please ...","You will be redirected to your bank for secure payment. Wait a moment, please ...
+There is still no card associated,There is still no card associated"
+BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT
+"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.",The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.""
+You must accept the terms and conditions of service,You must accept the terms and conditions of service
+Yes,Yes

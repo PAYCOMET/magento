@@ -1,0 +1,316 @@
+<script type="text/javascript">
+    var $jq = jQuery.noConflict();
+    $jq(document).ready(function() {
+        $jq("#open_conditions").fancybox({
+                href: "<?php echo $this->getUrl('paytpvcom/standard/conditions') ?>",
+                autoSize:false,
+                type : 'ajax',
+                'width':parseInt($jq(window).width() * 0.7)
+            });
+        
+        $jq(".remove_card").on("click", function(e){   
+            e.preventDefault();
+            $jq("#customer_id").val($jq(this).attr("id"));
+            cc = $jq("#card_"+$jq(this).attr("id")+"_cc").val();
+
+            confirm("<?php print $this->__('Remove Card');?>" + ": " + cc, true, function(resp) {
+                if (resp)   removeCard();
+            });
+        });
+
+
+    });
+
+    function confirm(msg, modal, callback) {
+        $jq.fancybox("#confirm",{
+            modal: modal,
+            'width':400,
+            'height': 'auto',
+            'autoSize' : false,
+            beforeShow: function() {
+                $jq(".title").html(msg);
+            },
+            afterShow: function() {
+                $jq(".confirm").on("click", function(event){
+                    if($jq(event.target).is(".yes")){
+                        ret = true;
+                    } else if ($jq(event.target).is(".no")){
+                        ret = false;
+                    }
+                    $jq.fancybox.close();
+                });
+            },
+            afterClose: function() {
+                callback.call(this, ret);
+            }
+        });
+    }
+
+    function alert(msg) {
+        $jq.fancybox("#alert",{
+            beforeShow: function() {
+                $jq(".title").html(msg);
+            },
+            modal: false,
+        });
+    }
+
+    function vincularTarjeta(){
+    	if ($jq("#savecard").is(':checked')){
+    		$jq('#savecard').attr("disabled", true);
+    		$jq('#close_vincular').show();
+            $jq('#open_vincular').hide();
+    		$jq('#nueva_tarjeta').show();
+    	}else{
+            alert("<?php print $this->__('You must accept the terms and conditions of service');?>");
+    	}
+
+    }
+
+    function close_vincularTarjeta(){
+    	$jq('#savecard').attr("disabled", false);
+    	$jq('#nueva_tarjeta').hide();
+    	$jq('#close_vincular').hide();
+        $jq('#open_vincular').show();
+    }
+
+    
+
+	function removeCard()
+	{
+        customer_id = $jq("#customer_id").val();
+
+		$jq.ajax({
+            url: "<?php echo $this->getUrl('paytpvcom/standard/actions') ?>",
+			type: "POST",
+			data: {
+                'action': 'removeCard',
+				'customer_id': customer_id,
+				'ajax': true
+			},
+			success: function(result)
+			{
+				if (result == '0')
+				{
+                   $jq("#card_"+customer_id).hide();
+				}
+ 		 	}
+		});
+		
+	};
+
+
+    function addCard(){
+        if(customForm.validator && customForm.validator.validate()) {
+            $jq.ajax({
+                url: "<?php echo $this->getUrl('paytpvcom/standard/actions') ?>",
+                type: "POST",
+                data: {
+                    'action': 'addCard',
+                    'cc_number': $jq("#cc_number").val(),
+                    'cc_exp_month': $jq("#expiration").val(),
+                    'cc_exp_year': $jq("#expiration_yr").val(),
+                    'cc_cid': $jq("#cc_cid").val(),
+                    'ajax': true
+                },
+                success: function(result)
+                {
+                    if (result == '')
+                    {
+                       window.location.reload();
+                    }else{
+                        alert(result)
+                    }
+                }
+            });
+        }
+    };
+
+    
+</script>
+
+
+<style>
+    .alert {
+        padding: 8px 35px 8px 14px;
+        margin: 10px 20px 0px 0px;
+        /* text-shadow: 0 1px 0 rgba(255,255,255,0.5); */
+        background-color: #fcf8e3;
+        border: 1px solid #fbeed5;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+       }
+
+    .alert-info {
+        color: #3a87ad;
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+    }
+    .terminos
+    {
+        color:#ff6000;
+    }
+
+    .button_del{
+    	float:right;
+    }
+
+    .bankstoreCard {
+		border: 1px solid #e5e5e5;
+		border-radius: 4px;
+		margin-bottom: 10px;
+		padding: 20px;
+		color: #a6a6a6;
+		}
+
+    .suscriptionCard {
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        padding: 20px;
+
+        color: #a6a6a6;
+        }
+
+    #div_suscripciones_pay {
+        margin-top: 5px;
+      
+        }
+
+    .suscription_pay {
+        border-radius: 4px;
+        padding-left: 50px;
+        color: #a6a6a6;
+        }
+
+
+	.remove_card,.cancel_suscription{
+		color: #ff6000!important;
+	}
+
+    #div_suscripciones li{
+        list-style:none;
+    } 
+
+
+</style>
+
+<div id="paytpv_block_account">
+	<h2><?php print strtoupper($this->__('My Cards'));?></h2>
+	<?php if (sizeof($this->getCustomerCards())>0){?>
+		<div class="span6" id="div_tarjetas">
+            <?php print $this->__('Available Cards');?>:
+            <?php foreach ($this->getCustomerCards() as $card){
+                print "<div class='bankstoreCard' id='card_".$card["customer_id"]."'>";  
+    	            print $card["paytpv_cc"] . " (". $card["paytpv_brand"] . ")";
+    	            print "<label class='button_del'>";
+    		             print "<a href='#' id='".$card["customer_id"]."' class='remove_card'>";
+    			         print $this->__('Remove Card');
+    			         print "</a>";
+    		    	print "</label>";
+                    print "<input type=\"hidden\" name=\"card_".$card["customer_id"]."_cc\" id=\"card_".$card["customer_id"]."_cc\" value=\"".$card["paytpv_cc"]."\">";
+            	print "</div>";
+            }?>
+    	</div>
+    <?php }else{?>
+		<p class="warning"><?php print $this->__('There is still no card associated.');?></p>
+	<?php }?>
+
+    <div id="storingStep" class="alert alert-info" style="display: block;">
+        <h4><?php print $this->__('STREAMLLINE YOUR FUTURE PURCHASES!');?></h4>
+        <?php print $this->__('Link a card to your account to make all procedures easily and quickly.');?>
+        <br>
+        <label class="checkbox"><input type="checkbox" name="savecard" id="savecard"> <?php print $this->__('When you link a Tarjet accepts ');?> <a id="open_conditions" href="#conditions"><span class="terminos"><?php print $this->__('terms and conditions of service');?></span></a>.</label>
+
+
+        <a href="javascript:void(0);" onclick="vincularTarjeta();" id="open_vincular" title="<?php print $this->__('Vincular Tarjeta de crédito');?>" class="button button-small btn btn-default">
+            <?php print $this->__('Link card');?>
+        </a>
+        <a href="javascript:void(0);" onclick="close_vincularTarjeta();" title="<?php print $this->__('Cancelar');?>" class="button button-small btn btn-default" id="close_vincular" style="display:none">
+	            <?php print $this->__('Cancel');?>
+	    </a>
+        <div class="payment_module paytpv_iframe" id="nueva_tarjeta" style="display:none">
+
+            <form name="credit_card" id="credit_card" class="sp-methods">
+
+            <ul class="form-list" id="payment_form_credit_card">
+            <li>
+                <label for="cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
+                <div class="input-box">
+                    <input maxlength="16" type="text" id="cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number required-entry" value=""/>
+                </div>
+            </li>
+            <li>
+                <label for="expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
+                <div class="input-box">
+                    <div class="v-fix">
+                        <select id="expiration" name="payment[cc_exp_month]" class="month required-entry" autocomplete="off">
+                            <option value="1">01</option>
+                            <option value="2">02</option>
+                            <option value="3">03</option>
+                            <option value="4">04</option>
+                            <option value="5">05</option>
+                            <option value="6">06</option>
+                            <option value="7">07</option>
+                            <option value="8">08</option>
+                            <option value="9">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div class="v-fix">
+                        <select id="expiration_yr" name="payment[cc_exp_year]" class="year required-entry" autocomplete="off">
+                            <?php $date = date("Y");
+                            for($year=$date;$year<$date+11;$year++){
+                                print "<option value=".$year.">".$year."</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            
+            <li>
+                <label for="cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+                <div class="input-box">
+                    <div class="v-fix">
+                        <input maxlength="4" size="4" type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="cc_cid" name="payment[cc_cid]" value="" />
+                    </div>
+                    <?php echo $this->__('CVC2') ?>
+                </div>
+            </li>
+            <button type="button" class="button" onclick="addCard()"><span><span><?php echo $this->__('Aceptar') ?></span></span></button>
+            <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl();?>">
+            </form>
+
+            <script type="text/javascript">
+                //< ![CDATA[
+                    var customForm = new VarienForm('credit_card');
+                //]]>
+            </script>
+
+        </ul>
+
+        </div>
+    </div>
+    <br/>
+    
+    <div id="alert" style="display:none">
+        <p class="title"></p>
+    </div>
+
+    <div id="confirm" style="display:none">
+        <p class="title"></p>
+        <input type="button" class="confirm yes button" value="<?php print $this->__('Accept');?>" />
+        <input type="button" class="confirm no button" value="<?php print $this->__('Cancel');?>" />
+        <input type="hidden" name="customer_id" id="customer_id">
+        <input type="hidden" name="suscription_id" id="suscription_id">
+    </div>
+
+    <div style="display: none;">
+        <div id="conditions" style="overflow:auto;">
+        </div>
+    </div>
+</div>

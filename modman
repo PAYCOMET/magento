@@ -2,6 +2,11 @@ app/code/community/Mage/PayTpvCom	app/code/community/Mage/PayTpvCom
 app/etc/modules/Mage_PayTpvCom.xml	app/etc/modules/Mage_PayTpvCom.xml
 app/design/frontend/base/default/layout/paytpvcom.xml	app/design/frontend/base/default/layout/paytpvcom.xml
 app/design/frontend/base/default/template/paytpvcom	app/design/frontend/base/default/template/paytpvcom
+app/design/adminhtml/default/default/layout/paytpvcom.xml	app/design/adminhtml/default/default/layout/paytpvcom.xml
+app/locale/en_US/template/paytpvcom app/locale/en_US/template/paytpvcom
 app/locale/en_US/Mage_PayTpvCom.csv app/locale/en_US/Mage_PayTpvCom.csv
 app/locale/es_ES/Mage_PayTpvCom.csv app/locale/ea_ES/Mage_PayTpvCom.csv
+app/locale/es_ES/template/paytpvcom app/locale/es_ES/template/paytpvcom
 skin/frontend/base/default/images/paytpvcom	skin/frontend/base/default/images/paytpvcom
+skin/frontend/base/default/js/paytpvcom	skin/frontend/base/default/js/paytpvcom
+skin/frontend/base/default/css/paytpvcom	skin/frontend/base/default/css/paytpvcom

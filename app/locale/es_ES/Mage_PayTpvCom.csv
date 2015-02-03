@@ -7,16 +7,28 @@ Successful payment,Pago exitoso
 Tarjeta de credito paytpv,Tarjeta de credito paytpv
 Enabled,Habilitado
 Title,Título
-Operation method,Tipo de opertiva
+Credit Card Paytpv,Tarjeta de credito Paytpv
+"Operation method","Tipo de opertiva"
 Integration method,Tipo de integración
 Client Code,Código de cliente
 User Name,Nombre de usuario
 User Password,Contraseña de usuario
 Terminal number,Número de terminal
+Secure,Seguro
+No Secure,No Seguro
+Both,Ambos
+Use 3D Secure,Usar 3D Secure
+Use 3D Secure first purchase,Usar 3D Secure primera compra
+Use 3D Secure in purchases above,Usar 3D Secure en pagos superiores a
+Commerce password required in saved cards purchase,Contraseña del comercio en pagos con Tarjeta Guardada
+Active Subscriptions,Activar Suscripciones
+Show Name on Card,Mostrar Nombre en la Tarjeta
+Show Credit Card Types,Mostrar Tipos de Tarjeta
 Credit Card Types,Tipos de tarjeta
 Minimum Order Total,Importe mínimo del pedido
 Maximum Order Total,Importe máximo del pedido
 Sort Order,Orden
+Position of payment method,Posición el methodo de pago
 Selected currency (%s) is not compatible with this payment method,La moneda seleccionada (%s) no es compatible con este método de pago
 Authorization failed. %s - %s,Fallo la pre-autorización. %s - %s
 Payment failed. %s - %s,Falló el pago. %s - %s
@@ -273,3 +285,23 @@ IFRAME,IFRAME
 "You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está rgistrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
 "Remember this information for next purchase","Recordar esta información en la próxima compra"
 "use another","usar otra"
+STREAMLLINE YOUR FUTURE PURCHASES!,¡AGILICE SUS FUTURAS COMPRAS!
+Link a card to your account to make all procedures easily and quickly.,Vincule una tarjeta a su cuenta para poder hacer todos los trámites de forma ágil y rápida.
+When you link a Tarjet accepts ,Al vincular una tarjet acepta los 
+terms and conditions of service,términos y condiciones del servicio
+Link card,Vincular tarjeta
+Available Cards,Tarjetas disponibles
+My Cards,Mis Tarjetas
+Pay by Credit Card,Pagar con Tarjeta
+"For security, enter your user password Store","Para mayor seguridad, indique su contraseña de usuario de la tienda"
+NEW CARD,NUEVA TARJETA
+Remove Card, Eliminar Tarjeta
+"Yes, remember my card accepting ","Si, recordar mi tarjeta aceptando los "
+"The first purchase when ordering shall carry out, and the following is defined as the frequency subscription","La primera compra se efecturá al realizar el pedido y las siguientes según se haya definido la periodicidad de la suscripción"
+"By subscribing you agree to the ","Al suscribirse está aceptando los "
+"You will be redirected to your bank for secure payment. Wait a moment, please ...","Va a ser redirigido a su banco para realizar el pago seguro. Espere un momento, por favor..."
+There is still no card associated,No tiene asociado todavía ninguna tarjeta
+BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,SE LE REDIRIGIRA A LA PASARELA DE PAGO EN EL PASO FINAL DEL CHECKOUT
+"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.","Los datos de introducidos se almacenarán en los servidores de PayTpv, empresa con certificación PCI/DSS de nivel 1, lo que hace los pagos 100% seguros."
+You must accept the terms and conditions of service,Debe aceptar los términos y condiciones del servicio
+Yes,Si

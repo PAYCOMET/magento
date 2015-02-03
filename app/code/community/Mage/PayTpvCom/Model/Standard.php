@@ -29,7 +29,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     protected $_allowCurrencyCode = array('EUR', 'USD', 'GBP', 'JPY');
     protected $_canAuthorize = true;
     protected $_canRefund = true;
-    protected $_canRefundInvoicePartial = false;
+    protected $_canRefundInvoicePartial = true;
     protected $_canCapture = true;
     protected $_canUseInternal = false; //Payments from backend
     protected $_canUseForMultishipping = true;
@@ -40,7 +40,33 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     const IT_OFFSITE = 0;
     const IT_IFRAME = 1;
     const OP_TPVWEB = 0;
-    const OP_BANKSTORE = 3;
+    const OP_BANKSTORE = 1;
+
+    protected $_arrCustomerCards = null;
+    protected $_arrCustomerSuscriptions = null;
+
+    protected function _construct(){
+
+       $this->_init("paytpvcom/paytpvcom");
+
+    }
+
+    /**
+     * API instance getter
+     * Sets current store id to current config instance and passes it to API
+     *
+     * @return Mage_Paytpvcom_Model_Api
+     */
+    public function getApi()
+    {
+        if (null === $this->_api) {
+            $this->_api = Mage::getModel($this->_apiType);
+        }
+        $this->_api->setConfigObject($this->_config);
+        return $this->_api;
+    }
+
+   
 
     /**
      * Get paytpv.com session namespace
@@ -78,20 +104,31 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $block->setMethod('paytpvcom')
             ->setPayment($this->getPayment())
             ->setTemplate('paytpvcom/form.phtml');
-
         return $block;
     }
 
-    /* validate the currency code is avaialable to use for paytpvcom or not */
+    public function isRecurring(){
+        $quote = Mage::getModel('checkout/cart')->getQuote();
+        foreach ($quote->getAllItems() as $item) {
+            if (!$item->getProduct()->getIsRecurring())
+                return false;
+        }
+        return true;
+    }
+
+    public function canUseForCurrency($currencyCode){
+       
+        if (!in_array($currencyCode, $this->_allowCurrencyCode)) {
+            return false;
+        }
+        return true;
+    }
+
+     /* validate the currency code is avaialable to use for paytpvcom or not */
 
     public function validate()
     {
         parent::validate();
-        $currency_code = $this->getQuote()->getBaseCurrencyCode();
-        if (!in_array($currency_code, $this->_allowCurrencyCode)) {
-            Mage::throwException(Mage::helper('payment')->__('Selected currency (%s) is not compatible with this payment method', $currency_code));
-        }
-        return $this;
     }
 
     public function onOrderValidate(Mage_Sales_Model_Order_Payment $payment)
@@ -104,101 +141,152 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this;
     }
 
+    public function setCustomerCards($arrCards){
+        $this->_arrCustomerCards = $arrCards;
+    }
+
+    public function setCustomerSuscriptions($arrSuscriptions){
+        $this->_arrCustomerSuscriptions = $arrSuscriptions;
+    }
+
+    public function getCustomerCards(){
+        return $this->_arrCustomerCards;
+    }
+
     private function useIframe(){
         if(self::OP_TPVWEB == parent::getConfigData('operativa'))
             return true;
         return $this->isSecureTransaction();
     }
+
+
+    public function _getValidParamKey($key){
+        if (substr($key, 0, 10) !== 'paytpv3ds_')
+            return null;
+        
+        return substr($key, 10);
+    }
+    
     public function getConfigData($field, $storeId = null)
     {
         if (null === $storeId) {
             $storeId = $this->getStore();
         }
-            
         if ('order_status' == $field)
             return $this->useIframe() ? 'pending' : 'processing';
-        if ('payment_action' == $field && $this->useIframe() )
-            return 'redirect';
-        $path = 'payment/' . $this->getCode() . '/' . $field;
+        
+        if ('payment_action' == $field){
+            $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+            if ($this->isSecureTransaction()){
+                return 'authorize';
+            }else{
+                return 'authorize_capture';
+            }
+        }
+        $path = 'payment/' . $this->getCode() . '/' . $field; 
+
         return Mage::getStoreConfig($path, $storeId);
     }
 
     public function authorize(Varien_Object $payment, $amount)
     {
         parent::authorize($payment, $amount);
-        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
         $order = $payment->getOrder();
-        if ($payment_data['cc_number'] && $payment_data['cc_number']) {
-            $res = $this->addUser($payment_data);
-            $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
-            $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
-            $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';
-            if ((int)$DS_ERROR_ID == 0)
-                $order
-                    ->setPaytpvIduser($DS_IDUSER)
-                    ->setPaytpvTokenuser($DS_TOKEN_USER)
-                    ->save();
-        } else {
-            $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
-            $order
-                ->setPaytpvIduser($customer->getPaytpvIduser())
-                ->setPaytpvTokenuser($customer->getPaytpvTokenuser())
-                ->save();
+        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+        $card = array();
+        $remember = (isset($payment_data["remember"]) && $payment_data["card"]==0)?1:0;
+        // NUEVA TARJETA o SUSCRIPCION
+        if ($payment_data["card"]==0){
+            if ($payment_data['cc_number'] && $payment_data['cc_number']) {
+                $res = $this->addUser($payment_data);
 
+                $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
+                $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
+                $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';
+
+                if ((int)$DS_ERROR_ID == 0){
+
+                    $card["paytpv_iduser"] = $DS_IDUSER;
+                    $card["paytpv_tokenuser"] = $DS_TOKEN_USER;
+
+                    // Si ha pulsado en el acuerdo y es un usuario registrado guardamos el token
+                    if ($remember && $order->getCustomerId()>0){
+                        $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER);
+                        $this->save_card($DS_IDUSER,$DS_TOKEN_USER,$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$order->getCustomerId());
+                    }
+                }
+            } 
+            if ((int)$DS_ERROR_ID != 0) {
+                if (!isset($res['DS_ERROR_ID']))
+                    $res['DS_ERROR_ID'] = 666;
+                $message = Mage::helper('payment')->__('Authorization failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+                throw new Mage_Payment_Model_Info_Exception($message);
+            }
+        // TARJETA EXISTENTE
+        }else{
+            if ($this->getConfigData('commerce_password') && !$this->verifyPwd($payment_data["userpwd"])){
+                $message = Mage::helper('payment')->__('Payment failed. Contraseña incorrecta');
+                throw new Mage_Payment_Model_Info_Exception($message);
+            }
+            $paytpv_iduser =  $payment_data["card"];
+            $card = $this->getToken($paytpv_iduser);
         }
-        if ((int)$DS_ERROR_ID != 0 || $order->getPaytpvIduser() == '' || $order->getPaytpvTokenuser() == '') {
-            if (!isset($res['DS_ERROR_ID']))
-                $res['DS_ERROR_ID'] = 666;
-            $message = Mage::helper('payment')->__('Authorization failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
-            throw new Mage_Payment_Model_Info_Exception($message);
+
+        $order->setPaytpvIduser($card["paytpv_iduser"])
+              ->setPaytpvTokenuser($card["paytpv_tokenuser"]);
+        $order->save();
+
+        if ($this->getConfigData("payment_action")=="authorize"){
+            return $this;
         }
-        return $this;
+
+        return $card;
     }
 
     public function capture(Varien_Object $payment, $amount)
     {
         parent::capture($payment, $amount);
+
         $order = $payment->getOrder();
-		$customer_id = $order->getCustomerId();
+        $customer_id = $order->getCustomerId();
         $customer = Mage::getModel('customer/customer')->load($customer_id);
-		$payment_data = Mage::app()->getRequest()->getParam('payment', array());
-        if ($payment_data['cc_number'] && $payment_data['cc_number']) {
-            $this->authorize($payment, 0);
-        } else if($customer_id) {
-            $order
-                ->setPaytpvIduser($customer->getPaytpvIduser())
-                ->setPaytpvTokenuser($customer->getPaytpvTokenuser())
-                ->save();
-        }
+        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+       
+        $Secure = ($this->isSecureTransaction())?1:0;
 
-        $res = $this->executePurchase($order, $amount);
-        if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
-			if($customer_id){
-				$customer
-					->setPaytpvIduser($order->getPaytpvIduser())
-					->setPaytpvTokenuser($order->getPaytpvTokenuser())
-					->setPaytpvRecall('true'==$payment_data['recall']);
-				if(isset($payment_data['cc_number']) && $payment_data['cc_number']!='')
-					$customer->setPaytpvCc('************' . substr($payment_data['cc_number'], -4));
-				$customer->save();
-			}
+        switch ($Secure){
+            // PAGO NO SEGURO
+            case 0:
+                $card = $this->authorize($payment, 0);
+                $res = $this->executePurchase($card["paytpv_iduser"],$card["paytpv_tokenuser"],$order, $amount);
+                if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
+                    
+                    $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
+                    $payment->setIsTransactionClosed(1);
+                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
 
-            $orderStatus = $this->getConfigData('paid_status');
-            $comment = Mage::helper('payment')->__('Successful payment');
-            $order->setState($orderStatus, $orderStatus, $comment, true);
-            $order->save();
-            $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
-            $payment->setIsTransactionClosed(1);
-            $payment->setTransactionAdditionalInfo(
-                Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
-                $res);
-        } else {
-            if (!isset($res['DS_ERROR_ID']))
-                $res['DS_ERROR_ID'] = -1;
-            $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
-            throw new Mage_Payment_Model_Info_Exception($message);
+                } else {
+                    if (!isset($res['DS_ERROR_ID']))
+                        $res['DS_ERROR_ID'] = -1;
+                    $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+                    throw new Mage_Payment_Model_Info_Exception($message);
+                }
+            break;
+
         }
         return $this;
+    }
+
+    public function verifyPwd($password){
+        $username = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
+        try{
+            $blah = Mage::getModel('customer/customer')
+            ->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+            ->authenticate($username, $password);
+            return true;
+        }catch( Exception $e ){
+            return false;
+        }
     }
 
     public function processSuccess(&$order, $session,$params=null)
@@ -213,22 +301,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order->sendNewOrderEmail();
         $order->setEmailSent(true);
 
-        if(isset($params['IdUser']) && isset($params['TokenUser'])){
-            $order->setState($orderStatus, $orderStatus, $comment, true)
-                ->setPaytpvIduser($params['IdUser'])
-                ->setPaytpvTokenuser($params['TokenUser']);
-            $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
-            $customer->setPaytpvIduser($params['TokenUser'])
-                 ->setPaytpvTokenuser()
-                 ->save();
-        }
         $order->save();
-        Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
-        Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/onepage/success'));
+        if ($session){
+            Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
+            Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/onepage/success'));
+        }
     }
 
     public function processFail($order, $session, $message, $comment)
     {
+      
         $state = $this->getConfigData('error_status');
         if ($state == Mage_Sales_Model_Order::STATE_CANCELED)
             $order->cancel();
@@ -239,17 +321,22 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order->sendOrderUpdateEmail(true, $message);
 
         $session->addError($message);
-        Mage::app()->getResponse()->setRedirect(Mage::getUrl('sales/order/reorder', array('order_id' => $order->getId())));
+        Mage::app()->getResponse()->setRedirect(Mage::getUrl('sales/order/reorder', array('order_id' => $order->getIncrementId())));
     }
 
-    public function getOrderPlaceRedirectUrl()
-    {
-        if (self::OP_BANKSTORE == $this->getConfigData('operativa'))
-            if (!$this->isSecureTransaction())
-                return null;
-            else
-                return Mage::getUrl('paytpvcom/standard/iframe');
 
+
+    public function getOrderPlaceRedirectUrl(){
+        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+        if (self::OP_BANKSTORE == $this->getConfigData('operativa'))
+            if ($this->isSecureTransaction()){
+                if ($this->isRecurring())
+                    return Mage::getUrl('paytpvcom/standard/bankstorerecurring');
+                else
+                    return Mage::getUrl('paytpvcom/standard/bankstore');
+            }else{
+                return null;
+            }
         $it = $this->getConfigData('integracion');
         switch ($it) {
             case self::IT_OFFSITE:
@@ -259,6 +346,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             default:
                 return Mage::getUrl('paytpvcom/standard/iframe');
         }
+
         return null;
     }
 
@@ -270,7 +358,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this->_client;
     }
 
-    private function infoUser($DS_IDUSER, $DS_TOKEN_USER)
+    public function infoUser($DS_IDUSER, $DS_TOKEN_USER)
     {
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
@@ -280,13 +368,14 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_MERCHANT_MERCHANTCODE, $DS_MERCHANT_TERMINAL, $DS_IDUSER, $DS_TOKEN_USER, $DS_MERCHANT_MERCHANTSIGNATURE, $_SERVER['REMOTE_ADDR']);
     }
 
-    private function executePurchase($order, $amount, $original_ip = '')
+    private function executePurchase($paytpv_iduser,$paytpv_tokenuser, $order, $amount, $original_ip = '')
     {
+
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
-        $DS_IDUSER = $order->getPaytpvIduser();
-        $DS_TOKEN_USER = $order->getPaytpvTokenuser();
+        $DS_IDUSER = $paytpv_iduser;
+        $DS_TOKEN_USER = $paytpv_tokenuser;
         $DS_MERCHANT_AMOUNT = round($amount * 100);
-        $DS_MERCHANT_ORDER = $order->getId();
+        $DS_MERCHANT_ORDER = $order->getIncrementId();
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
@@ -305,23 +394,28 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_ORIGINAL_IP,
             $DS_MERCHANT_PRODUCTDESCRIPTION,
             $DS_MERCHANT_OWNER
-
         );
     }
 
-    private function executeRefund(Varien_Object $payment)
+    
+
+    private function executeRefund(Varien_Object $payment,$amount)
     {
         $order = $payment->getOrder();
+        $fecha = date("Ymd",strtotime($order->getCreatedAt()));
+
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
         $DS_IDUSER = $order->getPaytpvIduser();
         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
-        $DS_MERCHANT_ORDER = $order->getId();
+        $DS_MERCHANT_ORDER = $order->getIncrementId();
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_AUTHCODE = $payment->getLastTransId();
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
         $DS_ORIGINAL_IP = $order->getRemoteAddr();
-        return $this->getClient()->execute_refund(
+        $DS_MERCHANT_AMOUNT = round($amount * 100);
+
+        $res = $this->getClient()->execute_refund(
             $DS_MERCHANT_MERCHANTCODE,
             $DS_MERCHANT_TERMINAL,
             $DS_IDUSER,
@@ -330,8 +424,49 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_MERCHANT_ORDER,
             $DS_MERCHANT_CURRENCY,
             $DS_MERCHANT_MERCHANTSIGNATURE,
-            $DS_ORIGINAL_IP
+            $DS_ORIGINAL_IP,
+            $DS_MERCHANT_AMOUNT
         );
+        // Si recibimos este error intentamos realizar la devolucion con order[iduser]fecha
+        if ($res['DS_ERROR_ID']==130){
+            $DS_MERCHANT_ORDER = $order->getIncrementId() . "[" . $DS_IDUSER . "]" . $fecha;
+            $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
+            
+            $res = $this->getClient()->execute_refund(
+                $DS_MERCHANT_MERCHANTCODE,
+                $DS_MERCHANT_TERMINAL,
+                $DS_IDUSER,
+                $DS_TOKEN_USER,
+                $DS_MERCHANT_AUTHCODE,
+                $DS_MERCHANT_ORDER,
+                $DS_MERCHANT_CURRENCY,
+                $DS_MERCHANT_MERCHANTSIGNATURE,
+                $DS_ORIGINAL_IP,
+                $DS_MERCHANT_AMOUNT
+            );
+        }
+        
+        // Si recibimos este error intentamos realizar la devolucion con S-tokenuser[iduser]fecha
+        if ($res['DS_ERROR_ID']==130 || $res['DS_ERROR_ID']==1001 ){
+            $DS_MERCHANT_ORDER = "S-" . $DS_TOKEN_USER . "[" . $DS_IDUSER . "]" . $fecha;
+            $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
+            
+            $res = $this->getClient()->execute_refund(
+                $DS_MERCHANT_MERCHANTCODE,
+                $DS_MERCHANT_TERMINAL,
+                $DS_IDUSER,
+                $DS_TOKEN_USER,
+                $DS_MERCHANT_AUTHCODE,
+                $DS_MERCHANT_ORDER,
+                $DS_MERCHANT_CURRENCY,
+                $DS_MERCHANT_MERCHANTSIGNATURE,
+                $DS_ORIGINAL_IP,
+                $DS_MERCHANT_AMOUNT
+            );
+        }
+
+
+        return $res;
     }
 
     private function addUser($payment_data, $original_ip = '')
@@ -354,10 +489,51 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         );
     }
 
-    public function getRecurringProfileSetRedirectUrl()
+    private function removeUser($idUser, $tokeUser)
     {
-        return Mage::getUrl('paytpvcom/standard/recurringredirect');
+
+        $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
+        $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
+        $DS_IDUSER = $idUser;
+        $DS_TOKEN_USER = $tokeUser;
+        $DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
+        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        if ($DS_ORIGINAL_IP=="::1") $DS_ORIGINAL_IP = "127.0.0.1";
+
+        return $this->getClient()->remove_user(
+            $DS_MERCHANT_MERCHANTCODE,
+            $DS_MERCHANT_TERMINAL,
+            $DS_IDUSER,
+            $DS_TOKEN_USER,
+            $DS_MERCHANT_MERCHANTSIGNATURE,
+            $DS_ORIGINAL_IP
+        );
     }
+
+    private function removeSuscription($idUser, $tokeUser)
+    {
+
+        $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
+        $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
+        $DS_IDUSER = $idUser;
+        $DS_TOKEN_USER = $tokeUser;
+        $DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
+        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        
+        if ($DS_ORIGINAL_IP=="::1") $DS_ORIGINAL_IP = "127.0.0.1";
+
+
+
+        return $this->getClient()->remove_subscription(
+            $DS_MERCHANT_MERCHANTCODE,
+            $DS_MERCHANT_TERMINAL,
+            $DS_IDUSER,
+            $DS_TOKEN_USER,
+            $DS_MERCHANT_MERCHANTSIGNATURE,
+            $DS_ORIGINAL_IP
+        );
+    }
+
 
     public function calcLanguage($lan)
     {
@@ -379,36 +555,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return "es";
     }
 
-    public function getCCFromQuote()
-    {
-        $session = Mage::getSingleton('checkout/session');
-        $quote_id = $session->getQuoteId();
-        $quote = Mage::getModel('sales/quote')->load($quote_id);
-        $customer = Mage::getModel('customer/customer')->load($quote->getCustomerId());
-        $cc = $customer->getPaytpvCc();
-        if ($cc)
-            return $cc;
-        $DS_IDUSER = $customer->getPaytpvIduser();
-        if (!$DS_IDUSER)
-            return false;
-
-        $DS_TOKEN_USER = $customer->getPaytpvTokenuser();
-        $client = new Zend_Soap_Client("https://www.paytpv.com/gateway/xml_bankstore.php?wsdl",
-            array('soap_version' => SOAP_1_1, 'encoding' => 'UTF-8'));
-        $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
-        $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
-        $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = Mage::helper('core/http')->getRemoteAddr(true);
-        $res = $client->info_user(
-            $DS_MERCHANT_MERCHANTCODE, $DS_MERCHANT_TERMINAL, $DS_IDUSER, $DS_TOKEN_USER, $DS_MERCHANT_MERCHANTSIGNATURE, $DS_ORIGINAL_IP
-        );
-        if ($res['DS_MERCHANT_PAN']) {
-            $customer->setPaytpvCc($res['DS_MERCHANT_PAN']);
-            $customer->save();
-        }
-        return $res['DS_MERCHANT_PAN'];
-    }
-
+    
     public function getStandardCheckoutFormFields()
     {
         $order_id = $this->getCheckout()->getLastRealOrderId();
@@ -418,11 +565,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $convertor = Mage::getModel('sales/convert_order');
         $invoice = $convertor->toInvoice($order);
         $currency = $order->getOrderCurrencyCode();
-        $amount = round($order->getTotalDue() * 100);
+        $amount = round($order->getGrandTotal() * 100);
         if ($currency == 'JPY')
-            $amount = round($order->getTotalDue());
+            $amount = round($order->getGrandTotal());
 
-
+       
         $client = $this->getConfigData('client');
         $user = $this->getConfigData('user');
         $pass = $this->getConfigData('pass');
@@ -432,7 +579,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         $operation = "1";
 
-        $signature = md5($client . $user . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
+        $signature = md5($client . $user . $terminal . $operation . $order->getIncrementId() . $amount . $currency . md5($pass));
 
         $sArr = array
         (
@@ -481,48 +628,291 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $language = "EN";
         }
         $amount = $currency='';
-        if(1==$operation){
-            $amount = round($order->getTotalDue() * 100);;
-            $currency = $order->getOrderCurrencyCode();
+        $amount = round($order->getGrandTotal() * 100);
+        $currency = $order->getOrderCurrencyCode();
+        
+
+        // execute purchase
+        if ($operation == 1){
+            $signature = md5($client . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
+            $sArr = array
+            (
+                'MERCHANT_MERCHANTCODE' => $client,
+                'MERCHANT_TERMINAL' => $terminal,
+                'OPERATION' => $operation,
+                'LANGUAGE' => $language,
+                'MERCHANT_ORDER' => $order_id,
+                'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
+                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel'),
+                'MERCHANT_AMOUNT' => $amount,
+                'MERCHANT_CURRENCY' => $currency,
+                'MERCHANT_MERCHANTSIGNATURE' => $signature,
+                '3DSECURE' => $this->getConfigData('secure_first')
+            );
         }
-        $signature = md5($client . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
+
+
+        // add_user
+        if ($operation == 107){
+            $order = Mage::getSingleton('customer/session')->getCustomer()->getId();
+            $signature = md5($client . $terminal . $operation . $order . md5($pass));
+            $sArr = array
+            (
+                'MERCHANT_MERCHANTCODE' => $client,
+                'MERCHANT_TERMINAL' => $terminal,
+                'OPERATION' => $operation,
+                'LANGUAGE' => $language,
+                'MERCHANT_MERCHANTSIGNATURE' => $signature,
+                'MERCHANT_ORDER' => $order,
+                'URLOK' => Mage::getUrl('paytpvcom/standard/tarjetas'),
+                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')                
+            );
+        }
+
+        return $sArr;
+    }
+
+
+    public function getBankStoreTokenFormFields($operation=109)
+    {
+        $order_id = $this->getCheckout()->getLastRealOrderId();
+        $order = Mage::getModel('sales/order');
+        $order->loadByIncrementId($order_id);
+        $client = $this->getConfigData('client');
+        $pass = $this->getConfigData('pass');
+        $terminal = $this->getConfigData('terminal');
+
+        $language_settings = strtolower(Mage::app()->getStore()->getCode());
+
+        if ($language_settings == "default") {
+            $language = "ES";
+        } else {
+            $language = "EN";
+        }
+        $amount = $currency='';
+        $amount = round($order->getGrandTotal() * 100);
+        $currency = $order->getOrderCurrencyCode();
+
+        $paytpv_iduser = $order->getPaytpvIduser();
+        $paytpv_tokenuser = $order->getPaytpvTokenuser();
+
+        // execute_purchase_token
+        if ($operation == 109){
+            $signature = md5($client . $paytpv_iduser . $paytpv_tokenuser . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
+            $sArr = array
+            (
+                'MERCHANT_MERCHANTCODE' => $client,
+                'MERCHANT_TERMINAL' => $terminal,
+                'OPERATION' => $operation,
+                'LANGUAGE' => $language,
+                'MERCHANT_MERCHANTSIGNATURE' => $signature,
+                'MERCHANT_ORDER' => $order_id,
+                'MERCHANT_AMOUNT' => $amount,
+                'MERCHANT_CURRENCY' => $currency,
+                'IDUSER' => $paytpv_iduser,
+                'TOKEN_USER' => $paytpv_tokenuser,          
+                '3DSECURE' => 1,
+                'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
+                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
+            );
+        }
+
+
+        return $sArr;
+    }
+
+
+    public function getBankStorerecurringTokenFormFields($arrDatos)
+    {
+        $operation=110; // create_subscription_token;
+
+        $order_id = $arrDatos["MERCHANT_ORDER"];
+
+        $client = $this->getConfigData('client');
+        $pass = $this->getConfigData('pass');
+        $terminal = $this->getConfigData('terminal');
+
+        $language_settings = strtolower(Mage::app()->getStore()->getCode());
+
+        if ($language_settings == "default") {
+            $language = "ES";
+        } else {
+            $language = "EN";
+        }
+        $amount = $currency='';
+        $amount = round($arrDatos["MERCHANT_AMOUNT"] * 100);
+        $currency = $arrDatos["MERCHANT_CURRENCY"];
+
+        $paytpv_iduser = $arrDatos["IDUSER"];
+        $paytpv_tokenuser = $arrDatos["TOKEN_USER"];
+        
+        $subscription_stratdate = $arrDatos["DS_SUBSCRIPTION_STARTDATE"];
+
+        $subs_periodicity = $arrDatos["DS_SUBSCRIPTION_PERIODICITY"];
+        $subscription_enddate = $arrDatos["DS_SUBSCRIPTION_ENDDATE"];
+
+
+        $signature = md5($client . $paytpv_iduser . $paytpv_tokenuser . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
         $sArr = array
         (
             'MERCHANT_MERCHANTCODE' => $client,
             'MERCHANT_TERMINAL' => $terminal,
             'OPERATION' => $operation,
             'LANGUAGE' => $language,
+            'MERCHANT_MERCHANTSIGNATURE' => $signature,
             'MERCHANT_ORDER' => $order_id,
-            'URLOK' => Mage::getUrl('checkout/onepage/success'),
-            'URLKO' => Mage::getUrl('paytpvcom/standard/cancel'),
             'MERCHANT_AMOUNT' => $amount,
             'MERCHANT_CURRENCY' => $currency,
-            'MERCHANT_MERCHANTSIGNATURE' => $signature,
-            '3DSECURE' => '1'
+            'SUBSCRIPTION_STARTDATE' => $subscription_stratdate, 
+            'SUBSCRIPTION_ENDDATE' => $subscription_enddate,
+            'SUBSCRIPTION_PERIODICITY' => $subs_periodicity,
+            'IDUSER' => $paytpv_iduser,
+            'TOKEN_USER' => $paytpv_tokenuser,
+            '3DSECURE' => 1,
+            'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
+            'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
         );
+        
 
         return $sArr;
     }
 
-    public function getStandardFormTemplate()
-    {
-        if ($this->isSecureTransaction())
-            return 'paytpvcom/form.phtml';
-        return 'paytpvcom/form_bankstore_ws.phtml';
+    // Cargar tarjetas tokenizadas
+    public function loadCustomerCards(){
+        $model = Mage::getModel('paytpvcom/customer');
+        $collection = $model->getCollection()->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and");
+        $arrCards = array();
+        foreach($collection as $item){
+            $arrCards[] =  $item->getData();
+        }
+        $this->setCustomerCards($arrCards);
+        return $arrCards;
     }
 
-    function isSecureTransaction()
+
+    public function getStandardFormTemplate()
     {
         $op = $this->getConfigData('operativa');
-        if (self::OP_TPVWEB == $op)
-            return true;
-        if ($this->getConfigData('secure_first') && $this->isFirstPurchase())
-            return true;
-        if ($this->getConfigData('secure_amount') < $this->getCurrentOrderAmount())
-            return true;
+        if (self::OP_BANKSTORE == $op){
+            $this->loadCustomerCards();
+            $terminales = $this->getConfigData('terminales');
+            return 'paytpvcom/form_bankstore_ws.phtml';
+        }else{
+            return 'paytpvcom/form.phtml';
+        }
+    }
+
+    function isSecureTransaction(){
+        $op = $this->getConfigData('operativa');
+        $terminales = $this->getConfigData('terminales');
+        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+        // Transaccion Segura:
+            // Si es TPVWEB
+            // Si es Bankstore y solo tiene Terminal Seguro
+            if (self::OP_TPVWEB == $op || (self::OP_BANKSTORE == $op && $terminales==0))
+                return true;   
+       
+            // Si esta definido que el pago es 3d secure y no estamos usando una tarjeta tokenizada
+            if ($this->getConfigData('secure_first') && $payment_data["card"]==0)
+                return true;
+
+            // Si se supera el importe maximo para compra segura
+            if ($terminales==2 && ($this->getConfigData('secure_amount')!="" && $this->getConfigData('secure_amount') < $this->getCurrentOrderAmount()))
+                return true;
+
+            // Si esta definido como que la primera compra es Segura y es la primera compra aunque este tokenizada
+            if ($terminales==2 && $this->getConfigData('secure_first') && $payment_data["card"]>0 && $this->isFirstPurchaseToken($payment_data["card"]))
+                return true;
+        
         return false;
     }
 
+    public function getToken($paytpv_iduser){
+        $model = Mage::getModel('paytpvcom/customer');
+        $card = $model->getCollection()->addFilter("paytpv_iduser",$paytpv_iduser,"and")->getFirstItem()->getData();
+        return $card;
+    }
+
+    
+    /**
+     * removeCard
+     *
+     * 
+     */
+    function removeCard($customer_id){
+        $model = Mage::getModel('paytpvcom/customer');
+        $customer = $model->getCollection()
+                    ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+                    ->addFilter("customer_id",$customer_id,"and")
+                    ->getFirstItem()->getData();
+        $paytpv_iduser = $customer["paytpv_iduser"];
+        $paytpv_tokenuser = $customer["paytpv_tokenuser"];
+        $customer_id = $customer["customer_id"];
+
+        // Si se elimina el usuario no se pueden realizar devoluciones desde el backofice
+        //$result = $this->removeUser( $paytpv_iduser, $paytpv_tokenuser);
+        try{
+            $customer = $model->getCollection()
+                        ->addFilter("customer_id",$customer_id,"and")
+                        ->getFirstItem()->delete();
+        } catch (Exception $e){
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * addCard
+     *
+     * 
+     */
+    function addCard($params){
+        $id_customer = Mage::getSingleton('customer/session')->getCustomer()->getId();
+
+        if ($id_customer>0){
+            $res = $this->addUser($params);
+
+            $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
+            $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
+            $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';
+
+            if ((int)$DS_ERROR_ID == 0){
+
+                $card["paytpv_iduser"] = $DS_IDUSER;
+                $card["paytpv_tokenuser"] = $DS_TOKEN_USER;
+
+                // Si ha pulsado en el acuerdo y es un usuario registrado guardamos el token
+                if ($id_customer>0){
+                    $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER);
+                    $this->save_card($DS_IDUSER,$DS_TOKEN_USER,$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$id_customer);
+                }
+                return "";
+            }else{
+                return Mage::helper('payment')->__('%s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+            }
+        }
+        return _("Error");
+    }
+
+    function isFirstPurchaseToken($IDUSER)
+    {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        if (!$customer)
+            return true;
+        $orderCollection = Mage::getModel('sales/order')->getCollection()
+            ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
+            ->addFieldToFilter('paytpv_iduser', array('eq' => array($IDUSER)))
+            ->addFieldToFilter('status', array(
+                'nin' => array('pending','cancel','canceled','refund'),
+                'notnull'=>true)
+            );
+        if (0 < $orderCollection->getSize()) {
+            return false;
+        }
+        return true;
+    }
+       
     function isFirstPurchase()
     {
         $customer = Mage::getSingleton('customer/session')->getCustomer();
@@ -567,14 +957,19 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function refund(Varien_Object $payment, $amount)
     {
         parent::refund($payment, $amount);
+       
         /*@TODO comprobar devolución completa*/
-        $res = $this->executeRefund($payment);
+        $res = $this->executeRefund($payment,$amount);
         if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
-            $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
-            $payment->setIsTransactionClosed(1);
-            $payment->setTransactionAdditionalInfo(
-                Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
-                $res);
+             $refundTransactionId = $res['DS_MERCHANT_AUTHCODE'];
+             $newTransactionType = Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND;
+             $payment->setTransactionId($refundTransactionId);
+             $payment->resetTransactionAdditionalInfo();
+             $payment->setData('is_transaction_closed',0);
+             $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+             $message = Mage::helper('payment')->__('Devolucion confirmada');
+             $transaction = $payment->addTransaction($newTransactionType, null, false , $message);
+             $payment->unsLastTransId();
         } else {
             if (!isset($res['DS_ERROR_ID']))
                 $res['DS_ERROR_ID'] = -1;
@@ -584,6 +979,21 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this;
     } //refund api
 
+
+    public function save_card($paytpv_iduser,$paytpv_tokenuser,$paytpv_cc,$paytpv_brand,$id_customer){
+        $paytpv_cc = '************' . substr($paytpv_cc, -4);
+        $data = array("paytpv_iduser"=>$paytpv_iduser,"paytpv_tokenuser"=>$paytpv_tokenuser,"paytpv_cc"=>$paytpv_cc,"paytpv_brand"=>$paytpv_brand,"id_customer"=>$id_customer,"date"=>now());
+        $model = Mage::getModel('paytpvcom/customer')->setData($data);
+        try {
+            $insertId = $model->save()->getId();
+            //echo "CUSTOMER Data successfully inserted. Insert ID: ".$insertId;
+        } catch (Exception $e){
+         echo $e->getMessage();
+        }
+        return true;
+    }
+
+    
     /* RECURRING PROFILES */
 
     /**
@@ -618,12 +1028,125 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
      * @param  Mage_Payment_Model_Info $paymentInfo
      * @throws Mage_Core_Exception
      */
-    public function submitRecurringProfile(Mage_Payment_Model_Recurring_Profile $profile, Mage_Payment_Model_Info $paymentInfo
+    public function submitRecurringProfile(Mage_Payment_Model_Recurring_Profile $profile, Mage_Payment_Model_Info $payment
     )
     {
+        $profile->setRecurringAmount( $this->_formatAmount($profile->getTaxAmount() + $profile->getBillingAmount() + $profile->getShippingAmount()) );
+        $api = $this->getApi();
 
-        $profile->setReferenceId(time());
-        $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_PENDING);
+        $api->setRecurringProfile($profile);
+        $api->setPayment($payment);
+
+
+        $res = $api->callCreateRecurringPaymentsProfile();
+        $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
+        $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
+        $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';  
+        
+        if ((int)$res['DS_ERROR_ID'] == 0){
+            $profile->setReferenceId($api->getMerchantTransId($DS_TOKEN_USER));
+            $additionalInfo["paytpv_iduser"] = $res["DS_IDUSER"];
+            $profile->setAdditionalInfo(serialize($additionalInfo));
+            $profile->save();
+
+            // Si es 3D Secure vamos al pago Seguro Iframe create_suscription_token
+            if ($this->isSecureTransaction()){
+                $subs_cycles = 0;
+                if ($profile->getPeriodMaxCycles())
+                    $subs_cycles = $profile->getPeriodMaxCycles();
+
+                $DS_SUBSCRIPTION_STARTDATE = Mage::getModel('core/date')->date('Ymd', strtotime($profile->getStartDatetime()));
+                
+                $freq = $profile->getPeriodFrequency();
+                switch ($profile->getPeriodUnit()){
+                    case 'day':         $subs_periodicity = 1; break;
+                    case 'week':        $subs_periodicity = 7; break;
+                    case 'semi_month':  $subs_periodicity = 14; break;
+                    case 'month':       $subs_periodicity = 30; break;
+                    case 'year':        $subs_periodicity = 365; break;
+                }
+
+                // Si es indefinido, ponemos como fecha tope la fecha + 5 años.
+                if ($subs_cycles==0){
+                    $start_datetime = $profile->getStartDatetime();
+                    $subscription_enddate = Mage::getModel('core/date')->date('Y', strtotime($start_datetime))+5 . Mage::getModel('core/date')->date('m', strtotime($start_datetime)) . Mage::getModel('core/date')->date('d', strtotime($start_datetime));
+                }else{
+                    // Dias suscripcion
+                    $dias_subscription = $subs_cycles * $subs_periodicity;
+                    $subscription_enddate = Mage::getModel('core/date')->date('Ymd', strtotime($profile->getStartDatetime(). " +".$dias_subscription." days"));
+                }
+                $DS_SUBSCRIPTION_ENDDATE = $subscription_enddate;
+                $DS_SUBSCRIPTION_PERIODICITY = $subs_periodicity;
+
+                $arrData["IDUSER"] = $res["DS_IDUSER"];
+                $arrData["TOKEN_USER"] = $res["DS_TOKEN_USER"];
+                $arrData["DS_SUBSCRIPTION_STARTDATE"] = $DS_SUBSCRIPTION_STARTDATE;
+                $arrData["DS_SUBSCRIPTION_ENDDATE"] = $DS_SUBSCRIPTION_ENDDATE;
+                $arrData["DS_SUBSCRIPTION_PERIODICITY"] = $DS_SUBSCRIPTION_PERIODICITY;
+                $arrData["MERCHANT_ORDER"] = $api->getMerchantTransId();
+                $arrData["MERCHANT_AMOUNT"] = $profile->getInitAmount();
+                $arrData["MERCHANT_CURRENCY"] = $profile->getCurrencyCode();
+
+                Mage::helper('paytpvcom')->prepare3ds($arrData);
+
+                $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_PENDING);
+
+                return $this;
+            }
+
+            // Pago NO Seguro. -->realizamos la suscripcon
+            $res = $api->callCreateRecurringPaymentsSuscriptionToken($DS_IDUSER,$DS_TOKEN_USER);
+            if ((int)$res['DS_ERROR_ID'] == 0){
+                // add order assigned to the recurring profile with initial fee
+                if ((float)$profile->getInitAmount()){
+                    $productItemInfo = new Varien_Object;
+                    $productItemInfo->setPaymentType(Mage_Sales_Model_Recurring_Profile::PAYMENT_TYPE_INITIAL);
+                    $productItemInfo->setPrice($profile->getInitAmount());
+
+                    $order = $profile->createOrder($productItemInfo);
+                    $order->setPaytpvIduser($DS_IDUSER)
+                          ->setPaytpvTokenuser($DS_TOKEN_USER);
+                    $order->save();
+
+                    $profile->addOrderRelation($order->getId());
+                    $payment->save();
+
+                    // Creamos la factura
+                    $payment = $order->getPayment();
+                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+                    $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
+                    ->setCurrencyCode($order->getBaseCurrencyCode())
+                    ->setPreparedMessage("Paytpv")
+                    ->setParentTransactionId($res['DS_MERCHANT_AUTHCODE'])
+                    ->setShouldCloseParentTransaction(true)
+                    ->setIsTransactionClosed(1)
+                    ->registerCaptureNotification($profile->getInitAmount());
+
+                    $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_ACTIVE);
+
+                    $this->processSuccess($order,null,$params);
+                }
+           
+                return $this;
+            }else{
+                if (!$profile->getInitMayFail()){
+                    $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_SUSPENDED);
+                    $profile->save();
+                }
+                $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+                throw new Mage_Payment_Model_Info_Exception($message);
+            }
+        }else {
+            if (!$profile->getInitMayFail()){
+                $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_SUSPENDED);
+                $profile->save();
+            }
+            $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+            throw new Mage_Payment_Model_Info_Exception($message);
+        }
+
+        return $this;
+
     }
 
     /**
@@ -634,9 +1157,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
      */
     public function getRecurringProfileDetails($referenceId, Varien_Object $result)
     {
-        $api = $this->getApi();
-        $api->setRecurringProfileId($referenceId)
-            ->callGetRecurringPaymentsProfileDetails($result);
+        return $this;
     }
 
     /**
@@ -647,6 +1168,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function updateRecurringProfile(Mage_Payment_Model_Recurring_Profile $profile)
     {
 
+        return $this;
+
     }
 
     /**
@@ -656,13 +1179,51 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
      */
     public function updateRecurringProfileStatus(Mage_Payment_Model_Recurring_Profile $profile)
     {
-        $api = $this->getApi();
-        $api->callManageRecurringPaymentsProfileStatus($profile->getNewState(), $profile->getState());
+        $api = $this->getApi();   
+
+        switch ($profile->getNewState()) {
+            case Mage_Sales_Model_Recurring_Profile::STATE_ACTIVE:      $action = 'start'; break;
+            case Mage_Sales_Model_Recurring_Profile::STATE_CANCELED:    $action = 'cancel'; break;
+            case Mage_Sales_Model_Recurring_Profile::STATE_EXPIRED:     $action = 'cancel'; break;
+            case Mage_Sales_Model_Recurring_Profile::STATE_SUSPENDED:   $action = 'stop'; break;
+            default: return $this;
+        }
+       
+        $additionalInfo = $profile->getAdditionalInfo() ? $profile->getAdditionalInfo() : array();
+
+        if ($action=='cancel'){
+            $res = $api->callManageRecurringPaymentsProfileStatus($profile,$action);
+             
+            if ((int)$res['DS_ERROR_ID'] == 0){
+                $profile->save();
+                return $this;
+            }   
+            $message = Mage::helper('payment')->__('Subscription update failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+            throw new Mage_Payment_Model_Info_Exception($message);
+
+        }else{
+            $message = Mage::helper('payment')->__($action . ' denied',222);
+            throw new Mage_Payment_Model_Info_Exception($message);
+        }
+
     }
 
     public function canGetRecurringProfileDetails()
     {
+        return true;
+    }
 
+    /**
+     * Round up and cast specified amount to float or string
+     * @todo move it to the helper
+     *
+     * @param string|float $amount
+     * @param bool $asFloat
+     * @return string|float
+     */
+    public function _formatAmount($amount, $asFloat = false){
+        $amount = sprintf('%.2F', $amount); // "f" depends on locale, "F" doesn't
+        return $asFloat ? (float)$amount : $amount;
     }
 
     public function getErrorDesc($code)

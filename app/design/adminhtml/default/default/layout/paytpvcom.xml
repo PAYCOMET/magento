@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+    <adminhtml_system_config_edit>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/validation.js</name>
+            </action>
+        </reference>
+    </adminhtml_system_config_edit>
+
+</layout>

@@ -3,35 +3,30 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>3.1.4</version>
+            <version>5.0.0</version>
         </Mage_PayTpvCom>
     </modules>
 
     <global>
-        <fieldsets>
-            <customer_account>
-                <paytpv_id>
-                    <create>1</create>
-                    <update>1</update>
-                </paytpv_id>
-                <paytpv_token>
-                    <create>1</create>
-                    <update>1</update>
-                </paytpv_token>
-                <paytpv_cc>
-                    <create>1</create>
-                    <update>1</update>
-                </paytpv_cc>
-            </customer_account>
-        </fieldsets>
         <!-- declare model group for new module -->
         <models>
             <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
             <paytpvcom>
                 <!-- base class name for the model group -->
                 <class>Mage_PayTpvCom_Model</class>
+                <resourceModel>paytpvcom_resource</resourceModel>
             </paytpvcom>
+            <paytpvcom_resource>
+                <class>Mage_PayTpvCom_Model_Resource</class>
+                <deprecatedNode>paytpvcom_mysql4</deprecatedNode>
+                <entities>
+                    <customer>
+                        <table>paytpvcom_customer</table>
+                    </customer>
+                </entities>
+            </paytpvcom_resource>
         </models>
+
 
         <!-- declare resource setup for new module -->
         <resources>
@@ -101,7 +96,46 @@
                 </paytpvcom>
             </updates>
         </layout>
+        <events>
+            <sales_order_place_after>
+                <observers>
+                    <mage_paytpvcom_order_observer>
+                        <type>singleton</type>
+                        <class>paytpvcom/observer</class>
+                        <method>saveOrderInfo</method>
+                    </mage_paytpvcom_order_observer>
+                </observers>
+            </sales_order_place_after>
+            <checkout_submit_all_after>
+                <observers>
+                    <redirect_to_3ds>
+                        <class>paytpvcom/observer</class>
+                        <method>checkout_submit_all_after</method>
+                    </redirect_to_3ds>
+                </observers>
+            </checkout_submit_all_after>    
+        </events>
     </frontend>
+
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <paytpvcom>
+                    <file>paytpvcom.xml</file>
+                </paytpvcom>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Mage_PayTpvCom>
+                    <files>
+                        <default>Mage_PayTpvCom.csv</default>
+                    </files>
+                </Mage_PayTpvCom>
+            </modules>
+        </translate>
+     </adminhtml>
 
     <!-- declare default configuration values for this module -->
     <default>
@@ -118,12 +152,16 @@
                 <paid_status>processing</paid_status>
                 <error_status>canceled</error_status>
                 <useccv>1</useccv>
-                <payment_action>authorize_capture</payment_action>
+                <payment_action>redirect</payment_action>
                 <!-- default title for payment checkout page and order view page -->
                 <title>Tarjeta de crédito/débito (PAYTPV)</title>
                 <sort_order>-999</sort_order>
-                <secure_first>0</secure_first>
+                <operativa>1</operativa>
+                <terminales>0</terminales>
+                <secure_first>1</secure_first>
                 <secure_amount>100000</secure_amount>
+                <show_nameoncard>1</show_nameoncard>
+                <show_cctypes>1</show_cctypes>
             </paytpvcom>
         </payment>
     </default>
