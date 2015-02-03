@@ -68,14 +68,16 @@ if (version_compare(Mage::getVersion(), '1.6', '>=')) {
     ");
 }
 
-// Eliminanos columnas de order. Solo deben quedar paytpv_iduser,paytpv_tokenuser
-$tablequote = $this->getTable('sales/order');
-$installer->run("
-ALTER TABLE  $tablequote
-    DROP  `paytpv_cc`,
-    DROP  `paytpv_card_country_iso3`,
-    DROP  `paytpv_card_type`,
-    DROP  `paytpv_card_brand`;
-");
+try{
+    // Eliminanos columnas de order. Solo deben quedar paytpv_iduser,paytpv_tokenuser
+    $tablequote = $this->getTable('sales/order');
+    $installer->run("
+    ALTER TABLE  $tablequote
+        DROP  `paytpv_cc`,
+        DROP  `paytpv_card_country_iso3`,
+        DROP  `paytpv_card_type`,
+        DROP  `paytpv_card_brand`;
+    ");
+}catch (exception $e){}
 
 $installer->endSetup();
