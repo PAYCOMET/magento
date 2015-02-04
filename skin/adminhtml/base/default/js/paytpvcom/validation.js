@@ -1,5 +1,3 @@
-var $jq = jQuery.noConflict();
-
 $jq(document).ready(function() {
     $jq("body").on("change","#payment_paytpvcom #payment_paytpvcom_terminales",function(){
        checkterminales();

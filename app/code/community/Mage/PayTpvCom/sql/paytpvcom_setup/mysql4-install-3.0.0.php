@@ -45,13 +45,16 @@ if (version_compare(Mage::getVersion(), '1.4.2', '>=')) {
 
 }
 */
-$tablequote = $this->getTable('sales/quote');
-$installer->run("
-ALTER TABLE  $tablequote
-    ADD  `paytpv_iduser` INT NOT NULL ,
-    ADD  `paytpv_tokenuser` VARCHAR( 64 ) NULL DEFAULT NULL ,
-    ADD  `paytpv_cc` VARCHAR( 32 ) NULL DEFAULT NULL ;
-");
+
+try{
+    $tablequote = $this->getTable('sales/quote');
+    $installer->run("
+    ALTER TABLE  $tablequote
+        ADD  `paytpv_iduser` INT NOT NULL ,
+        ADD  `paytpv_tokenuser` VARCHAR( 64 ) NULL DEFAULT NULL ,
+        ADD  `paytpv_cc` VARCHAR( 32 ) NULL DEFAULT NULL ;
+    ");
+}catch (exception $e){}
 
 
 

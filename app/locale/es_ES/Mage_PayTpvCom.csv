@@ -305,3 +305,5 @@ BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,SE LE REDIRIGIRA
 "The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.","Los datos de introducidos se almacenarán en los servidores de PayTpv, empresa con certificación PCI/DSS de nivel 1, lo que hace los pagos 100% seguros."
 You must accept the terms and conditions of service,Debe aceptar los términos y condiciones del servicio
 Yes,Si
+Accept,Aceptar
+Cancel,Cancelar

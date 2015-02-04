@@ -8,6 +8,10 @@
             </action>
             <action method="addItem">
                 <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
                 <name>js/paytpvcom/jquery.fancybox.pack.js</name>
             </action>
             <action method="addItem">
@@ -20,6 +24,31 @@
             </action>
         </reference>
     </checkout_onepage_index>
+
+    <onepagecheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/paytpv.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+    </onepagecheckout_index_index>
 
     <paytpvcom_standard_bankstore>
         <remove name="right.reports.product.viewed"/>
@@ -76,6 +105,10 @@
             <action method="addItem">
                 <type>skin_js</type>
                 <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
             </action>
             <action method="addItem">
                 <type>skin_js</type>

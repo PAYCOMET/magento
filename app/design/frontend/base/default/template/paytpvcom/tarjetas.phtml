@@ -1,5 +1,4 @@
 <script type="text/javascript">
-    var $jq = jQuery.noConflict();
     $jq(document).ready(function() {
         $jq("#open_conditions").fancybox({
                 href: "<?php echo $this->getUrl('paytpvcom/standard/conditions') ?>",
@@ -221,15 +220,14 @@
         <h4><?php print $this->__('STREAMLLINE YOUR FUTURE PURCHASES!');?></h4>
         <?php print $this->__('Link a card to your account to make all procedures easily and quickly.');?>
         <br>
-        <label class="checkbox"><input type="checkbox" name="savecard" id="savecard"> <?php print $this->__('When you link a Tarjet accepts ');?> <a id="open_conditions" href="#conditions"><span class="terminos"><?php print $this->__('terms and conditions of service');?></span></a>.</label>
-
-
+        <input type="checkbox" name="savecard" id="savecard"> 
+        <label for="savecard"><?php print $this->__('When you link a Tarjet accepts ');?> <a id="open_conditions" href="#conditions"><span class="terminos"><?php print $this->__('terms and conditions of service');?></span></a>.</label>
         <a href="javascript:void(0);" onclick="vincularTarjeta();" id="open_vincular" title="<?php print $this->__('Vincular Tarjeta de crédito');?>" class="button button-small btn btn-default">
             <?php print $this->__('Link card');?>
         </a>
         <a href="javascript:void(0);" onclick="close_vincularTarjeta();" title="<?php print $this->__('Cancelar');?>" class="button button-small btn btn-default" id="close_vincular" style="display:none">
-	            <?php print $this->__('Cancel');?>
-	    </a>
+                <?php print $this->__('Cancel');?>
+        </a>
         <div class="payment_module paytpv_iframe" id="nueva_tarjeta" style="display:none">
 
             <form name="credit_card" id="credit_card" class="sp-methods">

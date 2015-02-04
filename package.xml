@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -97,6 +97,7 @@
                         <dir name="js">
                             <dir name="paytpvcom">
                                 <file name="jquery-1.10.2.min.js"/>
+                                <file name="noconflict.js"/>
                                 <file name="jquery.fancybox.pack.js"/>
                                 <file name="paytpv.js"/>
                             </dir>
@@ -118,6 +119,7 @@
                         <dir name="js">
                             <dir name="paytpvcom">
                                 <file name="jquery-1.10.2.min.js"/>
+                                <file name="noconflict.js"/>
                                 <file name="validation.js"/>
                             </dir>
                         </dir>

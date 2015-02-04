@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.0.0</version>
+            <version>5.0.1</version>
         </Mage_PayTpvCom>
     </modules>
 
