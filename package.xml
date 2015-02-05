@@ -108,6 +108,8 @@
                                 <file name="fancybox_overlay.png"/>
                                 <file name="fancybox_sprite.png"/>
                                 <file name="jquery.fancybox.css"/>
+                                <file name="tarjetas.css"/>
+                                <file name="payment.css"/>
                             </dir>
                         </dir>
                     </dir>

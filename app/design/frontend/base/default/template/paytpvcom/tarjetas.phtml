@@ -1,4 +1,5 @@
 <script type="text/javascript">
+//<![CDATA[
     $jq(document).ready(function() {
         $jq("#open_conditions").fancybox({
                 href: "<?php echo $this->getUrl('paytpvcom/standard/conditions') ?>",
@@ -16,8 +17,6 @@
                 if (resp)   removeCard();
             });
         });
-
-
     });
 
     function confirm(msg, modal, callback) {
@@ -55,48 +54,48 @@
     }
 
     function vincularTarjeta(){
-    	if ($jq("#savecard").is(':checked')){
-    		$jq('#savecard').attr("disabled", true);
-    		$jq('#close_vincular').show();
+        if ($jq("#savecard").is(':checked')){
+            $jq('#savecard').attr("disabled", true);
+            $jq('#close_vincular').show();
             $jq('#open_vincular').hide();
-    		$jq('#nueva_tarjeta').show();
-    	}else{
+            $jq('#nueva_tarjeta').show();
+        }else{
             alert("<?php print $this->__('You must accept the terms and conditions of service');?>");
-    	}
+        }
 
     }
 
     function close_vincularTarjeta(){
-    	$jq('#savecard').attr("disabled", false);
-    	$jq('#nueva_tarjeta').hide();
-    	$jq('#close_vincular').hide();
+        $jq('#savecard').attr("disabled", false);
+        $jq('#nueva_tarjeta').hide();
+        $jq('#close_vincular').hide();
         $jq('#open_vincular').show();
     }
 
     
 
-	function removeCard()
-	{
+    function removeCard()
+    {
         customer_id = $jq("#customer_id").val();
 
-		$jq.ajax({
+        $jq.ajax({
             url: "<?php echo $this->getUrl('paytpvcom/standard/actions') ?>",
-			type: "POST",
-			data: {
+            type: "POST",
+            data: {
                 'action': 'removeCard',
-				'customer_id': customer_id,
-				'ajax': true
-			},
-			success: function(result)
-			{
-				if (result == '0')
-				{
+                'customer_id': customer_id,
+                'ajax': true
+            },
+            success: function(result)
+            {
+                if (result == '0')
+                {
                    $jq("#card_"+customer_id).hide();
-				}
- 		 	}
-		});
-		
-	};
+                }
+            }
+        });
+        
+    };
 
 
     function addCard(){
@@ -124,97 +123,32 @@
             });
         }
     };
-
-    
+//]]>
 </script>
 
 
-<style>
-    .alert {
-        padding: 8px 35px 8px 14px;
-        margin: 10px 20px 0px 0px;
-        /* text-shadow: 0 1px 0 rgba(255,255,255,0.5); */
-        background-color: #fcf8e3;
-        border: 1px solid #fbeed5;
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        border-radius: 4px;
-       }
-
-    .alert-info {
-        color: #3a87ad;
-        background-color: #d9edf7;
-        border-color: #bce8f1;
-    }
-    .terminos
-    {
-        color:#ff6000;
-    }
-
-    .button_del{
-    	float:right;
-    }
-
-    .bankstoreCard {
-		border: 1px solid #e5e5e5;
-		border-radius: 4px;
-		margin-bottom: 10px;
-		padding: 20px;
-		color: #a6a6a6;
-		}
-
-    .suscriptionCard {
-        border: 1px solid #e5e5e5;
-        border-radius: 4px;
-        margin-bottom: 10px;
-        padding: 20px;
-
-        color: #a6a6a6;
-        }
-
-    #div_suscripciones_pay {
-        margin-top: 5px;
-      
-        }
-
-    .suscription_pay {
-        border-radius: 4px;
-        padding-left: 50px;
-        color: #a6a6a6;
-        }
-
-
-	.remove_card,.cancel_suscription{
-		color: #ff6000!important;
-	}
-
-    #div_suscripciones li{
-        list-style:none;
-    } 
-
-
-</style>
-
 <div id="paytpv_block_account">
-	<h2><?php print strtoupper($this->__('My Cards'));?></h2>
-	<?php if (sizeof($this->getCustomerCards())>0){?>
-		<div class="span6" id="div_tarjetas">
+    <div class="page-title">
+        <h1><?php print strtoupper($this->__('My Cards'));?></h1>
+    </div>
+    <?php if (sizeof($this->getCustomerCards())>0){?>
+        <div class="span6" id="div_tarjetas">
             <?php print $this->__('Available Cards');?>:
             <?php foreach ($this->getCustomerCards() as $card){
                 print "<div class='bankstoreCard' id='card_".$card["customer_id"]."'>";  
-    	            print $card["paytpv_cc"] . " (". $card["paytpv_brand"] . ")";
-    	            print "<label class='button_del'>";
-    		             print "<a href='#' id='".$card["customer_id"]."' class='remove_card'>";
-    			         print $this->__('Remove Card');
-    			         print "</a>";
-    		    	print "</label>";
+                    print $card["paytpv_cc"] . " (". $card["paytpv_brand"] . ")";
+                    print "<label class='button_del'>";
+                         print "<a href='#' id='".$card["customer_id"]."' class='remove_card'>";
+                         print $this->__('Remove Card');
+                         print "</a>";
+                    print "</label>";
                     print "<input type=\"hidden\" name=\"card_".$card["customer_id"]."_cc\" id=\"card_".$card["customer_id"]."_cc\" value=\"".$card["paytpv_cc"]."\">";
-            	print "</div>";
+                print "</div>";
             }?>
-    	</div>
+        </div>
     <?php }else{?>
-		<p class="warning"><?php print $this->__('There is still no card associated.');?></p>
-	<?php }?>
+        <p class="warning"><?php print $this->__('There is still no card associated.');?></p>
+    <?php }?>
 
     <div id="storingStep" class="alert alert-info" style="display: block;">
         <h4><?php print $this->__('STREAMLLINE YOUR FUTURE PURCHASES!');?></h4>

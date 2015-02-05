@@ -20,6 +20,10 @@
             </action>
             <action method="addItem">
                 <type>skin_css</type>
+                <name>css/paytpvcom/payment.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
                 <name>css/paytpvcom/jquery.fancybox.css</name>
             </action>
         </reference>
@@ -45,10 +49,72 @@
             </action>
             <action method="addItem">
                 <type>skin_css</type>
+                <name>css/paytpvcom/payment.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
                 <name>css/paytpvcom/jquery.fancybox.css</name>
             </action>
         </reference>
     </onepagecheckout_index_index>
+
+    <onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/paytpv.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/payment.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+    </onestepcheckout_index_index>
+
+    <paytpvcom_standard_tarjetas>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/tarjetas.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="paytpvcom/standard_tarjetas" name="tarjetas" template="paytpvcom/tarjetas.phtml"></block>  
+        </reference>
+    </paytpvcom_standard_tarjetas>
 
     <paytpvcom_standard_bankstore>
         <remove name="right.reports.product.viewed"/>
@@ -81,11 +147,10 @@
     </paytpvcom_standard_bankstorerecurring>
 
     <paytpvcom_standard_redirect>
-    	<reference name="content">
-    	    <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
-    	</reference>
+        <reference name="content">
+            <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
+        </reference>
     </paytpvcom_standard_redirect>
-
 
 
     <paytpvcom_standard_iframe>
@@ -95,36 +160,10 @@
             <action method="setIsHandle"><applied>1</applied></action>
         </reference>
         <reference name="content">
-    	    <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
-    	</reference>
+            <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
+        </reference>
     </paytpvcom_standard_iframe>
-
-    <paytpvcom_standard_tarjetas>
-        <update handle="customer_account"/>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
-            </action>
-            
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/jquery.fancybox.css</name>
-            </action>
-        </reference>
-        <reference name="content">
-            <block type="paytpvcom/standard_tarjetas" name="tarjetas" template="paytpvcom/tarjetas.phtml"></block>  
-        </reference>
-    </paytpvcom_standard_tarjetas>
-    
+   
     <customer_account>
         <!-- Mage_Wishlist -->
         <reference name="customer_account_navigation">
@@ -135,9 +174,5 @@
             </action>
         </reference>
     </customer_account>
-
-
-    
-
 
 </layout>
