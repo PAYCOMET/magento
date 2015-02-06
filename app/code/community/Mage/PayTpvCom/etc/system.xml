@@ -50,7 +50,7 @@
                             <show_in_store>1</show_in_store>
                         </operativa>
                         <terminales translate="label">
-                            <label>Terminales disponibles</label>
+                            <label>Terminals available</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_terminales</source_model>
                             <sort_order>31</sort_order>
@@ -71,7 +71,7 @@
                         </integracion>
                         <secure_first translate="label">
                             <label>Use 3D Secure first purchase</label>
-                            <comment>Terminal Seguro: todas las compras con 3D Secure. Terminal No Seguro: todas las compras sin 3D Secure.</comment>
+                            <comment>Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>32</sort_order>
@@ -189,7 +189,7 @@
                         </payment_action>-->
                         <sort_order translate="label">
                             <label>Sort Order</label>
-                            <comment>Posición del método de pago</comment>
+                            <comment>Payment method position</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>1000</sort_order>
                             <show_in_default>1</show_in_default>

@@ -14,6 +14,7 @@ Client Code,Client Code
 User Name,User Name
 User Password,User Password
 Terminal number,Terminal number
+Terminals available,Terminals available
 Secure,Secure
 No Secure,No Secure
 Both,Both
@@ -307,3 +308,5 @@ You must accept the terms and conditions of service,You must accept the terms an
 Yes,Yes
 Accept,Accept
 Cancel,Cancel
+"Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.","Terminal Seguro: todas las compras con 3D Secure. Terminal No Seguro: todas las compras sin 3D Secure."
+Payment method position,Payment method position
