@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.0.1</version>
+    <version>5.1.0</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -53,6 +53,7 @@
                                     <file name="Integraciones.php"/>
                                     <file name="Operativas.php"/>
                                     <file name="Terminales.php"/>
+                                    <file name="Transactions.php"/>
                                 </dir>
                             </dir>
                         </dir>

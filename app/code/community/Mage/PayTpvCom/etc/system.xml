@@ -49,11 +49,20 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </operativa>
+                        <transaction_type translate="label">
+                            <label>Transaction type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>paytpvcom/system_config_source_transactions</source_model>
+                            <sort_order>31</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </transaction_type>
                         <terminales translate="label">
                             <label>Terminals available</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_terminales</source_model>
-                            <sort_order>31</sort_order>
+                            <sort_order>32</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -63,7 +72,7 @@
                             <label>Integration method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_integraciones</source_model>
-                            <sort_order>35</sort_order>
+                            <sort_order>36</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -74,7 +83,7 @@
                             <comment>Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>32</sort_order>
+                            <sort_order>33</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -84,7 +93,7 @@
                             <label>Use 3D Secure in purchases above</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number</validate>
-                            <sort_order>33</sort_order>
+                            <sort_order>34</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -95,7 +104,7 @@
                             <label>Commerce password required in saved cards purchase</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>34</sort_order>
+                            <sort_order>35</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

@@ -236,7 +236,6 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                 $params['BankDateTime'].
                                 $params['Response']);   
             
-            $sign=$local_sign;
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en el pago');
             else{
                 $id_order = $ref;
@@ -246,14 +245,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     
                     // Creamos la factura
                     $payment = $order->getPayment();
-                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
+
                     $payment->setTransactionId($params['AuthCode'])
-                    ->setCurrencyCode($order->getBaseCurrencyCode())
-                    ->setPreparedMessage("Paytpv")
-                    ->setParentTransactionId($params['AuthCode'])
-                    ->setShouldCloseParentTransaction(true)
-                    ->setIsTransactionClosed(1)
-                    ->registerCaptureNotification($importe);
+                        ->setCurrencyCode($order->getBaseCurrencyCode())
+                        ->setPreparedMessage("PayTPV Pago Correcto.")
+                        ->setIsTransactionClosed(1)
+                        ->registerCaptureNotification($importe)
+                        ->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
 
                     $order
                         ->setPaytpvIduser($params['IdUser'])
@@ -262,9 +260,59 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     $model->processSuccess($order,null,$params);
                 }
+            }
+        // (preathorization)       
+        }else if ($params['TransactionType']==3
+            AND $params['Order']
+            AND $params['Response']
+            AND $params['ExtendedSignature'])
+        {
+            $importe  = number_format($params['Amount']/ 100, 2);
+            $ref = $params['Order'];
+            $result = $params['Response']=='OK'?0:-1;
+            $sign = $params['ExtendedSignature'];
+            $esURLOK = false;
+            $sign = $params['ExtendedSignature'];
+            $local_sign = md5(  $model->getConfigData('client').
+                                $model->getConfigData('terminal').
+                                $params['TransactionType'].
+                                $ref.
+                                $params['Amount'].
+                                $params['Currency'].
+                                md5($model->getConfigData('pass')).
+                                $params['BankDateTime'].
+                                $params['Response']);
+            if ($sign!=$local_sign || $params['Response']!="OK") die('Error en preauthorization');
+            else{
+                $id_order = $ref;
+                $order->loadByIncrementId($id_order);
+
+                if(isset($params['IdUser']) && isset($params['TokenUser'])){
+                    
+                    $payment = $order->getPayment();
+                    $newTransactionType = Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH;
+                    $message = Mage::helper('payment')->__('Preautorizacion confirmada'); 
+                    
+                    $payment->setTransactionId($params['AuthCode']);
+                    $payment->setIsTransactionClosed(0);
+                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
+                    $transaction = $payment->addTransaction($newTransactionType, null, false , $message);
+                    $payment->unsetData('is_transaction_closed');
+                    $payment->unsLastTransId();
+
+                    $payment->setSkipTransactionCreation(true);
+
+                    $order
+                        ->setPaytpvIduser($params['IdUser'])
+                        ->setPaytpvTokenuser($params['TokenUser']);
+                    $order->save();
+
+                    $model->preauthSuccess($order,null,$params);
+                }
+
                 
             } 
-
+ 
         // (add_user)
         }else if ($params['TransactionType']==107){
             
@@ -296,7 +344,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
             if (sizeof($datos)>1){
                 $datos2 = explode("]",$params['Order']);
-                $fecha = $datos2[1];
+                $fecha = $datos2[sizeof($datos2)-1];
 
                 $fecha_act = date("Ymd");
                 // Si la fecha no es la de hoy es un pago de cuota suscripcion
@@ -308,7 +356,6 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             }else{
                 $paytpv_iduser = $params['IdUser'];
             }
-
 
 
             // Por si es un pago de suscripcion.
@@ -372,7 +419,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
                 $payment->setTransactionId($params['AuthCode'])
                 ->setCurrencyCode($order->getBaseCurrencyCode())
-                ->setPreparedMessage("Paytpv")
+                ->setPreparedMessage("PayTPV")
                 ->setParentTransactionId($params['AuthCode'])
                 ->setShouldCloseParentTransaction(true)
                 ->setIsTransactionClosed(1)

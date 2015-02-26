@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.0.1</version>
+            <version>5.1.0</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -149,6 +149,7 @@
                 <model>paytpvcom/standard</model>
                 <!-- order status for new orders paid by this payment method -->
                 <order_status>pending</order_status>
+                <preauth_status>preathorize</preauth_status>
                 <paid_status>processing</paid_status>
                 <error_status>canceled</error_status>
                 <useccv>1</useccv>
@@ -158,6 +159,7 @@
                 <sort_order>-999</sort_order>
                 <operativa>1</operativa>
                 <terminales>0</terminales>
+                <transaction_type>0</transaction_type>
                 <secure_first>1</secure_first>
                 <secure_amount>100000</secure_amount>
                 <show_nameoncard>1</show_nameoncard>

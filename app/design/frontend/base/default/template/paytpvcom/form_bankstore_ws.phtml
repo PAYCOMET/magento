@@ -179,5 +179,5 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         </ul>
     <li>
 
-    <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl();?>">
+    <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB,array('_secure'=>true));?>">
 </ul>

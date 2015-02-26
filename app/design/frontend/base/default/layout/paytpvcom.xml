@@ -58,6 +58,7 @@
         </reference>
     </onepagecheckout_index_index>
 
+
     <onestepcheckout_index_index>
         <reference name="head">
             <action method="addItem">
@@ -86,6 +87,35 @@
             </action>
         </reference>
     </onestepcheckout_index_index>
+
+    <gomage_checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/paytpv.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/payment.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+    </gomage_checkout_onepage_index>
 
     <paytpvcom_standard_tarjetas>
         <update handle="customer_account"/>
@@ -143,14 +173,19 @@
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
+        <!--use the right block-->
         
+        <reference name="content">
+            <block type="paytpvcom/standard_bankstorerecurring" name="bankstore" template="paytpvcom/bankstore.phtml"/>
+        </reference>
     </paytpvcom_standard_bankstorerecurring>
 
     <paytpvcom_standard_redirect>
-        <reference name="content">
-            <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
-        </reference>
+    	<reference name="content">
+    	    <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
+    	</reference>
     </paytpvcom_standard_redirect>
+
 
 
     <paytpvcom_standard_iframe>
@@ -160,10 +195,11 @@
             <action method="setIsHandle"><applied>1</applied></action>
         </reference>
         <reference name="content">
-            <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
-        </reference>
+    	    <block type="paytpvcom/standard_iframe" name="redirect" template="paytpvcom/iframe.phtml"/>
+    	</reference>
     </paytpvcom_standard_iframe>
-   
+
+       
     <customer_account>
         <!-- Mage_Wishlist -->
         <reference name="customer_account_navigation">
@@ -174,5 +210,9 @@
             </action>
         </reference>
     </customer_account>
+
+
+    
+
 
 </layout>

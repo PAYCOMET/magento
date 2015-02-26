@@ -310,3 +310,6 @@ Accept,Aceptar
 Cancel,Cancelar
 "Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.","Terminal Seguro: todas las compras con 3D Secure. Terminal No Seguro: todas las compras sin 3D Secure."
 Payment method position,Posición del método de pago
+Transaction type,Tipo de transacción
+Sale (Auth + Capture),Venta
+Pre-Authorization,Pre-Autorización

@@ -1,0 +1,9 @@
+*.zip
+
+# Documentacion
+/paytpvdoc/*
+*.doc*
+
+# Word temporary
+~$*.doc*
+

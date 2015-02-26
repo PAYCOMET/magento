@@ -1,3 +1,5 @@
+var $jq = jQuery.noConflict();
+
 $jq(document).ready(function() {
     $jq("body").on("click",".paytpv .open_conditions",function(){
        conditions();

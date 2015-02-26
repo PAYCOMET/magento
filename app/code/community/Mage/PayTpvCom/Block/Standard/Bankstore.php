@@ -13,7 +13,9 @@ class Mage_PayTpvCom_Block_Standard_Bankstore extends Mage_Core_Block_Template
         $order = Mage::getModel('sales/order');
         $order = $order->load($order_id);
 
-        $operation = 109;
+        $transaction_type = $standard->getConfigData('transaction_type');
+
+        $operation = ($transaction_type == $standard::PREAUTHORIZATION)?111:109;
 
         Mage::getSingleton('adminhtml/session_quote')->clear();
 

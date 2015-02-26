@@ -42,6 +42,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     const OP_TPVWEB = 0;
     const OP_BANKSTORE = 1;
 
+    const SALE = 0;
+    const PREAUTHORIZATION = 1;
+
     protected $_arrCustomerCards = null;
     protected $_arrCustomerSuscriptions = null;
 
@@ -176,8 +179,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             return $this->useIframe() ? 'pending' : 'processing';
         
         if ('payment_action' == $field){
-            $payment_data = Mage::app()->getRequest()->getParam('payment', array());
-            if ($this->isSecureTransaction()){
+            $terminales = $this->getConfigData('terminales');
+            $transaction_type = $this->getConfigData('transaction_type');
+            if ($this->isSecureTransaction() || ($transaction_type==self::PREAUTHORIZATION)){
                 return 'authorize';
             }else{
                 return 'authorize_capture';
@@ -237,44 +241,94 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order->save();
 
         if ($this->getConfigData("payment_action")=="authorize"){
+            $transaction_type = $this->getConfigData('transaction_type');
+            if (!$this->isSecureTransaction() && $transaction_type == self::PREAUTHORIZATION){
+                $res = $this->create_preauthorization($order, $amount);
+                if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
+                    $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
+                    $payment->setIsTransactionClosed(0);
+                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+                    $payment->unsLastTransId();
+                }else {
+                    if (!isset($res['DS_ERROR_ID']))
+                        $res['DS_ERROR_ID'] = -1;
+                    $message = Mage::helper('payment')->__('Preathorization failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+                    throw new Mage_Payment_Model_Info_Exception($message);
+                }
+            }
             return $this;
         }
 
         return $card;
     }
 
+
     public function capture(Varien_Object $payment, $amount)
     {
-        parent::capture($payment, $amount);
+        if ($this->_isPreauthorizeCapture($payment)){
+            $this->_preauthorizeCapture($payment, $amount);
+        }else{
+            parent::capture($payment, $amount);
 
-        $order = $payment->getOrder();
-        $customer_id = $order->getCustomerId();
-        $customer = Mage::getModel('customer/customer')->load($customer_id);
-        $payment_data = Mage::app()->getRequest()->getParam('payment', array());
-       
-        $Secure = ($this->isSecureTransaction())?1:0;
+            $order = $payment->getOrder();
+            $customer_id = $order->getCustomerId();
+            $customer = Mage::getModel('customer/customer')->load($customer_id);
+            $payment_data = Mage::app()->getRequest()->getParam('payment', array());
 
-        switch ($Secure){
-            // PAGO NO SEGURO
-            case 0:
-                $card = $this->authorize($payment, 0);
-                $res = $this->executePurchase($card["paytpv_iduser"],$card["paytpv_tokenuser"],$order, $amount);
-                if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
-                    
-                    $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
-                    $payment->setIsTransactionClosed(1);
-                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+            $Secure = ($this->isSecureTransaction())?1:0;
 
-                } else {
-                    if (!isset($res['DS_ERROR_ID']))
-                        $res['DS_ERROR_ID'] = -1;
-                    $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
-                    throw new Mage_Payment_Model_Info_Exception($message);
-                }
-            break;
+            switch ($Secure){
+                // PAGO NO SEGURO
+                case 0:
+                    $card = $this->authorize($payment, 0);
 
+                    $res = $this->executePurchase($order, $amount);
+                    if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
+                        $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
+                        ->setCurrencyCode($order->getBaseCurrencyCode())
+                        ->setPreparedMessage("PayTPV Pago Correcto")
+                        ->setIsTransactionClosed(1)
+                        ->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+
+                    } else {
+                        if (!isset($res['DS_ERROR_ID']))
+                            $res['DS_ERROR_ID'] = -1;
+                        $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+                        throw new Mage_Payment_Model_Info_Exception($message);
+                    }
+                break;
+            }
         }
         return $this;
+    }
+
+    public function _isPreauthorizeCapture($payment){
+        $idtran = (int)$payment->getTransactionId();
+        $lastTransaction = $payment->getTransaction($idtran);
+        if (!$lastTransaction || $lastTransaction->getTxnType() != Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH)
+            return false;
+        return true;
+    }
+
+    public function _preauthorizeCapture($payment, $amount){
+        $order = $payment->getOrder();
+        $res = $this->preauthorization_confirm($order, $amount);
+
+        if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
+            $transaction_id = (int)$payment->getTransactionId();
+            $payment->setIsTransactionClosed(1);
+            $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
+            $payment->setData('parent_transaction_id',$transaction_id);
+            $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+            
+            $payment->unsLastTransId();
+
+        } else {
+            if (!isset($res['DS_ERROR_ID']))
+                $res['DS_ERROR_ID'] = -1;
+            $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+            throw new Mage_Payment_Model_Info_Exception($message);
+        }
     }
 
     public function verifyPwd($password){
@@ -297,6 +351,25 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $session->addSuccess(Mage::helper('payment')->__('Successful payment'));
         }
         $comment = Mage::helper('payment')->__('Successful payment');
+        $order->setState($orderStatus, $orderStatus, $comment, true);
+        $order->sendNewOrderEmail();
+        $order->setEmailSent(true);
+
+        $order->save();
+        if ($session){
+            Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
+            Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/onepage/success'));
+        }
+    }
+
+    public function preauthSuccess(&$order, $session,$params=null)
+    {
+        $orderStatus = $this->getConfigData('paid_status');
+        if($session){
+            $session->unsErrorMessage();
+            $session->addSuccess(Mage::helper('payment')->__('Successful Preauthorization'));
+        }
+        $comment = Mage::helper('payment')->__('Successful Preauthorization');
         $order->setState($orderStatus, $orderStatus, $comment, true);
         $order->sendNewOrderEmail();
         $order->setEmailSent(true);
@@ -368,12 +441,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_MERCHANT_MERCHANTCODE, $DS_MERCHANT_TERMINAL, $DS_IDUSER, $DS_TOKEN_USER, $DS_MERCHANT_MERCHANTSIGNATURE, $_SERVER['REMOTE_ADDR']);
     }
 
-    private function executePurchase($paytpv_iduser,$paytpv_tokenuser, $order, $amount, $original_ip = '')
+    private function executePurchase($order, $amount, $original_ip = '')
     {
 
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
-        $DS_IDUSER = $paytpv_iduser;
-        $DS_TOKEN_USER = $paytpv_tokenuser;
+        $DS_IDUSER = $order->getPaytpvIduser();
+        $DS_TOKEN_USER = $order->getPaytpvTokenuser();
         $DS_MERCHANT_AMOUNT = round($amount * 100);
         $DS_MERCHANT_ORDER = $order->getIncrementId();
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
@@ -394,6 +467,60 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_ORIGINAL_IP,
             $DS_MERCHANT_PRODUCTDESCRIPTION,
             $DS_MERCHANT_OWNER
+        );
+    }
+
+
+    private function create_preauthorization($order, $amount, $original_ip = '')
+    {
+
+        $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
+        $DS_IDUSER = $order->getPaytpvIduser();
+        $DS_TOKEN_USER = $order->getPaytpvTokenuser();
+        $DS_MERCHANT_AMOUNT = round($amount * 100);
+        $DS_MERCHANT_ORDER = $order->getIncrementId();
+        $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
+        $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
+        $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
+        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
+        $DS_MERCHANT_PRODUCTDESCRIPTION = $order->getIncrementId();
+        $DS_MERCHANT_OWNER = ''; /*@TODO: Set owner*/
+        return $this->getClient()->create_preauthorization(
+            $DS_MERCHANT_MERCHANTCODE,
+            $DS_MERCHANT_TERMINAL,
+            $DS_IDUSER,
+            $DS_TOKEN_USER,
+            $DS_MERCHANT_AMOUNT,
+            $DS_MERCHANT_ORDER,
+            $DS_MERCHANT_CURRENCY,
+            $DS_MERCHANT_MERCHANTSIGNATURE,
+            $DS_ORIGINAL_IP,
+            $DS_MERCHANT_PRODUCTDESCRIPTION,
+            $DS_MERCHANT_OWNER
+        );
+    }
+
+
+    private function preauthorization_confirm($order, $amount, $original_ip = '')
+    {
+
+        $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
+        $DS_IDUSER = $order->getPaytpvIduser();
+        $DS_TOKEN_USER = $order->getPaytpvTokenuser();
+        $DS_MERCHANT_AMOUNT = round($amount * 100);
+        $DS_MERCHANT_ORDER = $order->getIncrementId();
+        $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
+        $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL .  $DS_MERCHANT_ORDER . $DS_MERCHANT_AMOUNT . $this->getConfigData('pass'));
+        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
+        return $this->getClient()->preauthorization_confirm(
+            $DS_MERCHANT_MERCHANTCODE,
+            $DS_MERCHANT_TERMINAL,
+            $DS_IDUSER,
+            $DS_TOKEN_USER,
+            $DS_MERCHANT_AMOUNT,
+            $DS_MERCHANT_ORDER,
+            $DS_MERCHANT_MERCHANTSIGNATURE,
+            $DS_ORIGINAL_IP
         );
     }
 
@@ -717,6 +844,27 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             );
         }
 
+        // execute_preauthorization_token
+        if ($operation == 111){
+            $signature = md5($client . $paytpv_iduser . $paytpv_tokenuser . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
+            $sArr = array
+            (
+                'MERCHANT_MERCHANTCODE' => $client,
+                'MERCHANT_TERMINAL' => $terminal,
+                'OPERATION' => $operation,
+                'LANGUAGE' => $language,
+                'MERCHANT_MERCHANTSIGNATURE' => $signature,
+                'MERCHANT_ORDER' => $order_id,
+                'MERCHANT_AMOUNT' => $amount,
+                'MERCHANT_CURRENCY' => $currency,     
+                'IDUSER' => $paytpv_iduser,
+                'TOKEN_USER' => $paytpv_tokenuser,
+                '3DSECURE' => 1,
+                'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
+                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
+            );
+        }
+
 
         return $sArr;
     }
@@ -954,22 +1102,18 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return "https://secure.paytpv.com/gateway/bnkgateway.php";
     }
 
-    public function refund(Varien_Object $payment, $amount)
+    /*public function refund(Varien_Object $payment, $amount)
     {
         parent::refund($payment, $amount);
        
-        /*@TODO comprobar devolución completa*/
+        //@TODO comprobar devolución completa
         $res = $this->executeRefund($payment,$amount);
         if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
-             $refundTransactionId = $res['DS_MERCHANT_AUTHCODE'];
-             $newTransactionType = Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND;
-             $payment->setTransactionId($refundTransactionId);
-             $payment->resetTransactionAdditionalInfo();
-             $payment->setData('is_transaction_closed',0);
-             $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
-             $message = Mage::helper('payment')->__('Devolucion confirmada');
-             $transaction = $payment->addTransaction($newTransactionType, null, false , $message);
-             $payment->unsLastTransId();
+            $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
+            $payment->setIsTransactionClosed(1);
+            $payment->setTransactionAdditionalInfo(
+                Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
+                $res);
         } else {
             if (!isset($res['DS_ERROR_ID']))
                 $res['DS_ERROR_ID'] = -1;
@@ -978,7 +1122,28 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         }
         return $this;
     } //refund api
+    */
 
+    public function refund(Varien_Object $payment, $amount)
+    {
+        parent::refund($payment, $amount);
+       
+        /*@TODO comprobar devolución completa*/
+        $res = $this->executeRefund($payment,$amount);
+        if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
+             $refundTransactionId = $res['DS_MERCHANT_AUTHCODE'];
+             $payment->setTransactionId($refundTransactionId);
+             $payment->resetTransactionAdditionalInfo();
+             $payment->setData('is_transaction_closed',0);
+             $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+        } else {
+            if (!isset($res['DS_ERROR_ID']))
+                $res['DS_ERROR_ID'] = -1;
+            $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
+            throw new Mage_Payment_Model_Info_Exception($message);
+        }
+        return $this;
+    } //refund api
 
     public function save_card($paytpv_iduser,$paytpv_tokenuser,$paytpv_cc,$paytpv_brand,$id_customer){
         $paytpv_cc = '************' . substr($paytpv_cc, -4);
@@ -1116,7 +1281,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                     $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
                     $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
                     ->setCurrencyCode($order->getBaseCurrencyCode())
-                    ->setPreparedMessage("Paytpv")
+                    ->setPreparedMessage("PayTPV")
                     ->setParentTransactionId($res['DS_MERCHANT_AUTHCODE'])
                     ->setShouldCloseParentTransaction(true)
                     ->setIsTransactionClosed(1)
