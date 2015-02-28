@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.1.0</version>
+            <version>5.1.1</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -106,6 +106,15 @@
                     </mage_paytpvcom_order_observer>
                 </observers>
             </sales_order_place_after>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <mage_paytpvcom_order_observer>
+                        <type>singleton</type>
+                        <class>paytpvcom/observer</class>
+                        <method>automaticallyInvoiceShipCompleteOrder</method>
+                    </mage_paytpvcom_order_observer>
+               </observers>
+            </sales_order_invoice_save_after>
             <checkout_submit_all_after>
                 <observers>
                     <redirect_to_3ds>
@@ -113,7 +122,7 @@
                         <method>checkout_submit_all_after</method>
                     </redirect_to_3ds>
                 </observers>
-            </checkout_submit_all_after>    
+            </checkout_submit_all_after>
         </events>
     </frontend>
 
@@ -149,7 +158,6 @@
                 <model>paytpvcom/standard</model>
                 <!-- order status for new orders paid by this payment method -->
                 <order_status>pending</order_status>
-                <preauth_status>preathorize</preauth_status>
                 <paid_status>processing</paid_status>
                 <error_status>canceled</error_status>
                 <useccv>1</useccv>

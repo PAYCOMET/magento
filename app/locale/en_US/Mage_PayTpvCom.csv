@@ -311,5 +311,7 @@ Cancel,Cancel
 "Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.","Terminal Seguro: todas las compras con 3D Secure. Terminal No Seguro: todas las compras sin 3D Secure."
 Payment method position,Payment method position
 Transaction type,Transaction type
-Sale (Auth + Capture),Sale (Auth + Capture)
+Sale (Authorize + Capture),Sale (Authorize + Capture)
 Pre-Authorization,Pre-Authorization
+Send Invoice Mail,Send Invoice Mail
+Send invoice mail automatically to the customer when invoice is created,Send invoice mail automatically to the customer when invoice is created

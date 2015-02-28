@@ -1,5 +1,7 @@
 <?php
 class Mage_PayTpvCom_Model_Observer{
+    /* @var Magento_Sales_Model_Order_Invoice */
+    var $_invoice;
 
 
 	public function saveOrderInfo($event)
@@ -18,4 +20,29 @@ class Mage_PayTpvCom_Model_Observer{
             $session->setRedirectUrl($url);
         }
     }
+
+
+    /**
+    * Mage::dispatchEvent($this->_eventPrefix.'_save_after', $this->_getEventData());
+    * protected $_eventPrefix = 'sales_order';
+    * protected $_eventObject = 'order';
+    * event: sales_order_save_after
+    */
+    public function automaticallyInvoiceShipCompleteOrder($observer)
+    {
+       try {
+            $payment_code = $observer->getEvent()->getInvoice()->getOrder()->getPayment()->getMethodInstance()->getCode();
+            $standard = Mage::getModel('paytpvcom/standard');
+            if ($payment_code==$standard->getCode() && $standard->getConfigData('sendmailinvoicecreation')){
+                /* @var $order Magento_Sales_Model_Order_Invoice */
+                $this->_invoice = $observer->getEvent()->getInvoice();
+                $this->_invoice->sendEmail();
+            }
+       } catch (Mage_Core_Exception $e) {
+           Mage::log("PAYTPV AutomaticallyInvoice Error: " . $e->getMessage());
+       }
+
+       return $this;
+    }
+
 }
