@@ -17,6 +17,16 @@
                 if (resp)   removeCard();
             });
         });
+
+        $jq(".save_desc").on("click", function(e){   
+            e.preventDefault();
+            $jq("#customer_id").val($jq(this).attr("id"));
+            cc = $jq("#card_desc_"+$jq(this).attr("id")).val();
+
+            confirm("<?php print $this->__('Save Description');?>" + ": " + cc, true, function(resp) {
+                if (resp)   saveDescriptionCard();
+            });
+        });
     });
 
     function confirm(msg, modal, callback) {
@@ -97,6 +107,30 @@
         
     };
 
+    function saveDescriptionCard()
+    {
+        customer_id = $jq("#customer_id").val();
+        card_desc = $jq("#card_desc_"+customer_id).val();
+        $jq.ajax({
+            url: "<?php echo $this->getUrl('paytpvcom/standard/actions') ?>",
+            type: "POST",
+            data: {
+                'action': 'saveDescriptionCard',
+                'customer_id': customer_id,
+                'card_desc': card_desc,
+                'ajax': true
+            },
+            success: function(result)
+            {
+                if (result == '0')
+                {
+                   alert("<?php print $this->__('Description saved');?>");
+                }
+            }
+        });
+        
+    };
+
 
     function addCard(){
         if(customForm.validator && customForm.validator.validate()) {
@@ -135,13 +169,20 @@
         <div class="span6" id="div_tarjetas">
             <?php print $this->__('Available Cards');?>:
             <?php foreach ($this->getCustomerCards() as $card){
-                print "<div class='bankstoreCard' id='card_".$card["customer_id"]."'>";  
+                print "<div class='bankstoreCard' id='card_".$card["customer_id"]."'>";
                     print $card["paytpv_cc"] . " (". $card["paytpv_brand"] . ")";
+                    print " <input type='text' maxlength='32' style='width:300px' id='card_desc_".$card["customer_id"]."' name='card_desc_".$card["customer_id"]."' value='".$card["card_desc"]."' placeholder='".$this->__('add description')."'>";
                     print "<label class='button_del'>";
-                         print "<a href='#' id='".$card["customer_id"]."' class='remove_card'>";
-                         print $this->__('Remove Card');
-                         print "</a>";
+                        print "<a href='#' id='".$card["customer_id"]."' class='save_desc'>";
+                        print $this->__('Save Description');
+                        print "</a>";
+                        print " | ";
+                        print "<a href='#' id='".$card["customer_id"]."' class='remove_card'>";
+                        print $this->__('Remove Card');
+                        print "</a>";
+                       
                     print "</label>";
+                   
                     print "<input type=\"hidden\" name=\"card_".$card["customer_id"]."_cc\" id=\"card_".$card["customer_id"]."_cc\" value=\"".$card["paytpv_cc"]."\">";
                 print "</div>";
             }?>

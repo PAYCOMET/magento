@@ -315,3 +315,6 @@ Sale (Authorize + Capture),Sale (Authorize + Capture)
 Pre-Authorization,Pre-Authorization
 Send Invoice Mail,Send Invoice Mail
 Send invoice mail automatically to the customer when invoice is created,Send invoice mail automatically to the customer when invoice is created
+Save Description,Save Description
+Description saved,Description saved
+add description,add description

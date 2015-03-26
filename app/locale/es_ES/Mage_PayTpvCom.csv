@@ -315,3 +315,6 @@ Sale (Authorize + Capture),Venta (Authorize + Capture)
 Pre-Authorization,Pre-Autorización
 Send Invoice Mail,Enviar Mail Factura
 Send invoice mail automatically to the customer when invoice is created,Enviar mail de factura automáticamente al cliente cuando se genera la factura
+Save Description,Guardar Descripción
+Description saved,Descripción guardada
+add description,añada una descripción

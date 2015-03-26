@@ -121,6 +121,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 else die('1');
                 
                 break;
+             case "saveDescriptionCard":
+                if ($model->saveDescriptionCard($params["customer_id"],$params["card_desc"]))
+                    die('0');
+                else die('1');
+                
+                break;
             case "cancelSuscription":
                 if ($model->cancelSuscription($params["suscription_id"]))
                     die('0');

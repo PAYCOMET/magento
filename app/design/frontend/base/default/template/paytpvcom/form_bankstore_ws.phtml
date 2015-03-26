@@ -20,7 +20,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
               $saveCard = 0;
               foreach ($this->getCustomerCards() as $card){
                  $saveCard = 1;
-                 print "<option value=".$card['paytpv_iduser'].">".$card["paytpv_cc"] . " (".$card["paytpv_brand"].")</option>";
+                 print "<option value=".$card['paytpv_iduser'].">".$card["paytpv_cc"] . " (".$card["paytpv_brand"].") - " . $card["card_desc"] . "</option>";
               }
               ?>
               <option value='0'><?php print $this->__('NEW CARD');?></option>

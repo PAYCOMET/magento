@@ -600,9 +600,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     {
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
-        $DS_MERCHANT_PAN = $payment_data['cc_number'];
+        $DS_MERCHANT_PAN = trim($payment_data['cc_number']);
         $DS_MERCHANT_EXPIRYDATE = str_pad($payment_data['cc_exp_month'], 2, "0", STR_PAD_LEFT) . substr($payment_data['cc_exp_year'], 2, 2);
         $DS_MERCHANT_CVV2 = $payment_data['cc_cid'];
+
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_MERCHANT_PAN . $DS_MERCHANT_CVV2 . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
         $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
         return $this->getClient()->add_user(
@@ -1003,6 +1004,26 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $customer = $model->getCollection()
                         ->addFilter("customer_id",$customer_id,"and")
                         ->getFirstItem()->delete();
+        } catch (Exception $e){
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * saveDescriptionCard
+     *
+     * 
+     */
+    function saveDescriptionCard($customer_id,$card_desc){
+
+        $paytpv_cc = $card_name;
+        $data = array("customer_id"=>$customer_id,"card_desc"=>$card_desc);
+        $model = Mage::getModel('paytpvcom/customer')->setData($data);
+        try {
+            $insertId = $model->save()->getId();
+            //echo "CUSTOMER Data successfully inserted. Insert ID: ".$insertId;
         } catch (Exception $e){
             return false;
         }
