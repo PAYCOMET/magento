@@ -318,3 +318,5 @@ Send invoice mail automatically to the customer when invoice is created,Enviar m
 Save Description,Guardar Descripción
 Description saved,Descripción guardada
 add description,añada una descripción
+Operation call,Llamada Operaciones
+Get CardBrand and BicCode,Obtener CardBrand y BicCode

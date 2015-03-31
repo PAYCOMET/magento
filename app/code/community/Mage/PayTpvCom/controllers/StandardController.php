@@ -231,7 +231,6 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $result = $params['Response']=='OK'?0:-1;
             $sign = $params['ExtendedSignature'];
             $esURLOK = false;
-            $sign = $params['ExtendedSignature'];
             $local_sign = md5(  $model->getConfigData('client').
                                 $model->getConfigData('terminal').
                                 $params['TransactionType'].
@@ -246,6 +245,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             else{
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
+
+                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                    $order
+                    ->setPaytpvCardBrand($params['CardBrand'])
+                    ->setPaytpvBicCode($params['BicCode']);
+                    $order->save();
+                }
 
                 if(isset($params['IdUser']) && isset($params['TokenUser'])){
                     
@@ -292,6 +298,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             else{
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
+
+                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                    $order
+                    ->setPaytpvCardBrand($params['CardBrand'])
+                    ->setPaytpvBicCode($params['BicCode']);
+                    $order->save();
+                }
 
                 if(isset($params['IdUser']) && isset($params['TokenUser'])){
                     
@@ -433,6 +446,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                 $order->setPaytpvIduser($paytpv_iduser)
                       ->setPaytpvTokenuser($paytpv_tokenuser);
+
+                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                    $order
+                    ->setPaytpvCardBrand($params['CardBrand'])
+                    ->setPaytpvBicCode($params['BicCode']);
+                    $order->save();
+                }
 
                 $order->save();
 

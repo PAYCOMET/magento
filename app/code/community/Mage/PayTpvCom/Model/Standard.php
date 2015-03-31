@@ -36,6 +36,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     protected $_isInitializeNeeded = false;
 
     private $_client = null;
+    private $_clientoperation = null;
 
     const IT_OFFSITE = 0;
     const IT_IFRAME = 1;
@@ -284,11 +285,24 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
                     $res = $this->executePurchase($order, $amount);
                     if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
+
                         $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
                         ->setCurrencyCode($order->getBaseCurrencyCode())
                         ->setPreparedMessage("PayTPV Pago Correcto")
                         ->setIsTransactionClosed(1)
                         ->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+
+                        // Obtener CardBrand y BicCode
+                        $operationcall = $this->getConfigData('operationcall');
+                        if ($operationcall==1){         
+                            $res = $this->operationCall($order);
+                            if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
+                                $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
+                                $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
+                                $order->setPaytpvCardBrand($CardBrand)
+                                ->setPaytpvBicCode($BicCode);
+                            }
+                        }
 
                     } else {
                         if (!isset($res['DS_ERROR_ID']))
@@ -322,6 +336,18 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
             
             $payment->unsLastTransId();
+
+            // Obtener CardBrand y BicCode
+            $operationcall = $this->getConfigData('operationcall');
+            if ($operationcall==1){         
+                $res = $this->operationCall($order);
+                if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
+                    $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
+                    $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
+                    $order->setPaytpvCardBrand($CardBrand)
+                    ->setPaytpvBicCode($BicCode);
+                }
+            }
 
         } else {
             if (!isset($res['DS_ERROR_ID']))
@@ -431,6 +457,14 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this->_client;
     }
 
+    private function getClientOperation()
+    {
+        if (null == $this->_clientoperation)
+            $this->_clientoperation = new Zend_Soap_Client('https://www.paytpv.com/gateway/xml_operations.php?wsdl');
+        $this->_clientoperation->setSoapVersion(SOAP_1_1);
+        return $this->_clientoperation;
+    }
+
     public function infoUser($DS_IDUSER, $DS_TOKEN_USER)
     {
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
@@ -468,6 +502,67 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_MERCHANT_PRODUCTDESCRIPTION,
             $DS_MERCHANT_OWNER
         );
+    }
+
+
+    private function operationCall($order)
+    {
+
+        // Array. Una password por cada terminal en PAYTPV_OPERATIONS_TERMINAL
+        $terminal_passwords = array($this->getConfigData('pass'));
+
+        $method = 'search_operations';
+
+        $arrDatos["PAYTPV_OPERATIONS_MERCHANTCODE"]    = $this->getConfigData('client');
+        $arrDatos["PAYTPV_OPERATIONS_SORTYPE"]         = 1;
+        $arrDatos["PAYTPV_OPERATIONS_SORTORDER"]       = "ASC";
+        $arrDatos["PAYTPV_OPERATIONS_LIMIT"]           = 9999;
+        $arrDatos["PAYTPV_OPERATIONS_TERMINAL"]        = array($this->getConfigData('terminal'));
+        $arrDatos["PAYTPV_OPERATIONS_OPERATIONS"]      = array(1,2,3,9);
+        $arrDatos["PAYTPV_OPERATIONS_MINAMOUNT"]       = 0;
+        $arrDatos["PAYTPV_OPERATIONS_MAXAMOUNT"]       = 999999999;
+        $arrDatos["PAYTPV_OPERATIONS_STATE"]           = 1;
+        $arrDatos["PAYTPV_OPERATIONS_FROMDATE"]        = date('YmdH', mktime(0, 0, 0, date("n")-1)) . "0000";
+        $arrDatos["PAYTPV_OPERATIONS_TODATE"]          = date('YmdH', mktime(0, 0, 0, date("n")+1)) . "0000";
+        $arrDatos["PAYTPV_OPERATIONS_CURRENCY"]        = $order->getOrderCurrencyCode();
+
+        $arrDatos["PAYTPV_OPERATIONS_VERSION"]         = "1.10";
+
+        // Inicio Calculo de firma
+        $arrDatos["PAYTPV_OPERATIONS_SIGNATURE"]       = $arrDatos["PAYTPV_OPERATIONS_MERCHANTCODE"];
+        $arrDatos["PAYTPV_OPERATIONS_SIGNATURE"]       .= $this->getConfigData('terminal').$terminal_passwords[0];
+         
+        foreach($arrDatos["PAYTPV_OPERATIONS_OPERATIONS"] as $oper) {
+            $arrDatos["PAYTPV_OPERATIONS_SIGNATURE"]   .= $oper;
+        }
+
+        $arrDatos["PAYTPV_OPERATIONS_SIGNATURE"]       .= $arrDatos["PAYTPV_OPERATIONS_FROMDATE"].$arrDatos["PAYTPV_OPERATIONS_TODATE"];
+        $arrDatos["PAYTPV_OPERATIONS_SIGNATURE"]       = sha1($arrDatos["PAYTPV_OPERATIONS_SIGNATURE"]);
+        // Fin Calculo de firma
+
+        $arrDatos["PAYTPV_OPERATIONS_REFERENCE"]       = $order->getIncrementId();
+        $arrDatos["PAYTPV_OPERATIONS_SEARCHTYPE"]      = 0;
+
+        $res = $this->getClientOperation()->search_operations(
+                $arrDatos["PAYTPV_OPERATIONS_MERCHANTCODE"],
+                $arrDatos["PAYTPV_OPERATIONS_SORTYPE"],
+                $arrDatos["PAYTPV_OPERATIONS_SORTORDER"],
+                $arrDatos["PAYTPV_OPERATIONS_LIMIT"],
+                $arrDatos["PAYTPV_OPERATIONS_TERMINAL"],
+                $arrDatos["PAYTPV_OPERATIONS_OPERATIONS"],
+                $arrDatos["PAYTPV_OPERATIONS_MINAMOUNT"],
+                $arrDatos["PAYTPV_OPERATIONS_MAXAMOUNT"],
+                $arrDatos["PAYTPV_OPERATIONS_STATE"],
+                $arrDatos["PAYTPV_OPERATIONS_FROMDATE"],
+                $arrDatos["PAYTPV_OPERATIONS_TODATE"],
+                $arrDatos["PAYTPV_OPERATIONS_CURRENCY"],
+                $arrDatos["PAYTPV_OPERATIONS_SIGNATURE"],
+                $arrDatos["PAYTPV_OPERATIONS_REFERENCE"],
+                $arrDatos["PAYTPV_OPERATIONS_SEARCHTYPE"],
+                $arrDatos["PAYTPV_OPERATIONS_VERSION"]
+                
+            );
+        return $res;
     }
 
 

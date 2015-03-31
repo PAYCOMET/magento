@@ -318,3 +318,5 @@ Send invoice mail automatically to the customer when invoice is created,Send inv
 Save Description,Save Description
 Description saved,Description saved
 add description,add description
+Operation call,Operation call
+Get CardBrand and BicCode,Get CardBrand and BicCode
