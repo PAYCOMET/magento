@@ -25,7 +25,7 @@ $jq(document).ready(function() {
 
 function conditions() {
     $jq(".open_conditions").fancybox({
-        href: $jq("#base_url").val()+"paytpvcom/standard/conditions",
+        href: $jq("#conditions_url").val(),
                 autoSize:false,
                 type : 'ajax',
                 'width':parseInt($jq(window).width() * 0.7)
