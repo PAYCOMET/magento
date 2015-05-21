@@ -320,3 +320,11 @@ Description saved,Description saved
 add description,add description
 Operation call,Operation call
 Get CardBrand and BicCode,Get CardBrand and BicCode
+Environment,Environment
+Real Mode,Real Mode
+Test Mode,Test Mode
+"Test Mode Credit Cards (MASTERCARD): 5325298401138208 / 5392661198415436 / 5534958931200656.<br>Expiration Date: Month: 5 / Year: 2020<br>CVC2: 123 / 3DSecure: 1234","Test Mode Credit Cards (MASTERCARD): 5325298401138208 / 5392661198415436 / 5534958931200656.<br>Expiration Date: Month: 5 / Year: 2020<br>CVC2: 123 / 3DSecure: 1234"
+Test mode does not support returns orders placed in Real Mode,Test mode does not support returns orders placed in Real Mode
+Test Card is invalid,Test Card is invalid
+Test mode does not support confirm preathorize orders placed in Real Mode,Test mode does not support confirm preathorize orders placed in Real Mode
+Test mode does not support cancel suscription placed in Real Mode,Test mode does not support cancel suscription placed in Real Mode

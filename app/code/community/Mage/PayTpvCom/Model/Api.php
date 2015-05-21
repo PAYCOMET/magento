@@ -64,6 +64,14 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
 
         $profileAdditionalInfo = $profile->getAdditionalInfo();
         $paytpv_iduser = $profileAdditionalInfo["paytpv_iduser"];
+        $paytpv_iduser = explode("paytpv_iduser_",$paytpv_iduser);
+        // Antiguo dato en additiona info (no va el texto paytpv_iduser_)
+        if (sizeof($paytpv_iduser)==1){
+            $paytpv_iduser = $paytpv_iduser[0];
+        }else{
+            $paytpv_iduser = $paytpv_iduser[1];
+            $paytpv_iduser = str_replace("_","",$paytpv_iduser);
+        }
 
         $res = $this->removeSuscription( $paytpv_iduser, $paytpv_tokenuser);
         
@@ -92,8 +100,13 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
      * CreateRecurringPaymentsProfile call
      */
     public function callCreateRecurringPaymentsProfile(){
-        
-        $res = $this->addUser();
+        $model = Mage::getModel('paytpvcom/standard');
+        if ($model->getConfigData('environment')!=1){
+            $res = $this->addUser();
+        // Test Mode
+        }else{
+            $res = $this->addUserTest();
+        }
         return $res;
     }
 
@@ -155,6 +168,37 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
             $DS_MERCHANT_MERCHANTSIGNATURE,
             $DS_ORIGINAL_IP
         );
+    }
+
+
+    private function addUserTest()
+    {
+        $model = Mage::getModel('paytpvcom/standard');
+
+        // Test Mode
+        // First 100.000 paytpv_iduser for Test_Mode
+        if (in_array(trim($this->_payment['cc_number']),$model->_arrTestCard) && str_pad($this->_payment['cc_exp_month'], 2, "0", STR_PAD_LEFT)==$model->_TestCard_mm && substr($this->_payment['cc_exp_year'], 2, 2)==$model->_TestCard_yy && $this->_payment['cc_cid']==$model->_TestCard_merchan_cvc2){
+            $model = Mage::getModel('paytpvcom/customer');
+            $collection = $model->getCollection()
+                ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+                ->addFieldToFilter('paytpv_iduser', array('lt' => 100000))
+                ->setOrder('paytpv_iduser', 'DESC')
+                ->getFirstItem()->getData();
+            if (empty($collection) === true){
+                $paytpv_iduser = 1;
+            }else{
+                $paytpv_iduser = $collection["paytpv_iduser"]+1;
+            }
+            $paytpv_tokenuser = "TESTTOKEN_".date("dmyHis");
+
+            $res["DS_IDUSER"] = $paytpv_iduser;
+            $res["DS_TOKEN_USER"] = $paytpv_tokenuser;
+            $res["DS_ERROR_ID"] = 0;
+        }else{
+            $res["DS_ERROR_ID"] = 4001;
+        }   
+        return $res;
+
     }
 
     private function removeSuscription($idUser, $tokeUser)

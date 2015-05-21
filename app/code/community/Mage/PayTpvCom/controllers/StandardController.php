@@ -78,6 +78,19 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         return;
     }
 
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function Bankstore3dstestAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        $this->loadLayout();
+        $this->renderLayout();
+        
+        return;
+    }
+
      /**
      * When a customer chooses PayTpvCom on Checkout/Payment page
      *
@@ -221,7 +234,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         }
         // NOTIFICACIÓN BANK STORE
         // (execute_purchase)
-        if ($params['TransactionType']==1
+        if (($params['TransactionType']==="1" || $params['TransactionType']==="109_TEST")
             AND $params['Order']
             AND $params['Response']
             AND $params['ExtendedSignature'])
@@ -231,15 +244,32 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $result = $params['Response']=='OK'?0:-1;
             $sign = $params['ExtendedSignature'];
             $esURLOK = false;
-            $local_sign = md5(  $model->getConfigData('client').
-                                $model->getConfigData('terminal').
-                                $params['TransactionType'].
-                                $ref.
-                                $params['Amount'].
-                                $params['Currency'].
-                                md5($model->getConfigData('pass')).
-                                $params['BankDateTime'].
-                                $params['Response']);   
+            $session = null;
+
+
+            if ($model->getConfigData('environment')!=1){
+                $local_sign = md5(  $model->getConfigData('client').
+                                    $model->getConfigData('terminal').
+                                    $params['TransactionType'].
+                                    $ref.
+                                    $params['Amount'].
+                                    $params['Currency'].
+                                    md5($model->getConfigData('pass')).
+                                    $params['BankDateTime'].
+                                    $params['Response']);   
+            // Modo Test
+            }else{
+                $local_sign = md5(  $model->getConfigData('client').
+                                    $params['IdUser'].
+                                    $params['TokenUser'].
+                                    $model->getConfigData('terminal').
+                                    "109".
+                                    $ref.
+                                    $params['Amount'].
+                                    $params['Currency'].
+                                    md5($model->getConfigData('pass')));  
+                $session = Mage::getSingleton('checkout/session');
+            }
             
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en el pago');
             else{
@@ -270,11 +300,11 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                         ->setPaytpvTokenuser($params['TokenUser']);
                     $order->save();
 
-                    $model->processSuccess($order,null,$params);
+                    $model->processSuccess($order,$session,$params);
                 }
             }
         // (preathorization)       
-        }else if ($params['TransactionType']==3
+        }else if (($params['TransactionType']==="3" || $params['TransactionType']==="111_TEST")
             AND $params['Order']
             AND $params['Response']
             AND $params['ExtendedSignature'])
@@ -285,7 +315,10 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $sign = $params['ExtendedSignature'];
             $esURLOK = false;
             $sign = $params['ExtendedSignature'];
-            $local_sign = md5(  $model->getConfigData('client').
+            $session = null;
+
+            if ($model->getConfigData('environment')!=1){
+                $local_sign = md5(  $model->getConfigData('client').
                                 $model->getConfigData('terminal').
                                 $params['TransactionType'].
                                 $ref.
@@ -294,6 +327,20 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                 md5($model->getConfigData('pass')).
                                 $params['BankDateTime'].
                                 $params['Response']);
+            // Modo Test
+            }else{
+                $local_sign = md5(  $model->getConfigData('client').
+                                    $params['IdUser'].
+                                    $params['TokenUser'].
+                                    $model->getConfigData('terminal').
+                                    "111".
+                                    $ref.
+                                    $params['Amount'].
+                                    $params['Currency'].
+                                    md5($model->getConfigData('pass')));  
+                $session = Mage::getSingleton('checkout/session');
+            }
+
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en preauthorization');
             else{
                 $id_order = $ref;
@@ -326,14 +373,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                         ->setPaytpvTokenuser($params['TokenUser']);
                     $order->save();
 
-                    $model->preauthSuccess($order,null,$params);
+                    $model->preauthSuccess($order,$session,$params);
                 }
-
-                
             } 
  
         // (add_user)
-        }else if ($params['TransactionType']==107){
+        }else if ($params['TransactionType']==="107"){
             
             $ref = $params['Order'];
             $sign = $params['Signature'];
@@ -352,7 +397,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             
             die('Usuario Registrado');
         // (create_subscription)
-        }else if ($params['TransactionType']==9){
+        }else if ($params['TransactionType']==="9" || $params['TransactionType']=="110_TEST"){
             $suscripcion = 1;  // Inicio Suscripcion
             $importe  = number_format($params['Amount']/ 100, 2);
             $ref = $params['Order'];
@@ -381,7 +426,10 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $result = $params['Response']=='OK'?0:-1;
             $sign = $params['ExtendedSignature'];
             $esURLOK = false;
-            $local_sign = md5(  $model->getConfigData('client').
+            $session = null;
+            
+            if ($model->getConfigData('environment')!=1){
+                $local_sign = md5(  $model->getConfigData('client').
                                 $model->getConfigData('terminal').
                                 $params['TransactionType'].
                                 $params['Order'].
@@ -390,6 +438,19 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                 md5($model->getConfigData('pass')).
                                 $params['BankDateTime'].
                                 $params['Response']);
+            // Modo Test
+            }else{
+                $local_sign = md5(  $model->getConfigData('client').
+                                    $params['IdUser'].
+                                    $params['TokenUser'].
+                                    $model->getConfigData('terminal').
+                                    "110".
+                                    $ref.
+                                    $params['Amount'].
+                                    $params['Currency'].
+                                    md5($model->getConfigData('pass')));  
+                $session = Mage::getSingleton('checkout/session');
+            }
 
             if ($sign!=$sign) die('Error 3');
             else{
@@ -397,8 +458,9 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $recurringProfileCollection = Mage::getModel('sales/recurring_profile')
                     ->getCollection()
                     ->addFieldToFilter('additional_info', array(
-                        array('like' => '%'.$paytpv_iduser .'%'),
-                    ));
+                        array('like' => '%paytpv_iduser_'.$paytpv_iduser .'_%'),
+                    ))
+                    ->setOrder('created_at', 'DESC');
                 
                 $profile = $recurringProfileCollection->getFirstItem();
                 $paytpv_tokenuser = substr($profile->getReferenceId(),2);
@@ -417,7 +479,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 }else{
                     $profile->load();
                     // add order assigned to the recurring profile with initial fee
-                    if ($profile->getInitAmount()){
+
+                    if ((float)$profile->getInitAmount()){
                         $productItemInfo = new Varien_Object;
                         $productItemInfo->setPaymentType(Mage_Sales_Model_Recurring_Profile::PAYMENT_TYPE_INITIAL);
                         $productItemInfo->setPrice($profile->getInitAmount());
@@ -456,8 +519,9 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                 $order->save();
 
-                $model->processSuccess($order,null,$params);
+                $model->processSuccess($order,$session,$params);
             }
+        
         }
     }
 

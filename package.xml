@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.1.3</version>
+    <version>5.2.0</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -11,10 +11,6 @@
         &#xD;
         This module makes possible to use PayTpv services in Magento
     </description>
-    <notes>5.0.0&#xD;
-        * Save Cards and Suscriptions&#xD;
-        * Refunds
-    </notes>
     <authors>
         <author>
             <name>Jose Ramón García</name>
@@ -22,8 +18,8 @@
             <email>jrgarcia@paytpv.com</email>
         </author>
     </authors>
-    <date>2014-12-12</date>
-    <time>00:02:24</time>
+    <date>2015-05-15</date>
+    <time>15:30:00</time>
     <contents>
         <target name="magecommunity">
             <dir name="Mage">
@@ -31,6 +27,7 @@
                     <dir name="Block">
                         <dir name="Standard">
                             <file name="Bankstore.php"/>
+                            <file name="Bankstore3dstest.php"/>
                             <file name="Bankstorerecurring.php"/>
                             <file name="Form.php"/>
                             <file name="Iframe.php"/>
@@ -50,6 +47,8 @@
                         <dir name="System">
                             <dir name="Config">
                                 <dir name="Source">
+                                    <file name="Environment.php"/>
+                                    <file name="Environmentcomment.php"/>
                                     <file name="Integraciones.php"/>
                                     <file name="Operativas.php"/>
                                     <file name="Terminales.php"/>
@@ -95,6 +94,7 @@
                                 <file name="mastercard.png"/>
                                 <file name="mastercard_secuercode.png"/>
                                 <file name="verifiedbyvisa.png"/>
+                                <file name="2100candau256.png"/>
                             </dir>
                         </dir>
                         <dir name="js">
@@ -113,6 +113,7 @@
                                 <file name="jquery.fancybox.css"/>
                                 <file name="tarjetas.css"/>
                                 <file name="payment.css"/>
+                                <file name="2100.css"/>
                             </dir>
                         </dir>
                     </dir>
@@ -143,6 +144,7 @@
                             <dir name="paytpvcom">
                                 <file name="bankstore.phtml"/>
                                 <file name="form.phtml"/>
+                                <file name="form_bankstore_3ds_test.phtml"/>
                                 <file name="form_bankstore_ws.phtml"/>
                                 <file name="iframe.phtml"/>
                                 <file name="redirect.phtml"/>

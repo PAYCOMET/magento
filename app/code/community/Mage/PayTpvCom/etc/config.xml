@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.1.3</version>
+            <version>5.2.0</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -167,6 +167,7 @@
                 <sort_order>-999</sort_order>
                 <operativa>1</operativa>
                 <terminales>0</terminales>
+                <environment>0</environment>
                 <transaction_type>0</transaction_type>
                 <secure_first>1</secure_first>
                 <secure_amount>100000</secure_amount>

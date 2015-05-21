@@ -150,6 +150,7 @@
         <remove name="right.reports.product.viewed"/>
         <remove name="sale.reorder.sidebar"/>
         <remove name="catalog.compare.sidebar" />  <!--product compare-->
+
         
         <!--Change root template to 2columns-right.phtml-->
         <reference name="root">
@@ -162,6 +163,47 @@
         </reference>
         
     </paytpvcom_standard_bankstore>
+
+
+    <paytpvcom_standard_bankstore3dstest>
+
+        <remove name="header" />
+        <remove name="footer" />
+        <remove name="right"/>
+        <remove name="left"/>
+        <remove name="cart_sidebar" />
+        <remove name="checkout.cart" />
+        <remove name="sale.reorder.sidebar" />
+        
+        
+        <reference name="head">
+            <action method="removeItem">
+                <type>skin_css</type>
+                <name>css/styles.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/paytpv.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/2100.css</name>
+            </action>
+        </reference>
+        
+        <reference name="content">
+            <block type="paytpvcom/standard_bankstore3dstest" name="bankstore3ds" template="paytpvcom/form_bankstore_3ds_test.phtml"/>
+        </reference>
+        
+    </paytpvcom_standard_bankstore3dstest>
 
 
     <paytpvcom_standard_bankstorerecurring>

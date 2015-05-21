@@ -49,6 +49,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     protected $_arrCustomerCards = null;
     protected $_arrCustomerSuscriptions = null;
 
+    // Test Mode Card;
+    public $_arrTestCard = array("5325298401138208","5392661198415436","5534958931200656");
+    public $_TestCard_mm = 5;
+    public $_TestCard_yy = 20;
+    public $_TestCard_merchan_cvc2 = 123;
+
     protected function _construct(){
 
        $this->_init("paytpvcom/paytpvcom");
@@ -203,7 +209,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         // NUEVA TARJETA o SUSCRIPCION
         if ($payment_data["card"]==0){
             if ($payment_data['cc_number'] && $payment_data['cc_number']) {
-                $res = $this->addUser($payment_data);
+                if ($this->getConfigData('environment')!=1){
+                    $res = $this->addUser($payment_data);
+                // Test Mode
+                }else{
+                    $res = $this->addUserTest($payment_data);
+                }
 
                 $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
                 $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
@@ -216,8 +227,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
                     // Si ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                     if ($remember && $order->getCustomerId()>0){
-                        $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER);
-                        $this->save_card($DS_IDUSER,$DS_TOKEN_USER,$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$order->getCustomerId());
+                        if ($this->getConfigData('environment')!=1){
+                            $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER);
+                        // Test Mode
+                        }else{
+                            $result['DS_MERCHANT_PAN'] = $payment_data['cc_number'];
+                            $result['DS_CARD_BRAND'] = 'MASTERCARD';
+
+                        }
+                        $card = $this->save_card($DS_IDUSER,$DS_TOKEN_USER,$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$order->getCustomerId());
                     }
                 }
             } 
@@ -244,7 +262,13 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         if ($this->getConfigData("payment_action")=="authorize"){
             $transaction_type = $this->getConfigData('transaction_type');
             if (!$this->isSecureTransaction() && $transaction_type == self::PREAUTHORIZATION){
-                $res = $this->create_preauthorization($order, $amount);
+                if ($this->getConfigData('environment')!=1){
+                    $res = $this->create_preauthorization($order, $amount);
+                // Test Mode
+                }else{
+                    $res['DS_ERROR_ID'] = 0;
+                    $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
+                }
                 if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
                     $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
                     $payment->setIsTransactionClosed(0);
@@ -283,7 +307,14 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 case 0:
                     $card = $this->authorize($payment, 0);
 
-                    $res = $this->executePurchase($order, $amount);
+                    if ($this->getConfigData('environment')!=1){
+                        $res = $this->executePurchase($order, $amount);
+                    // Test Mode
+                    }else{
+                        $res['DS_ERROR_ID'] = 0;
+                        $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
+                    }
+
                     if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
 
                         $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
@@ -293,14 +324,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                         ->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
 
                         // Obtener CardBrand y BicCode
-                        $operationcall = $this->getConfigData('operationcall');
-                        if ($operationcall==1){         
-                            $res = $this->operationCall($order);
-                            if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
-                                $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
-                                $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
-                                $order->setPaytpvCardBrand($CardBrand)
-                                ->setPaytpvBicCode($BicCode);
+                        if ($this->getConfigData('environment')!=1){
+                            $operationcall = $this->getConfigData('operationcall');
+                            if ($operationcall==1){         
+                                $res = $this->operationCall($order);
+                                if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
+                                    $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
+                                    $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
+                                    $order->setPaytpvCardBrand($CardBrand)
+                                    ->setPaytpvBicCode($BicCode);
+                                }
                             }
                         }
 
@@ -326,8 +359,22 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function _preauthorizeCapture($payment, $amount){
         $order = $payment->getOrder();
-        $res = $this->preauthorization_confirm($order, $amount);
-
+        if ($this->getConfigData('environment')!=1){
+            $res = $this->preauthorization_confirm($order, $amount);
+        // Test Mode
+        }else{
+            $order = $payment->getOrder();
+            $paytpv_tokenuser = $order->getPaytpvTokenuser();
+            // Operacion realizada en Modo Test
+            if (strstr($paytpv_tokenuser, 'TESTTOKEN')){
+                $res['DS_ERROR_ID'] = 0;
+                $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
+            // Operacion real
+            }else{
+                $res['DS_RESPONSE' ] = 1;
+                $res["DS_ERROR_ID"] = 4002;
+            }
+        }
         if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
             $transaction_id = (int)$payment->getTransactionId();
             $payment->setIsTransactionClosed(1);
@@ -338,14 +385,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $payment->unsLastTransId();
 
             // Obtener CardBrand y BicCode
-            $operationcall = $this->getConfigData('operationcall');
-            if ($operationcall==1){         
-                $res = $this->operationCall($order);
-                if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
-                    $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
-                    $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
-                    $order->setPaytpvCardBrand($CardBrand)
-                    ->setPaytpvBicCode($BicCode);
+            if ($this->getConfigData('environment')!=1){
+                $operationcall = $this->getConfigData('operationcall');
+                if ($operationcall==1){         
+                    $res = $this->operationCall($order);
+                    if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
+                        $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
+                        $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
+                        $order->setPaytpvCardBrand($CardBrand)
+                        ->setPaytpvBicCode($BicCode);
+                    }
                 }
             }
 
@@ -712,6 +761,35 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         );
     }
 
+    private function addUserTest($payment_data)
+    {
+        // Test Mode
+        // First 100.000 paytpv_iduser for Test_Mode
+        if (in_array(trim($payment_data['cc_number']),$this->_arrTestCard) && str_pad($payment_data['cc_exp_month'], 2, "0", STR_PAD_LEFT)==$this->_TestCard_mm && substr($payment_data['cc_exp_year'], 2, 2)==$this->_TestCard_yy && $payment_data['cc_cid']==$this->_TestCard_merchan_cvc2){
+            $model = Mage::getModel('paytpvcom/customer');
+            $collection = $model->getCollection()
+                ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+                ->addFieldToFilter('paytpv_iduser', array('lt' => 100000))
+                ->setOrder('paytpv_iduser', 'DESC')
+                ->getFirstItem()->getData();
+            if (empty($collection) === true){
+                $paytpv_iduser = 1;
+            }else{
+                $paytpv_iduser = $collection["paytpv_iduser"]+1;
+            }
+            $paytpv_tokenuser = "TESTTOKEN_".date("dmyHis");
+
+            $res["DS_IDUSER"] = $paytpv_iduser;
+            $res["DS_TOKEN_USER"] = $paytpv_tokenuser;
+            $res["DS_ERROR_ID"] = 0;
+        }else{
+            $res["DS_ERROR_ID"] = 4001;
+        }   
+        return $res;
+    }
+
+     
+
     private function removeUser($idUser, $tokeUser)
     {
 
@@ -1021,10 +1099,13 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $sArr;
     }
 
+    
     // Cargar tarjetas tokenizadas
     public function loadCustomerCards(){
         $model = Mage::getModel('paytpvcom/customer');
-        $collection = $model->getCollection()->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and");
+        $collection = $model->getCollection()
+            ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+            ->setOrder("paytpv_iduser", 'DESC');
         $arrCards = array();
         foreach($collection as $item){
             $arrCards[] =  $item->getData();
@@ -1135,7 +1216,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $id_customer = Mage::getSingleton('customer/session')->getCustomer()->getId();
 
         if ($id_customer>0){
-            $res = $this->addUser($params);
+            if ($this->getConfigData('environment')!=1){
+                $res = $this->addUser($params);
+            // Test Mode
+            }else{
+                $res = $this->addUserTest($params);
+            }
 
             $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
             $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
@@ -1148,7 +1234,13 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
                 // Si ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                 if ($id_customer>0){
-                    $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER);
+                    if ($this->getConfigData('environment')!=1){
+                        $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER);
+                    // Test Mode
+                    }else{
+                        $result['DS_MERCHANT_PAN'] = $params['cc_number'];
+                        $result['DS_CARD_BRAND'] = 'MASTERCARD';
+                    }
                     $this->save_card($DS_IDUSER,$DS_TOKEN_USER,$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$id_customer);
                 }
                 return "";
@@ -1215,7 +1307,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getPayTpvBankStoreUrl()
     {
-        return "https://secure.paytpv.com/gateway/bnkgateway.php";
+        if ($this->getConfigData('environment')!=1){
+            return "https://secure.paytpv.com/gateway/bnkgateway.php";
+        // Test Mode
+        }else{
+            return Mage::getUrl('paytpvcom/standard/bankstore3dstest');
+        }
     }
 
     /*public function refund(Varien_Object $payment, $amount)
@@ -1245,7 +1342,23 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         parent::refund($payment, $amount);
        
         /*@TODO comprobar devolución completa*/
-        $res = $this->executeRefund($payment,$amount);
+        if ($this->getConfigData('environment')!=1){
+            $res = $this->executeRefund($payment,$amount);
+        // Test Mode
+        }else{
+            $order = $payment->getOrder();
+            $paytpv_tokenuser = $order->getPaytpvTokenuser();
+            // Operacion realizada en Modo Test
+            if (strstr($paytpv_tokenuser, 'TESTTOKEN')){
+                $res['DS_RESPONSE'] = 1;
+                $res["DS_ERROR_ID"] = 0;
+                $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
+            // Operacion real
+            }else{
+                $res[ 'DS_RESPONSE' ] = 1;
+                $res["DS_ERROR_ID"] = 4000;
+            }
+        }
         if (('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) && 1 == $res['DS_RESPONSE']) {
              $refundTransactionId = $res['DS_MERCHANT_AUTHCODE'];
              $payment->setTransactionId($refundTransactionId);
@@ -1263,6 +1376,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function save_card($paytpv_iduser,$paytpv_tokenuser,$paytpv_cc,$paytpv_brand,$id_customer){
         $paytpv_cc = '************' . substr($paytpv_cc, -4);
+
+        $arrSalida["paytpv_iduser"] = $paytpv_iduser;
+        $arrSalida["paytpv_tokenuser"] = $paytpv_tokenuser;
+
         $data = array("paytpv_iduser"=>$paytpv_iduser,"paytpv_tokenuser"=>$paytpv_tokenuser,"paytpv_cc"=>$paytpv_cc,"paytpv_brand"=>$paytpv_brand,"id_customer"=>$id_customer,"date"=>now());
         $model = Mage::getModel('paytpvcom/customer')->setData($data);
         try {
@@ -1271,7 +1388,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         } catch (Exception $e){
          echo $e->getMessage();
         }
-        return true;
+        return $arrSalida;
     }
 
     
@@ -1326,7 +1443,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         
         if ((int)$res['DS_ERROR_ID'] == 0){
             $profile->setReferenceId($api->getMerchantTransId($DS_TOKEN_USER));
-            $additionalInfo["paytpv_iduser"] = $res["DS_IDUSER"];
+            $additionalInfo["paytpv_iduser"] = "paytpv_iduser_".$res["DS_IDUSER"]."_";
+            $additionalInfo["paytpv_tokenuser"] = $DS_TOKEN_USER;
             $profile->setAdditionalInfo(serialize($additionalInfo));
             $profile->save();
 
@@ -1473,7 +1591,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $additionalInfo = $profile->getAdditionalInfo() ? $profile->getAdditionalInfo() : array();
 
         if ($action=='cancel'){
-            $res = $api->callManageRecurringPaymentsProfileStatus($profile,$action);
+            if ($this->getConfigData('environment')!=1){
+                $res = $api->callManageRecurringPaymentsProfileStatus($profile,$action);
+            // Test Mode
+            }else{
+                if (strstr($additionalInfo["paytpv_tokenuser"],'TESTTOKEN')){
+                    $res['DS_ERROR_ID']=0;
+                }else{
+                    $res['DS_ERROR_ID']=4003;
+                }
+            }
              
             if ((int)$res['DS_ERROR_ID'] == 0){
                 $profile->save();
@@ -1813,7 +1940,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             '1245' => Mage::helper('payment')->__('csb parameter missing'),
             '1246' => Mage::helper('payment')->__('userReference parameter missing'),
             '1247' => Mage::helper('payment')->__('Can not find the associated FUC'),
-            '666' => Mage::helper('payment')->__('Missing Credit Card information')
+            '666' => Mage::helper('payment')->__('Missing Credit Card information'),
+            '4000' => Mage::helper('payment')->__('Test mode does not support returns orders placed in Real Mode'),
+            '4001' => Mage::helper('payment')->__('Test Card is invalid'),
+            '4002' => Mage::helper('payment')->__('Test mode does not support confirm preathorize orders placed in Real Mode'),
+            '4003' => Mage::helper('payment')->__('Test mode does not support cancel suscription placed in Real Mode'),
         );
         return $paytpv_error_codes[$code];
     }

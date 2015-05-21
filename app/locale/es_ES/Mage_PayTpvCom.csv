@@ -320,3 +320,11 @@ Description saved,Descripción guardada
 add description,añada una descripción
 Operation call,Llamada Operaciones
 Get CardBrand and BicCode,Obtener CardBrand y BicCode
+Environment,Entorno
+Real Mode,Modo Real (Producción)
+Test Mode,Modo de Prueba 
+"Test Mode Credit Cards (MASTERCARD): 5325298401138208 / 5392661198415436 / 5534958931200656.<br>Expiration Date: Month: 5 / Year: 2020<br>CVC2: 123 / 3DSecure: 1234","Tarjetas Modo de Prueba (MASTERCARD): 5325298401138208 / 5392661198415436 / 5534958931200656.<br>Caducidad: Mes: 5 / Año: 2020<br>CVC2: 123 / 3DSecure: 1234"
+Test mode does not support returns orders placed in Real Mode,En Modo Pruebas no se puede realizar una devolución realizada en Modo Real
+Test Card is invalid,Tarjeta de prueba no válida
+Test mode does not support confirm preathorize orders placed in Real Mode,En Modo de Pruebas no se pueden confirmar preautorizaciones realizadas en Modo Real
+Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real

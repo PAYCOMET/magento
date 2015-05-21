@@ -24,7 +24,7 @@ class Mage_PayTpvCom_Block_Standard_Bankstorerecurring extends Mage_Core_Block_T
 
         $iframeUrl = $standard->getPayTpvBankStoreUrl()."?" .http_build_query( $standard->getBankStorerecurringTokenFormFields($arrDatos) );
         
-        $this->assign( "iframeUrl", $iframeUrl );
+        Mage::app()->getResponse()->setRedirect($iframeUrl);
 
     }
 }

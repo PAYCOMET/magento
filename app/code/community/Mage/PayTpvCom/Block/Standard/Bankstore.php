@@ -23,7 +23,7 @@ class Mage_PayTpvCom_Block_Standard_Bankstore extends Mage_Core_Block_Template
 
         $iframeUrl = $standard->getPayTpvBankStoreUrl()."?" .http_build_query( $standard->getBankStoreTokenFormFields($operation) );
         
-        $this->assign( "iframeUrl", $iframeUrl );
+        Mage::app()->getResponse()->setRedirect($iframeUrl);
 
     }
 }

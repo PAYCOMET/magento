@@ -20,7 +20,8 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
               $saveCard = 0;
               foreach ($this->getCustomerCards() as $card){
                  $saveCard = 1;
-                 print "<option value=".$card['paytpv_iduser'].">".$card["paytpv_cc"] . " (".$card["paytpv_brand"].") - " . $card["card_desc"] . "</option>";
+                 $card_desc = ($card["card_desc"]!="")?"- " . $card["card_desc"]:"";
+                 print "<option value=".$card['paytpv_iduser'].">".$card["paytpv_cc"] . " (".$card["paytpv_brand"].") ". $card_desc . "</option>";
               }
               ?>
               <option value='0'><?php print $this->__('NEW CARD');?></option>
@@ -39,10 +40,12 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
 
     <?php endif;?>
         
-	<?php $message = $this->getMessage();?>
-    <?php if($message != ''): ?>
-			<p><?php echo $message; ?></p>
-    <?php endif; ?>
+	<?php 
+        $message = $this->getMessage();
+        if($message != ''){
+			echo "<p>".$message."</p>";
+        }
+    ?>
     
     <li id="payment_form_<?php echo $_code ?>_cc" <?php if($saveCard > 0){?>style="display:none;"<?php } ?>>
         <ul>
