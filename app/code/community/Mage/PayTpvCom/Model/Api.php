@@ -233,7 +233,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
 
         $model = Mage::getModel('paytpvcom/standard');
 
-        $amount = $model->_formatAmount($this->_recurringProfile->getInitAmount());
+        $amount = $model->_formatAmount($model->getQuote()->getStore()->convertPrice($this->_recurringProfile->getInitAmount()));
 
         $DS_MERCHANT_MERCHANTCODE = $model->getConfigData('client');
         $freq = $this->_recurringProfile->getPeriodFrequency();
@@ -266,7 +266,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
 
         $DS_SUBSCRIPTION_AMOUNT = round($amount * 100);
         $DS_SUBSCRIPTION_ORDER = $this->getMerchantTransId($DS_TOKEN_USER);
-        $DS_SUBSCRIPTION_CURRENCY = $this->_recurringProfile->getCurrencyCode();
+        $DS_SUBSCRIPTION_CURRENCY = Mage::app()->getStore()->getCurrentCurrencyCode();
         $DS_MERCHANT_TERMINAL = $model->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_SUBSCRIPTION_AMOUNT . $DS_SUBSCRIPTION_CURRENCY . $model->getConfigData('pass'));
         $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
