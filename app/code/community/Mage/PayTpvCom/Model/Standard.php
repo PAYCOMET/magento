@@ -38,10 +38,6 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     private $_client = null;
     private $_clientoperation = null;
 
-    const IT_OFFSITE = 0;
-    const IT_IFRAME = 1;
-    const OP_TPVWEB = 0;
-    const OP_BANKSTORE = 1;
 
     const SALE = 0;
     const PREAUTHORIZATION = 1;
@@ -164,8 +160,6 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     }
 
     private function useIframe(){
-        if(self::OP_TPVWEB == parent::getConfigData('operativa'))
-            return true;
         return $this->isSecureTransaction();
     }
 
@@ -201,8 +195,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function authorize(Varien_Object $payment, $amount)
     {
-        parent::authorize($payment, $amount);
         $order = $payment->getOrder();
+        $amount = $order->getGrandTotal();
+
+        parent::authorize($payment, $amount);
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
         $card = array();
         $remember = (isset($payment_data["remember"]) && $payment_data["card"]==0)?1:0;
@@ -290,12 +286,13 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function capture(Varien_Object $payment, $amount)
     {
+        $order = $payment->getOrder();
+        $amount = $order->getGrandTotal();
         if ($this->_isPreauthorizeCapture($payment)){
             $this->_preauthorizeCapture($payment, $amount);
         }else{
             parent::capture($payment, $amount);
-
-            $order = $payment->getOrder();
+            
             $customer_id = $order->getCustomerId();
             $customer = Mage::getModel('customer/customer')->load($customer_id);
             $payment_data = Mage::app()->getRequest()->getParam('payment', array());
@@ -476,25 +473,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getOrderPlaceRedirectUrl(){
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
-        if (self::OP_BANKSTORE == $this->getConfigData('operativa'))
-            if ($this->isSecureTransaction()){
-                if ($this->isRecurring())
-                    return Mage::getUrl('paytpvcom/standard/bankstorerecurring');
-                else
-                    return Mage::getUrl('paytpvcom/standard/bankstore');
-            }else{
-                return null;
-            }
-        $it = $this->getConfigData('integracion');
-        switch ($it) {
-            case self::IT_OFFSITE:
-                return Mage::getUrl('paytpvcom/standard/redirect');
-                break;
-            case self::IT_IFRAME:
-            default:
-                return Mage::getUrl('paytpvcom/standard/iframe');
+        if ($this->isSecureTransaction()){
+            if ($this->isRecurring())
+                return Mage::getUrl('paytpvcom/standard/bankstorerecurring');
+            else
+                return Mage::getUrl('paytpvcom/standard/bankstore');
         }
-
         return null;
     }
 
@@ -1117,37 +1101,31 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getStandardFormTemplate()
     {
-        $op = $this->getConfigData('operativa');
-        if (self::OP_BANKSTORE == $op){
-            $this->loadCustomerCards();
-            $terminales = $this->getConfigData('terminales');
-            return 'paytpvcom/form_bankstore_ws.phtml';
-        }else{
-            return 'paytpvcom/form.phtml';
-        }
+        $this->loadCustomerCards();
+        $terminales = $this->getConfigData('terminales');
+        return 'paytpvcom/form_bankstore_ws.phtml';
     }
 
     function isSecureTransaction(){
-        $op = $this->getConfigData('operativa');
         $terminales = $this->getConfigData('terminales');
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+        
         // Transaccion Segura:
-            // Si es TPVWEB
-            // Si es Bankstore y solo tiene Terminal Seguro
-            if (self::OP_TPVWEB == $op || (self::OP_BANKSTORE == $op && $terminales==0))
-                return true;   
-       
-            // Si esta definido que el pago es 3d secure y no estamos usando una tarjeta tokenizada
-            if ($this->getConfigData('secure_first') && $payment_data["card"]==0)
-                return true;
+        // Si solo tiene Terminal Seguro
+        if ($terminales==0)
+            return true;   
+   
+        // Si esta definido que el pago es 3d secure y no estamos usando una tarjeta tokenizada
+        if ($this->getConfigData('secure_first') && $payment_data["card"]==0)
+            return true;
 
-            // Si se supera el importe maximo para compra segura
-            if ($terminales==2 && ($this->getConfigData('secure_amount')!="" && $this->getConfigData('secure_amount') < $this->getCurrentOrderAmount()))
-                return true;
+        // Si se supera el importe maximo para compra segura
+        if ($terminales==2 && ($this->getConfigData('secure_amount')!="" && $this->getConfigData('secure_amount') < $this->getCurrentOrderAmount()))
+            return true;
 
-            // Si esta definido como que la primera compra es Segura y es la primera compra aunque este tokenizada
-            if ($terminales==2 && $this->getConfigData('secure_first') && $payment_data["card"]>0 && $this->isFirstPurchaseToken($payment_data["card"]))
-                return true;
+        // Si esta definido como que la primera compra es Segura y es la primera compra aunque este tokenizada
+        if ($terminales==2 && $this->getConfigData('secure_first') && $payment_data["card"]>0 && $this->isFirstPurchaseToken($payment_data["card"]))
+            return true;
         
         return false;
     }
@@ -1339,6 +1317,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function refund(Varien_Object $payment, $amount)
     {
+        $order = $payment->getOrder();
+        $amount = $order->getGrandTotal();
+
         parent::refund($payment, $amount);
        
         /*@TODO comprobar devolución completa*/
@@ -1483,8 +1464,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 $arrData["DS_SUBSCRIPTION_ENDDATE"] = $DS_SUBSCRIPTION_ENDDATE;
                 $arrData["DS_SUBSCRIPTION_PERIODICITY"] = $DS_SUBSCRIPTION_PERIODICITY;
                 $arrData["MERCHANT_ORDER"] = $api->getMerchantTransId();
-                $arrData["MERCHANT_AMOUNT"] = $profile->getInitAmount();
-                $arrData["MERCHANT_CURRENCY"] = $profile->getCurrencyCode();
+                $arrData["MERCHANT_AMOUNT"] = $this->_formatAmount($this->getQuote()->getStore()->convertPrice($profile->getInitAmount()));
+                $arrData["MERCHANT_CURRENCY"] = Mage::app()->getStore()->getCurrentCurrencyCode();
 
                 Mage::helper('paytpvcom')->prepare3ds($arrData);
 
@@ -1505,6 +1486,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                     $order = $profile->createOrder($productItemInfo);
                     $order->setPaytpvIduser($DS_IDUSER)
                           ->setPaytpvTokenuser($DS_TOKEN_USER);
+
+                    $grandtotal = $this->_formatAmount($this->getQuote()->getStore()->convertPrice($profile->getInitAmount()));
+                    $order->setOrderCurrencyCode( Mage::app()->getStore()->getCurrentCurrencyCode())
+                       ->setGrandTotal($grandtotal)
+                       ->setSubtotal($grandtotal);
+
                     $order->save();
 
                     $profile->addOrderRelation($order->getId());
@@ -1633,6 +1620,17 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $amount = sprintf('%.2F', $amount); // "f" depends on locale, "F" doesn't
         return $asFloat ? (float)$amount : $amount;
     }
+
+    public function write_log(){
+   
+        $domain = Mage::getSingleton('core/cookie')->getDomain();
+        $version_modulo = Mage::getConfig()->getNode()->modules->Mage_PayTpvCom->version;
+        try{
+            $url_log = "http://prestashop.paytpv.com/log_paytpv.php?dominio=".$domain."&version_modulo=".$version_modulo."&tienda=Magento&version_tienda=".Mage::getVersion();
+            @file_get_contents($url_log);
+        }catch (exception $e){}
+    }
+
 
     public function getErrorDesc($code)
     {

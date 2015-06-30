@@ -14,6 +14,8 @@ class Mage_PayTpvCom_Block_Standard_Bankstore3dstest extends Mage_Core_Block_Tem
 
         $transaction_type = $standard->getConfigData('transaction_type');
 
+        $currency_symbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+
         
         Mage::getSingleton('adminhtml/session_quote')->clear();
 
@@ -33,6 +35,7 @@ class Mage_PayTpvCom_Block_Standard_Bankstore3dstest extends Mage_Core_Block_Tem
         $this->assign( "MERCHANT_MERCHANTSIGNATURE",$_GET["MERCHANT_MERCHANTSIGNATURE"]);
         $this->assign( "ID_USER",$_GET["IDUSER"]);
         $this->assign( "TOKEN_USER",$_GET["TOKEN_USER"]);
+        $this->assign( "CURRENCY_SYMBOL",$currency_symbol);
         $this->assign( "CURRENCY",$_GET["MERCHANT_CURRENCY"]);
         $this->assign( "MERCHAN_PAN","");
 

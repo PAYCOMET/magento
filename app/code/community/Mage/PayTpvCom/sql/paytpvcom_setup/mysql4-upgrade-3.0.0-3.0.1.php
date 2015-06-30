@@ -12,6 +12,8 @@ try{
 	    DROP  `paytpv_tokenuser`,
 	    DROP  `paytpv_cc`;
 	");
+}catch (exception $e){}
+try{
 	$tableorder = $this->getTable('sales/order');
 	$installer->run("
 	ALTER TABLE  $tableorder

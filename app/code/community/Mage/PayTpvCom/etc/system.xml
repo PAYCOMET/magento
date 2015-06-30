@@ -10,12 +10,15 @@
                 <paytpvcom translate="label" module="paytpvcom">
                     <!-- will have title 'New Module' -->
                     <label>Credit Card Paytpv</label>
+
                     <!-- position between other payment methods -->
                     <sort_order>671</sort_order>
                     <!-- do not show this configuration options in store scope -->
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>0</show_in_store>
+                    <show_in_store>1</show_in_store>
+                    <comment>This module allows you to accept card payments via paytpv.com<![CDATA[<a href="https://www.paytpv.com/altaempresa.php" target="_blank">Click here to sign up for an PayTPV account</a>]]></comment>
+
                     <fields>
                         <!-- is this payment method active for the website? -->
                         <active translate="label">
@@ -38,30 +41,20 @@
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </title>
                         <environment translate="label">
                             <label>Environment</label>
                             <comment>
                                 <model>paytpvcom/system_config_source_environmentcomment</model>
                             </comment>
-                           
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_environment</source_model>
                             <sort_order>21</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </environment>
-                        <operativa translate="label">
-                            <label>Operation method</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>paytpvcom/system_config_source_operativas</source_model>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </operativa>
                         <transaction_type translate="label">
                             <label>Transaction type</label>
                             <frontend_type>select</frontend_type>
@@ -69,77 +62,90 @@
                             <sort_order>31</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </transaction_type>
+                        <client translate="label">
+                            <label>Client Code</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>32</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends><environment>0</environment></depends>
+                        </client>
+
+                        <terminal translate="label">
+                            <label>Terminal number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>33</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends><environment>0</environment></depends>
+                        </terminal>
+                        <pass translate="label">
+                            <label>User Password</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>34</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends><environment>0</environment></depends>
+                        </pass>
+                        
                         <terminales translate="label">
                             <label>Terminals available</label>
                             <frontend_type>select</frontend_type>
                             <source_model>paytpvcom/system_config_source_terminales</source_model>
-                            <sort_order>32</sort_order>
+                            <sort_order>35</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </terminales>
                         <secure_first translate="label">
                             <label>Use 3D Secure first purchase</label>
                             <comment>Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>33</sort_order>
+                            <sort_order>36</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </secure_first>
+
+                        <currency translate="label">
+                            <label>Accepted Currency</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_currency</source_model>
+                            <sort_order>37</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </currency>
+
                         <secure_amount translate="label">
                             <label>Use 3D Secure in purchases above</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number</validate>
-                            <sort_order>34</sort_order>
+                            <sort_order>38</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends><terminales>2</terminales></depends>
                         </secure_amount>
+                       
+                        
 
                         <commerce_password translate="label">
                             <label>Commerce password required in saved cards purchase</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>35</sort_order>
+                            <sort_order>86</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </commerce_password>
-
                         
-                        <pass translate="label">
-                            <label>User Password</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-                        </pass>
-                        <terminal translate="label">
-                            <label>Terminal number</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-
-                        </terminal>
-                        <client translate="label">
-                            <label>Client Code</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-                        </client>
                         <sendmailinvoicecreation translate="label">
                             <label>Send Invoice Mail</label>
                             <comment>Send invoice mail automatically to the customer when invoice is created</comment>
@@ -148,7 +154,7 @@
                             <sort_order>87</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </sendmailinvoicecreation>
                         <operationcall translate="label">
                             <label>Operation call</label>
@@ -158,7 +164,7 @@
                             <sort_order>88</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends><environment>0</environment></depends>
                         </operationcall>
                         <show_nameoncard translate="label">
@@ -168,7 +174,7 @@
                             <sort_order>89</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </show_nameoncard>
                         <show_cctypes translate="label">
                             <label>Show Credit Card Types</label>
@@ -177,7 +183,7 @@
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </show_cctypes>
                         <cctypes translate="label">
                             <label>Credit Card Types</label>

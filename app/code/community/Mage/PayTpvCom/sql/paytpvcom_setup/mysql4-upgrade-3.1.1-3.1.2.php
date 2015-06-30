@@ -2,17 +2,19 @@
 $installer = $this;
 
 $installer->startSetup();
-$setup = Mage::getModel('customer/entity_setup', 'core_setup');
-$setup->addAttribute('customer', 'paytpv_recall', array(
-	'type' => 'int',
-	'global' => 1,
-	'visible' => 0,
-	'required' => 0,
-	'user_defined' => 0,
-	'default' => '1',
-	'visible_on_front' => 0
-));
 
+try{
+	$setup = Mage::getModel('customer/entity_setup', 'core_setup');
+	$setup->addAttribute('customer', 'paytpv_recall', array(
+		'type' => 'int',
+		'global' => 1,
+		'visible' => 0,
+		'required' => 0,
+		'user_defined' => 0,
+		'default' => '1',
+		'visible_on_front' => 0
+	));
+}catch (exception $e){}
 try{
 	$tableorder = $this->getTable('sales/order');
 	$installer->run("

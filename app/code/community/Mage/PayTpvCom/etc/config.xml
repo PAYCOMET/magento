@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.2.0</version>
+            <version>5.3.0</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -165,7 +165,6 @@
                 <!-- default title for payment checkout page and order view page -->
                 <title>Tarjeta de crédito/débito (PAYTPV)</title>
                 <sort_order>-999</sort_order>
-                <operativa>1</operativa>
                 <terminales>0</terminales>
                 <environment>0</environment>
                 <transaction_type>0</transaction_type>
@@ -174,6 +173,7 @@
                 <show_nameoncard>1</show_nameoncard>
                 <show_cctypes>1</show_cctypes>
                 <operationcall>0</operationcall>
+                <currency>EUR</currency>
             </paytpvcom>
         </payment>
     </default>

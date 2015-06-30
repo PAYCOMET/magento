@@ -288,12 +288,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     // Creamos la factura
                     $payment = $order->getPayment();
 
+                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
                     $payment->setTransactionId($params['AuthCode'])
                         ->setCurrencyCode($order->getBaseCurrencyCode())
                         ->setPreparedMessage("PayTPV Pago Correcto.")
                         ->setIsTransactionClosed(1)
-                        ->registerCaptureNotification($importe)
-                        ->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
+                        ->registerCaptureNotification($order->getBaseGrandTotal());
 
                     $order
                         ->setPaytpvIduser($params['IdUser'])
@@ -470,6 +470,11 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     $order = $this->_createOrder($profile);
 
+                    $grandtotal = $importe;
+                    $order->setOrderCurrencyCode($params['Currency'])
+                       ->setGrandTotal($grandtotal)
+                       ->setSubtotal($grandtotal);
+
                     $payment = $order->getPayment();
                     $payment->setTransactionId($params['AuthCode']. '-rebill')->setIsTransactionClosed(1);
                     $order->save();
@@ -486,6 +491,11 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                         $productItemInfo->setPrice($profile->getInitAmount());
                         
                         $order = $profile->createOrder($productItemInfo);
+
+                        $grandtotal = $importe;
+                        $order->setOrderCurrencyCode($params['Currency'])
+                            ->setGrandTotal($grandtotal)
+                            ->setSubtotal($grandtotal);
 
                         $payment = $order->getPayment();
                         $payment->setTransactionId($params['AuthCode']. '-initial')->setIsTransactionClosed(1);
@@ -505,7 +515,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 ->setParentTransactionId($params['AuthCode'])
                 ->setShouldCloseParentTransaction(true)
                 ->setIsTransactionClosed(1)
-                ->registerCaptureNotification($importe);
+                ->registerCaptureNotification($order->getBaseGrandTotal());
 
                 $order->setPaytpvIduser($paytpv_iduser)
                       ->setPaytpvTokenuser($paytpv_tokenuser);
