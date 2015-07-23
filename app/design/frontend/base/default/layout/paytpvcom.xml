@@ -88,6 +88,35 @@
         </reference>
     </onestepcheckout_index_index>
 
+    <aw_onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/noconflict.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/paytpvcom/paytpv.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/payment.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/paytpvcom/jquery.fancybox.css</name>
+            </action>
+        </reference>
+    </aw_onestepcheckout_index_index>
+
     <gomage_checkout_onepage_index>
         <reference name="head">
             <action method="addItem">

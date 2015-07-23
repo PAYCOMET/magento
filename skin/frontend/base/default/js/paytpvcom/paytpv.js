@@ -87,3 +87,11 @@ function checkCardWS(card){
         $jq("#user_validation").show();
     }
 }
+
+
+document.observe("dom:loaded", function() {
+    Element.observe('userpwd', 'click', function (e) {
+        $('userpwd').stopObserving();
+        return false;
+    }, false);
+});
