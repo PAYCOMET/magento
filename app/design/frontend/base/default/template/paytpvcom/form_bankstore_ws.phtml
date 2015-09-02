@@ -10,7 +10,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
 
 
 <ul id="payment_form_<?php echo $_code ?>" class="form-list" style="display:none;">
-    <?php if ($method_checkout!="guest" && !$isRecurring):?>
+    <?php if (sizeof($this->getCustomerCards())>0 && !$isRecurring):?>
     
     <li id="saved_cards">
         <label for="card"><?php print $this->__('Pay by Credit Card');?>:</label>
@@ -159,12 +159,12 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
                 </script>
             </li>
             <?php endif; ?>
-            <?php if ($method_checkout!="guest" && !$isRecurring):?>
+            <?php if (!$isRecurring):?>
             <li>
                 <div class="input-box">
                 <div id="storingStep" class="alert alert-info"  <?php if ($saveCard==1) print " display:none";?>>
                     <!--
-                    <h4><?php print $this->__('STREAMLLINE YOUR FUTURE PURCHASES!');?></h4>
+                    <h4><?php print $this->__('STREAMLINE YOUR FUTURE PURCHASES!');?></h4>
                     <?php print $this->__('Link a card to your account to make all procedures easily and quickly.');?>
                     <br>
                     -->

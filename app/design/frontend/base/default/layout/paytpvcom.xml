@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout version="0.1.0">
-    <checkout_onepage_index>
+    <paytpvcom_handle>
         <reference name="head">
             <action method="addItem">
                 <type>skin_js</type>
@@ -27,124 +27,31 @@
                 <name>css/paytpvcom/jquery.fancybox.css</name>
             </action>
         </reference>
+    </paytpvcom_handle>
+
+    <checkout_onepage_index>
+        <update handle="paytpvcom_handle" />
     </checkout_onepage_index>
 
     <onepagecheckout_index_index>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/paytpv.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/payment.css</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/jquery.fancybox.css</name>
-            </action>
-        </reference>
+        <update handle="paytpvcom_handle" />
     </onepagecheckout_index_index>
 
-
     <onestepcheckout_index_index>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/paytpv.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/payment.css</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/jquery.fancybox.css</name>
-            </action>
-        </reference>
+        <update handle="paytpvcom_handle" />
     </onestepcheckout_index_index>
 
     <aw_onestepcheckout_index_index>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/paytpv.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/payment.css</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/jquery.fancybox.css</name>
-            </action>
-        </reference>
+        <update handle="paytpvcom_handle" />
     </aw_onestepcheckout_index_index>
 
     <gomage_checkout_onepage_index>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery.fancybox.pack.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/paytpv.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/payment.css</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/jquery.fancybox.css</name>
-            </action>
-        </reference>
+        <update handle="paytpvcom_handle" />
     </gomage_checkout_onepage_index>
+
+    <fancycheckout_index_index>
+        <update handle="paytpvcom_handle" />
+    </fancycheckout_index_index>
 
     <paytpvcom_standard_tarjetas>
         <update handle="customer_account"/>

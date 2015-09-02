@@ -286,7 +286,7 @@ IFRAME,IFRAME
 "You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está rgistrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
 "Remember this information for next purchase","Recordar esta información en la próxima compra"
 "use another","usar otra"
-STREAMLLINE YOUR FUTURE PURCHASES!,¡AGILICE SUS FUTURAS COMPRAS!
+STREAMLINE YOUR FUTURE PURCHASES!,¡AGILICE SUS FUTURAS COMPRAS!
 Link a card to your account to make all procedures easily and quickly.,Vincule una tarjeta a su cuenta para poder hacer todos los trámites de forma ágil y rápida.
 When you link a Tarjet accepts ,Al vincular una tarjet acepta los 
 terms and conditions of service,términos y condiciones del servicio
@@ -328,3 +328,4 @@ Test mode does not support returns orders placed in Real Mode,En Modo Pruebas no
 Test Card is invalid,Tarjeta de prueba no válida
 Test mode does not support confirm preathorize orders placed in Real Mode,En Modo de Pruebas no se pueden confirmar preautorizaciones realizadas en Modo Real
 Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real
+Currency Accepted,Moneda Aceptada

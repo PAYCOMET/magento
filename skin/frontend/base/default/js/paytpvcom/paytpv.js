@@ -5,21 +5,11 @@ $jq(document).ready(function() {
        conditions();
     });
 
-
-    $jq("body").on("click",".paytpv #subscribe",function(){
-       checkSuscription();
-    });
-
-    $jq("body").on("click","#payment_form_paytpvcom #subscribe",function(){
-       checkSuscriptionWS();
-    });
-
     $jq("body").on("click","#payment_form_paytpvcom .open_conditions",function(){
        conditions();
     });
 
-    checkSuscription();
-
+    
 });
 
 
@@ -30,48 +20,7 @@ function conditions() {
                 type : 'ajax',
                 'width':parseInt($jq(window).width() * 0.7)
         });
-
      
-}
-
-function checkSuscription(){
-   
-    if ($jq("#subscribe").is(':checked')){
-        $jq("#div_periodicity").show();
-        $jq("#saved_cards").hide();
-        $jq("#storingStep").hide();
-        $jq(".paytpv_iframe").hide();
-    }else{
-        $jq("#div_periodicity").hide();
-        $jq("#saved_cards").show();
-        checkCard();
-    }
-}
-
-
-function checkSuscriptionWS(){
-   
-    if ($jq("#subscribe").is(':checked')){
-        $jq("#div_periodicity").show();
-        $jq("#saved_cards").hide();
-        $jq("#storingStep").hide();
-        $jq('#payment_form_paytpvcom_cc').show();
-    }else{
-        $jq("#div_periodicity").hide();
-        $jq("#saved_cards").show();
-        checkCardWS($jq('#card'));
-    }
-}
-
-function checkCard(){
-    if ($jq("#card").val()=="0"){
-        $jq("#storingStep").removeClass("hidden").show();
-        $jq("#user_validation").hide();
-    }else{
-        $jq("#storingStep").hide();
-        $jq("#user_validation").show();
-    }
-    $jq(".paytpv_iframe").hide();
 }
 
 function checkCardWS(card){
@@ -90,8 +39,11 @@ function checkCardWS(card){
 
 
 document.observe("dom:loaded", function() {
-    Element.observe('userpwd', 'click', function (e) {
-        $('userpwd').stopObserving();
-        return false;
-    }, false);
+    if($('userpwd') != undefined) {
+   
+        Element.observe('userpwd', 'click', function (e) {
+            $('userpwd').stopObserving();
+            return false;
+        }, false);
+    }
 });

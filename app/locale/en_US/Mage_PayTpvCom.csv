@@ -286,7 +286,7 @@ IFRAME,IFRAME
 "You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está rgistrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
 "Remember this information for next purchase","Remember this information for next purchase"
 "use another","usar otra"
-STREAMLLINE YOUR FUTURE PURCHASES!,STREAMLLINE YOUR FUTURE PURCHASES!
+STREAMLINE YOUR FUTURE PURCHASES!,STREAMLINE YOUR FUTURE PURCHASES!
 Link a card to your account to make all procedures easily and quickly.,Link a card to your account to make all procedures easily and quickly.
 When you link a Tarjet accepts ,When you link a Tarjet accepts 
 terms and conditions of service,terms and conditions of service
@@ -328,3 +328,4 @@ Test mode does not support returns orders placed in Real Mode,Test mode does not
 Test Card is invalid,Test Card is invalid
 Test mode does not support confirm preathorize orders placed in Real Mode,Test mode does not support confirm preathorize orders placed in Real Mode
 Test mode does not support cancel suscription placed in Real Mode,Test mode does not support cancel suscription placed in Real Mode
+Currency Accepted,Currency Accepted
