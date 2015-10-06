@@ -18,10 +18,12 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         <select name="payment[card]" id="card" onChange="checkCardWS(this)">
               <?php 
               $saveCard = 0;
+              $selected = "selected";
               foreach ($this->getCustomerCards() as $card){
                  $saveCard = 1;
                  $card_desc = ($card["card_desc"]!="")?"- " . $card["card_desc"]:"";
-                 print "<option value=".$card['paytpv_iduser'].">".$card["paytpv_cc"] . " (".$card["paytpv_brand"].") ". $card_desc . "</option>";
+                 print "<option value=".$card['paytpv_iduser']." $selected>".$card["paytpv_cc"] . " (".$card["paytpv_brand"].") ". $card_desc . "</option>";
+                 $selected = "";
               }
               ?>
               <option value='0'><?php print $this->__('NEW CARD');?></option>

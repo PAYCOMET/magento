@@ -55,10 +55,22 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
 
     public function callManageRecurringPaymentsProfileStatus($profile,$action)
     {
+        $model = Mage::getModel('paytpvcom/standard');
+        // Test Mode
+        if ($model->getConfigData('environment')==1){
+            $additionalInfo = $profile->getAdditionalInfo() ? $profile->getAdditionalInfo() : array();
+
+            if (strstr($additionalInfo["paytpv_tokenuser"],'TESTTOKEN')){
+                $res['DS_ERROR_ID']=0;
+            }else{
+                $res['DS_ERROR_ID']=4003;
+            }
+            return $res;
+        }
+
         $newState = $profile->getNewState();
         $currentState = $profile->getState();
 
-        $model = Mage::getModel('paytpvcom/standard');
         $paytpv_tokenuser = substr($profile->getReferenceId(),2);
 
 
@@ -101,12 +113,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
      */
     public function callCreateRecurringPaymentsProfile(){
         $model = Mage::getModel('paytpvcom/standard');
-        if ($model->getConfigData('environment')!=1){
-            $res = $this->addUser();
-        // Test Mode
-        }else{
-            $res = $this->addUserTest();
-        }
+        $res = $model->addUser($this->_payment);
         return $res;
     }
 
@@ -148,9 +155,16 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
         return $this->_merchanttransid;
     }
 
+    /*
     private function addUser()
     {
         $model = Mage::getModel('paytpvcom/standard');
+
+        // Test Mode
+        if ($model->getConfigData('environment')==1){
+            $res = $this->addUserTest();
+            return $res;
+        }
 
         $DS_MERCHANT_MERCHANTCODE = $model->getConfigData('client');
         $DS_MERCHANT_TERMINAL = $model->getConfigData('terminal');
@@ -200,6 +214,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
         return $res;
 
     }
+    */
 
     private function removeSuscription($idUser, $tokeUser)
     {

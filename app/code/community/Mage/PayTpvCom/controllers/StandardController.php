@@ -276,14 +276,15 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
-                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
-                    $order
-                    ->setPaytpvCardBrand($params['CardBrand'])
-                    ->setPaytpvBicCode($params['BicCode']);
-                    $order->save();
-                }
-
                 if(isset($params['IdUser']) && isset($params['TokenUser'])){
+
+                    // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
+                    $remember = $order->getPaytpvSavecard();
+                    if ($remember && $order->getCustomerId()>0){
+                        $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
+                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
+                        $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
+                    }
                     
                     // Creamos la factura
                     $payment = $order->getPayment();
@@ -302,6 +303,14 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     $model->processSuccess($order,$session,$params);
                 }
+
+                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                    $order
+                    ->setPaytpvCardBrand($params['CardBrand'])
+                    ->setPaytpvBicCode($params['BicCode']);
+                    $order->save();
+                }
+
             }
         // (preathorization)       
         }else if (($params['TransactionType']==="3" || $params['TransactionType']==="111_TEST")
@@ -346,18 +355,19 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
-                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
-                    $order
-                    ->setPaytpvCardBrand($params['CardBrand'])
-                    ->setPaytpvBicCode($params['BicCode']);
-                    $order->save();
-                }
-
                 if(isset($params['IdUser']) && isset($params['TokenUser'])){
                     
                     $payment = $order->getPayment();
                     $newTransactionType = Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH;
-                    $message = Mage::helper('payment')->__('Preautorizacion confirmada'); 
+                    $message = Mage::helper('payment')->__('Preautorizacion confirmada');
+
+                    // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
+                    $remember = $order->getPaytpvSavecard();
+                    if ($remember && $order->getCustomerId()>0){
+                        $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
+                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
+                        $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
+                    }
                     
                     $payment->setTransactionId($params['AuthCode']);
                     $payment->setIsTransactionClosed(0);
@@ -374,6 +384,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     $order->save();
 
                     $model->preauthSuccess($order,$session,$params);
+                }
+
+                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                    $order
+                    ->setPaytpvCardBrand($params['CardBrand'])
+                    ->setPaytpvBicCode($params['BicCode']);
+                    $order->save();
                 }
             } 
  
@@ -392,7 +409,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             if ($sign!=$local_sign) die('Error 2');
 
             $id_customer = $ref;
-            $result = $model->infoUser($params['IdUser'],$params['TokenUser']);
+            $result = $model->infoUser($params['IdUser'],$params['TokenUser'],0);
             $model->save_card($params['IdUser'],$params['TokenUser'],$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$id_customer);
             
             die('Usuario Registrado');

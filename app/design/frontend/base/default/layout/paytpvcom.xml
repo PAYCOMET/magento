@@ -26,6 +26,7 @@
                 <type>skin_css</type>
                 <name>css/paytpvcom/jquery.fancybox.css</name>
             </action>
+            <action method="addJs"><script>lib/ccard.js</script></action>
         </reference>
     </paytpvcom_handle>
 
@@ -76,6 +77,7 @@
                 <type>skin_css</type>
                 <name>css/paytpvcom/jquery.fancybox.css</name>
             </action>
+            <action method="addJs"><script>lib/ccard.js</script></action>
         </reference>
         <reference name="content">
             <block type="paytpvcom/standard_tarjetas" name="tarjetas" template="paytpvcom/tarjetas.phtml"></block>  
