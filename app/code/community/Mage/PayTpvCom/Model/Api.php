@@ -246,7 +246,16 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
     private function createSubscriptionToken($DS_IDUSER,$DS_TOKEN_USER)
     {
 
+
         $model = Mage::getModel('paytpvcom/standard');
+        
+        // Test Mode
+        if ($model->getConfigData('environment')==1){
+            $res['DS_ERROR_ID']=0;
+            $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
+            return $res;
+        }
+
 
         $amount = $model->_formatAmount($model->getQuote()->getStore()->convertPrice($this->_recurringProfile->getInitAmount()));
 

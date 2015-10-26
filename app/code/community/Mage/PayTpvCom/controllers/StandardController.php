@@ -166,7 +166,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $locale = Mage::app()->getLocale()->getLocaleCode();
         $arr_Locale = array("es_ES","en_US");
 
-        if (!in_array($arr_Locale,$locale))
+        if (!in_array($locale,$arr_Locale))
             $locale = "es_ES";
 
         $file = Mage::getBaseDir('locale') . DS .  $locale . DS . "template" . DS . "paytpvcom" . DS . "conditions.html";
@@ -499,28 +499,29 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     
                 // Suscripcion
                 }else{
-                    $profile->load();
+                    //$profile->load();
                     // add order assigned to the recurring profile with initial fee
 
-                    if ((float)$profile->getInitAmount()){
-                        $productItemInfo = new Varien_Object;
-                        $productItemInfo->setPaymentType(Mage_Sales_Model_Recurring_Profile::PAYMENT_TYPE_INITIAL);
-                        $productItemInfo->setPrice($profile->getInitAmount());
-                        
-                        $order = $profile->createOrder($productItemInfo);
+                    $initAmount = ((float)$profile->getInitAmount()>0)?(float)$profile->getInitAmount():0;
 
-                        $grandtotal = $importe;
-                        $order->setOrderCurrencyCode($params['Currency'])
-                            ->setGrandTotal($grandtotal)
-                            ->setSubtotal($grandtotal);
+                    $productItemInfo = new Varien_Object;
+                    $productItemInfo->setPaymentType(Mage_Sales_Model_Recurring_Profile::PAYMENT_TYPE_INITIAL);
+                    $productItemInfo->setPrice($initAmount);
+                    
+                    $order = $profile->createOrder($productItemInfo);
 
-                        $payment = $order->getPayment();
-                        $payment->setTransactionId($params['AuthCode']. '-initial')->setIsTransactionClosed(1);
-                        $order->save();
-                        $profile->addOrderRelation($order->getId());
-                        $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_ACTIVE);
-                        $profile->save();
-                    }
+                    $grandtotal = $importe;
+                    $order->setOrderCurrencyCode($params['Currency'])
+                        ->setGrandTotal($grandtotal)
+                        ->setSubtotal($grandtotal);
+
+                    $payment = $order->getPayment();
+                    $payment->setTransactionId($params['AuthCode']. '-initial')->setIsTransactionClosed(1);
+                    $order->save();
+                    $profile->addOrderRelation($order->getId());
+                    $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_ACTIVE);
+                    $profile->save();
+                    
                 }
 
                 // Creamos la factura

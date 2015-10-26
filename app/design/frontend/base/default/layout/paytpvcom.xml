@@ -54,6 +54,10 @@
         <update handle="paytpvcom_handle" />
     </fancycheckout_index_index>
 
+    <lotusbreath_onestepcheckout_index_index>
+        <update handle="paytpvcom_handle" />
+    </lotusbreath_onestepcheckout_index_index>
+
     <paytpvcom_standard_tarjetas>
         <update handle="customer_account"/>
         <reference name="head">
@@ -156,7 +160,7 @@
         <!--use the right block-->
         
         <reference name="content">
-            <block type="paytpvcom/standard_bankstorerecurring" name="bankstore" template="paytpvcom/bankstore.phtml"/>
+            <block type="paytpvcom/standard_bankstorerecurring" name="bankstorerecurring" template="paytpvcom/bankstorerecurring.phtml"/>
         </reference>
     </paytpvcom_standard_bankstorerecurring>
 

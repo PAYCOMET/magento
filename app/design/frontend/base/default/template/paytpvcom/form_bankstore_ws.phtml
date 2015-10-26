@@ -49,7 +49,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         }
     ?>
     
-    <li id="payment_form_<?php echo $_code ?>_cc" <?php if($saveCard > 0){?>style="display:none;"<?php } ?>>
+    <li id="payment_form_<?php echo $_code ?>_cc" <?php if(isset($saveCard) && $saveCard > 0){?>style="display:none;"<?php } ?>>
         <ul>
             <?php if ($show_nameoncard):?>
             <li>

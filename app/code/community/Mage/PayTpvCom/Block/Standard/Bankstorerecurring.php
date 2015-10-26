@@ -11,9 +11,6 @@ class Mage_PayTpvCom_Block_Standard_Bankstorerecurring extends Mage_Core_Block_T
         $arrDatos = array();
         foreach ($session->getData() as $k => $value){
             $key = $standard->_getValidParamKey($k);
-            if ($key){
-                $session->unsetData($k);
-            }
             $arrDatos[$key] = $value;
         }
         

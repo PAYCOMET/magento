@@ -1422,6 +1422,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
 
         $res = $api->callCreateRecurringPaymentsProfile();
+
         $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
         $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
         $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';  
@@ -1467,10 +1468,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 $arrData["DS_SUBSCRIPTION_STARTDATE"] = $DS_SUBSCRIPTION_STARTDATE;
                 $arrData["DS_SUBSCRIPTION_ENDDATE"] = $DS_SUBSCRIPTION_ENDDATE;
                 $arrData["DS_SUBSCRIPTION_PERIODICITY"] = $DS_SUBSCRIPTION_PERIODICITY;
-                $arrData["MERCHANT_ORDER"] = $api->getMerchantTransId();
+                $arrData["MERCHANT_ORDER"] = $api->getMerchantTransId($res["DS_TOKEN_USER"]);
                 $arrData["MERCHANT_AMOUNT"] = $this->_formatAmount($this->getQuote()->getStore()->convertPrice($profile->getInitAmount()));
                 $arrData["MERCHANT_CURRENCY"] = Mage::app()->getStore()->getCurrentCurrencyCode();
 
+                // Test Mode
+                if ($this->getConfigData('environment')==1){
+                    $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+                    $arrData["CC_NUMBER"] = $payment_data['cc_number'];
+                }
+               
                 Mage::helper('paytpvcom')->prepare3ds($arrData);
 
                 $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_PENDING);

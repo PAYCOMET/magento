@@ -20,6 +20,7 @@ class Mage_PayTpvCom_Block_Standard_Bankstore3dstest extends Mage_Core_Block_Tem
             $key = $standard->_getValidParamKey($k);
             $arrDatos[$key] = $value;
         }
+        
 
         $currency_symbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
 
