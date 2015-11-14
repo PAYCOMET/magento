@@ -58,6 +58,10 @@
         <update handle="paytpvcom_handle" />
     </lotusbreath_onestepcheckout_index_index>
 
+    <opc_index_index>
+        <update handle="paytpvcom_handle" />
+    </opc_index_index>
+
     <paytpvcom_standard_tarjetas>
         <update handle="customer_account"/>
         <reference name="head">

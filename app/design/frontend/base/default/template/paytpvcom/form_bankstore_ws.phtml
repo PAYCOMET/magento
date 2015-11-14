@@ -10,15 +10,19 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
 
 
 <ul id="payment_form_<?php echo $_code ?>" class="form-list" style="display:none;">
-    <?php if (sizeof($this->getCustomerCards())>0 && !$isRecurring):?>
+    <?php 
+    $saveCard = 0;
+    $card_select = (isset($_POST["payment"]["card"]))?$_POST["payment"]["card"]:"";
+
+    if (sizeof($this->getCustomerCards())>0 && !$isRecurring):?>
     
     <li id="saved_cards">
         <label for="card"><?php print $this->__('Pay by Credit Card');?>:</label>
         <div class="input-box">
         <select name="payment[card]" id="card" onChange="checkCardWS(this)">
               <?php 
-              $saveCard = 0;
-              $selected = "selected";
+              
+              $selected = "selected=\"selected\"";
               foreach ($this->getCustomerCards() as $card){
                  $saveCard = 1;
                  $card_desc = ($card["card_desc"]!="")?"- " . $card["card_desc"]:"";
@@ -30,7 +34,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         </select>
         </div>
         <?php if ($commerce_password==1){?>
-            <div id="user_validation" class="<?php if ($saveCard==0) print "hidden";?>">
+            <div id="user_validation" style="<?php if ($saveCard==0 || $card_select==="0") print "display:none;";?>">
                 <label for="userpwd"><?php echo $this->__('For security, enter your user password Store') . ":"?></label>  
                 <div class="input-box">
                 <input type="password" style="width:200px" name="payment[userpwd]" id="userpwd">
@@ -49,7 +53,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
         }
     ?>
     
-    <li id="payment_form_<?php echo $_code ?>_cc" <?php if(isset($saveCard) && $saveCard > 0){?>style="display:none;"<?php } ?>>
+    <li id="payment_form_<?php echo $_code ?>_cc" <?php if($saveCard > 0 && $card_select!=="0"){?>style="display:none;"<?php } ?>>
         <ul>
             <?php if ($show_nameoncard):?>
             <li>

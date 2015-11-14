@@ -201,12 +201,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         parent::authorize($payment, $amount);
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
         $card = array();
-        $remember = (isset($payment_data["remember"]) && $payment_data["card"]==0)?1:0;
+
+        $payment_data_card = (isset($payment_data["card"]))?$payment_data["card"]:0;
+
+        $remember = (isset($payment_data["remember"]) && $payment_data_card==0)?1:0;
 
         $Secure = ($this->isSecureTransaction())?1:0;
 
         // NUEVA TARJETA o SUSCRIPCION
-        if ($payment_data["card"]==0){
+        if ($payment_data_card==0){
             if ($payment_data['cc_number'] && $payment_data['cc_number']) {
                 $res = $this->addUser($payment_data);
                
@@ -233,7 +236,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 $message = Mage::helper('payment')->__('Payment failed. Contraseña incorrecta');
                 throw new Mage_Payment_Model_Info_Exception($message);
             }
-            $paytpv_iduser =  $payment_data["card"];
+            $paytpv_iduser =  $payment_data_card;
             $card = $this->getToken($paytpv_iduser);
         }
 
@@ -278,6 +281,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $customer = Mage::getModel('customer/customer')->load($customer_id);
             $payment_data = Mage::app()->getRequest()->getParam('payment', array());
 
+            $payment_data_card = (isset($payment_data["card"]))?$payment_data["card"]:0;
+
             $Secure = ($this->isSecureTransaction())?1:0;
 
             switch ($Secure){
@@ -291,7 +296,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                         $DS_IDUSER = $order->getPaytpvIduser();
                         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
 
-                        $remember = (isset($payment_data["remember"]) && $payment_data["card"]==0)?1:0;
+                        $remember = (isset($payment_data["remember"]) && $payment_data_card==0)?1:0;
                         // Si es un pago NO Seguro, ha pulsado en el acuerdo, es una tarjeta nueva y es un usuario registrado guardamos el token
                         if ($remember && $order->getCustomerId()>0){
                             $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER,$payment_data['cc_number']);
@@ -343,8 +348,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_IDUSER = $order->getPaytpvIduser();
             $DS_TOKEN_USER = $order->getPaytpvTokenuser();
             $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+            $payment_data_card = (isset($payment_data["card"]))?$payment_data["card"]:0;
             
-            $remember = (isset($payment_data["remember"]) && $payment_data["card"]==0)?1:0;
+            $remember = (isset($payment_data["remember"]) && $payment_data_card==0)?1:0;
             // Si es un pago NO seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
             if ($remember && $order->getCustomerId()>0){
                 $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER,$payment_data['cc_number']);
@@ -1142,13 +1148,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $terminales = $this->getConfigData('terminales');
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
         
+        $payment_data_card = (isset($payment_data["card"]))?$payment_data["card"]:0;
+
         // Transaccion Segura:
         // Si solo tiene Terminal Seguro
         if ($terminales==0)
             return true;   
    
         // Si esta definido que el pago es 3d secure y no estamos usando una tarjeta tokenizada
-        if ($this->getConfigData('secure_first') && $payment_data["card"]==0)
+        if ($this->getConfigData('secure_first') && $payment_data_card==0)
             return true;
 
         // Si se supera el importe maximo para compra segura
@@ -1156,7 +1164,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             return true;
 
         // Si esta definido como que la primera compra es Segura y es la primera compra aunque este tokenizada
-        if ($terminales==2 && $this->getConfigData('secure_first') && $payment_data["card"]>0 && $this->isFirstPurchaseToken($payment_data["card"]))
+        if ($terminales==2 && $this->getConfigData('secure_first') && $payment_data_card>0 && $this->isFirstPurchaseToken($payment_data_card))
             return true;
         
         return false;
