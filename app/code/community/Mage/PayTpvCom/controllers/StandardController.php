@@ -270,6 +270,14 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                     md5($model->getConfigData('pass')));  
                 $session = Mage::getSingleton('checkout/session');
             }
+
+            if ($sign==$local_sign && $params['Response']!="OK"){
+                $id_order = $ref;
+                $order->loadByIncrementId($id_order);
+
+                $order->addStatusHistoryComment("PayTPV Pago Incorrecto. Error [" . $params['ErrorID'] . "]: " . $params['ErrorDescription']);
+                $order->save();
+            }
             
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en el pago');
             else{
