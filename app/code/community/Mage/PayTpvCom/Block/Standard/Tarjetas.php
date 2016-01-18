@@ -12,8 +12,9 @@ class Mage_PayTpvCom_Block_Standard_Tarjetas extends Mage_Core_Block_Template
 
         $operation = 107;
 
-        $iframeUrl = $model->getPayTpvBankStoreUrl()."?" .http_build_query( $model->getBankStoreFormFields($operation) );
+        $iframeUrl = $model->getPayTpvBankStoreUrlAddUser()."?" .http_build_query( $model->getBankStoreFormFields($operation) );
         $this->assign( "iframeUrl", $iframeUrl );
+        $this->assign( "paytpviframe", $model->getConfigData('paytpviframe') );
         $this->assign( "show_nameoncard", $model->getConfigData('show_nameoncard'));
         $this->setTemplate("paytpvcom/tarjetas.phtml");
 

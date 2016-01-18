@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.3.5</version>
+    <version>5.3.7</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -23,7 +23,7 @@
             <email>jrgarcia@paytpv.com</email>
         </author>
     </authors>
-    <date>2015-08-28</date>
+    <date>2016-01-15</date>
     <time>15:30:00</time>
     <contents>
         <target name="magecommunity">
@@ -33,7 +33,9 @@
                         <dir name="Standard">
                             <file name="Bankstore.php"/>
                             <file name="Bankstore3dstest.php"/>
+                            <file name="Bankstoreiframe.php"/>
                             <file name="Bankstorerecurring.php"/>
+                            <file name="Bankstoretest.php"/>
                             <file name="Form.php"/>
                             <file name="Iframe.php"/>
                             <file name="Redirect.php"/>
@@ -96,12 +98,16 @@
                     <dir name="default">
                         <dir name="images">
                             <dir name="paytpvcom">
-                                <file name="paytpv.png"/>
-                                <file name="maestro.png"/>
-                                <file name="mastercard.png"/>
-                                <file name="mastercard_secuercode.png"/>
-                                <file name="verifiedbyvisa.png"/>
                                 <file name="2100candau256.png"/>
+                                <file name="clockpayblue.gif"/>
+                                <file name="cvv2.png"/>
+                                <file name="error.gif"/>
+                                <file name="maestro.png"/>
+                                <file name="mastercard_secuercode.png"/>
+                                <file name="mastercard.png"/>
+                                <file name="paytpv.png"/>
+                                <file name="verifiedbyvisa.png"/>
+                                
                             </dir>
                         </dir>
                         <dir name="js">
@@ -114,13 +120,15 @@
                         </dir>
                         <dir name="css">
                             <dir name="paytpvcom">
+                                <file name="2100.css"/>
                                 <file name="fancybox_loading.gif"/>
+                                <file name="fancybox_loading@2x.gif"/>
                                 <file name="fancybox_overlay.png"/>
                                 <file name="fancybox_sprite.png"/>
+                                <file name="fancybox_sprite@2x.png"/>
                                 <file name="jquery.fancybox.css"/>
-                                <file name="tarjetas.css"/>
                                 <file name="payment.css"/>
-                                <file name="2100.css"/>
+                                <file name="tarjetas.css"/>
                             </dir>
                         </dir>
                     </dir>
@@ -151,9 +159,11 @@
                             <dir name="paytpvcom">
                                 <file name="bankstore.phtml"/>
                                 <file name="bankstorerecurring.phtml"/>
-                                <file name="form.phtml"/>
                                 <file name="form_bankstore_3ds_test.phtml"/>
+                                <file name="form_bankstore_iframe.phtml"/>
+                                <file name="form_bankstore_test.phtml"/>
                                 <file name="form_bankstore_ws.phtml"/>
+                                <file name="form.phtml"/>
                                 <file name="iframe.phtml"/>
                                 <file name="redirect.phtml"/>
                                 <file name="tarjetas.phtml"/>

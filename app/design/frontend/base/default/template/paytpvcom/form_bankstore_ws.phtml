@@ -52,7 +52,16 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
 			echo "<p>".$message."</p>";
         }
     ?>
+
+    <?php 
+
+    $paytpviframe = $standard->getConfigData('paytpviframe');
+
+    // Begin IF paytpviframe=0
+    if ($paytpviframe!="1"){ 
     
+    ?>
+
     <li id="payment_form_<?php echo $_code ?>_cc" <?php if($saveCard > 0 && $card_select!=="0"){?>style="display:none;"<?php } ?>>
         <ul>
             <?php if ($show_nameoncard):?>
@@ -168,7 +177,7 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
             <?php if (!$isRecurring):?>
             <li>
                 <div class="input-box">
-                <div id="storingStep" class="alert alert-info"  <?php if ($saveCard==1) print " display:none";?>>
+                <div id="storingStep" class="alert alert-info"  <?php if ($saveCard==1) print "style='display:none'";?>>
                     <!--
                     <h4><?php print $this->__('STREAMLINE YOUR FUTURE PURCHASES!');?></h4>
                     <?php print $this->__('Link a card to your account to make all procedures easily and quickly.');?>
@@ -180,13 +189,24 @@ $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUs
             <li>
             <?php endif; ?>
             <?php if ($isRecurring):?>
-                <div class="alert alert-info"><?php print $this->__('The first purchase when ordering shall carry out, and the following is defined as the frequency subscription');?>.
+                <div class="alert alert-info">
                     <?php print $this->__('By subscribing you agree to the ');?> <a href="#conditions" class="open_conditions" href="#"><?php print $this->__('terms and conditions of service');?></a>.
                 </div>
 
             <?php endif; ?>
         </ul>
     <li>
+
+    <?php
+    // END IF paytpviframe=0
+    }else{
+        ?>
+        <div id="storingStep" class="alert alert-info" <?php if ($saveCard==1) print "style='display:none'";?>>
+            <input type="checkbox" name="payment[remember]" id="savecard" class="input-checkbox" checked> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
+        </div>
+    <?php
+    }
+    ?>
 
     <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB,array('_secure'=>true));?>">
 

@@ -1,0 +1,8 @@
+<iframe title="titulo" src="<?php echo $iframeUrl; ?>" width="800" height="450"	frameborder="0"	marginheight="0" marginwidth="0" scrolling="no"	style="border: 0px solid #000000;padding: 0px; margin: 0px">
+</iframe>
+
+
+
+<input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB,array('_secure'=>true));?>">
+
+<input type="hidden" name="conditions_url" id="conditions_url" value="<?php print $this->getUrl('paytpvcom/standard/conditions');?>">

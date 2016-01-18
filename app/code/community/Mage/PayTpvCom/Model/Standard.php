@@ -180,15 +180,20 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             return $this->useIframe() ? 'pending' : 'processing';
         
         if ('payment_action' == $field){
+
             $terminales = $this->getConfigData('terminales');
             $transaction_type = $this->getConfigData('transaction_type');
-            if ($this->isSecureTransaction() || ($transaction_type==self::PREAUTHORIZATION)){
+
+            $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+            $payment_data_card = (isset($payment_data["card"]))?$payment_data["card"]:0;
+
+            if ($this->isSecureTransaction() || ($transaction_type==self::PREAUTHORIZATION) || ($this->getConfigData('paytpviframe')=="1" && $payment_data_card==0)){
                 return 'authorize';
             }else{
                 return 'authorize_capture';
             }
         }
-        $path = 'payment/' . $this->getCode() . '/' . $field; 
+        $path = 'payment/' . $this->getCode() . '/' . $field;
 
         return Mage::getStoreConfig($path, $storeId);
     }
@@ -198,7 +203,6 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order = $payment->getOrder();
         $amount = $order->getGrandTotal();
 
-        parent::authorize($payment, $amount);
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
         $card = array();
 
@@ -207,6 +211,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $remember = (isset($payment_data["remember"]) && $payment_data_card==0)?1:0;
 
         $Secure = ($this->isSecureTransaction())?1:0;
+
+        // Paytpv iframe: When Card=0. 
+        if ($this->getConfigData('paytpviframe')=="1" && $payment_data_card==0){
+            $order->setPaytpvSavecard($remember);
+            $order->save();
+            return;
+        }
+
+        parent::authorize($payment, $amount);
+        
 
         // NUEVA TARJETA o SUSCRIPCION
         if ($payment_data_card==0){
@@ -456,12 +470,25 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getOrderPlaceRedirectUrl(){
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
+        $payment_data_card = (isset($payment_data["card"]))?$payment_data["card"]:0;
+        $paytpviframe = $this->getConfigData('paytpviframe');
+
         if ($this->isSecureTransaction()){
+            // Pago Recurring
             if ($this->isRecurring())
                 return Mage::getUrl('paytpvcom/standard/bankstorerecurring');
+            // Pago Iframe. Si esta activada la opcion y no hay seleccionada una tarjeta
+            else if ($paytpviframe && $payment_data_card==0)
+                return Mage::getUrl('paytpvcom/standard/bankstoreiframe');
+            // Pago Iframe Token
             else
                 return Mage::getUrl('paytpvcom/standard/bankstore');
+        }else{
+            // Pago Iframe. Si esta activada la opcion y no hay seleccionada una tarjeta
+            if ($paytpviframe && $payment_data_card==0)
+                return Mage::getUrl('paytpvcom/standard/bankstoreiframe');
         }
+
         return null;
     }
 
@@ -936,9 +963,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getBankStoreFormFields($operation=1)
     {
+
         $order_id = $this->getCheckout()->getLastRealOrderId();
         $order = Mage::getModel('sales/order');
         $order->loadByIncrementId($order_id);
+
+
         $client = $this->getConfigData('client');
         $pass = $this->getConfigData('pass');
         $terminal = $this->getConfigData('terminal');
@@ -953,7 +983,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $amount = $currency='';
         $amount = round($order->getGrandTotal() * 100);
         $currency = $order->getOrderCurrencyCode();
-        
+
+        $Secure = ($this->isSecureTransaction())?1:0;
 
         // execute purchase
         if ($operation == 1){
@@ -970,7 +1001,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'MERCHANT_AMOUNT' => $amount,
                 'MERCHANT_CURRENCY' => $currency,
                 'MERCHANT_MERCHANTSIGNATURE' => $signature,
-                '3DSECURE' => $this->getConfigData('secure_first')
+                '3DSECURE' => $Secure
             );
         }
 
@@ -989,6 +1020,25 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'MERCHANT_ORDER' => $order,
                 'URLOK' => Mage::getUrl('paytpvcom/standard/tarjetas'),
                 'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')                
+            );
+        }
+
+        // crate_preauthorization
+        if ($operation == 3){
+            $signature = md5($client . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
+            $sArr = array
+            (
+                'MERCHANT_MERCHANTCODE' => $client,
+                'MERCHANT_TERMINAL' => $terminal,
+                'OPERATION' => $operation,
+                'LANGUAGE' => $language,
+                'MERCHANT_MERCHANTSIGNATURE' => $signature,
+                'MERCHANT_ORDER' => $order_id,
+                'MERCHANT_AMOUNT' => $amount,
+                'MERCHANT_CURRENCY' => $currency,
+                '3DSECURE' => $Secure,
+                'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
+                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
             );
         }
 
@@ -1230,7 +1280,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
      *
      * 
      */
-    function addCard($params){
+    function addCard($params,$salida=0){
         $id_customer = Mage::getSingleton('customer/session')->getCustomer()->getId();
 
         if ($id_customer>0){
@@ -1249,8 +1299,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 $result = $this->infoUser($DS_IDUSER,$DS_TOKEN_USER,$params['cc_number']);
                 $this->save_card($DS_IDUSER,$DS_TOKEN_USER,$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$id_customer);
                 
+                if ($salida==1) return $res;
                 return "";
             }else{
+                if ($salida==1) return $res;
+
                 return Mage::helper('payment')->__('%s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
             }
         }
@@ -1311,15 +1364,38 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return "https://www.paytpv.com/gateway/ifgateway.php";
     }
 
-    public function getPayTpvBankStoreUrl()
-    {
+    public function getPayTpvBankStoreUrl(){
         if ($this->getConfigData('environment')!=1){
             return "https://secure.paytpv.com/gateway/bnkgateway.php";
         // Test Mode
         }else{
-            return Mage::getUrl('paytpvcom/standard/bankstore3dstest');
+            // Miro si el pago es con un tarjeta tokenizada
+            $session = Mage::getSingleton('checkout/session');
+            $order_id = $session->getLastOrderId();
+            $order = Mage::getModel('sales/order');
+            $order = $order->load($order_id);
+
+            $iduser = $order->getPaytpvIduser();
+
+            // Pago tarjeta nueva
+            if ($this->getConfigData('paytpviframe')==1 && $iduser==0)
+                return Mage::getUrl('paytpvcom/standard/bankstoretest');
+            // Pago tarjeta tokenizada
+            else
+                return Mage::getUrl('paytpvcom/standard/bankstore3dstest');
         }
     }
+
+
+    public function getPayTpvBankStoreUrlAddUser(){
+        if ($this->getConfigData('environment')!=1){
+            return "https://secure.paytpv.com/gateway/bnkgateway.php";
+        // Test Mode
+        }else{
+            return Mage::getUrl('paytpvcom/standard/bankstoretest');
+        }
+    }
+
 
     /*public function refund(Varien_Object $payment, $amount)
     {

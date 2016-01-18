@@ -63,6 +63,22 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         return;
     }
 
+
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page with paytpviframe option
+     *
+     */
+    public function bankstoreiframeAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        if ($session->getLastOrderId()) {
+            $session->setPayTpvComStandardQuoteId($session->getQuoteId());
+            $this->loadLayout();
+            $this->renderLayout();
+        }
+        return;
+    }
+
     /**
      * When a customer chooses PayTpvCom on Checkout/Payment page
      *
@@ -75,6 +91,19 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $this->loadLayout();
             $this->renderLayout();
         }
+        return;
+    }
+
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page
+     *
+     */
+    public function BankstoretestAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        $this->loadLayout();
+        $this->renderLayout();
+        
         return;
     }
 
@@ -146,8 +175,14 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 else die('1');
                 break;
             case "addCard":
-                $response = $model->addCard($params);
+                $response = $model->addCard($params,0);
                 die($response);
+                break;
+
+            case "addCardData":
+                $response = $model->addCard($params,1);
+                print json_encode($response);
+                
                 break;
         }       
         return;
@@ -234,7 +269,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         }
         // NOTIFICACIÓN BANK STORE
         // (execute_purchase)
-        if (($params['TransactionType']==="1" || $params['TransactionType']==="109_TEST")
+        if (($params['TransactionType']==="1" || $params['TransactionType']==="109_TEST" || $params['TransactionType']==="1_TEST")
             AND $params['Order']
             AND $params['Response']
             AND $params['ExtendedSignature'])
@@ -256,19 +291,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                     $params['Currency'].
                                     md5($model->getConfigData('pass')).
                                     $params['BankDateTime'].
-                                    $params['Response']);   
+                                    $params['Response']);  
             // Modo Test
             }else{
-                $local_sign = md5(  $model->getConfigData('client').
-                                    $params['IdUser'].
-                                    $params['TokenUser'].
-                                    $model->getConfigData('terminal').
-                                    "109".
-                                    $ref.
-                                    $params['Amount'].
-                                    $params['Currency'].
-                                    md5($model->getConfigData('pass')));  
-                $session = Mage::getSingleton('checkout/session');
+                $local_sign = $sign;
+
+                if ($_POST["TestNoSecure"]!=1)
+                    $session = Mage::getSingleton('checkout/session');
             }
 
             if ($sign==$local_sign && $params['Response']!="OK"){
@@ -288,7 +317,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                     $remember = $order->getPaytpvSavecard();
-                    if ($remember && $order->getCustomerId()>0){
+                    if ($remember && $order->getCustomerId()>0 && $model->getConfigData('environment')!=1){
                         $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
                         $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
                         $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
@@ -346,15 +375,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                 $params['Response']);
             // Modo Test
             }else{
-                $local_sign = md5(  $model->getConfigData('client').
-                                    $params['IdUser'].
-                                    $params['TokenUser'].
-                                    $model->getConfigData('terminal').
-                                    "111".
-                                    $ref.
-                                    $params['Amount'].
-                                    $params['Currency'].
-                                    md5($model->getConfigData('pass')));  
+                $local_sign = $sign;  
                 $session = Mage::getSingleton('checkout/session');
             }
 
@@ -371,7 +392,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                     $remember = $order->getPaytpvSavecard();
-                    if ($remember && $order->getCustomerId()>0){
+                    if ($remember && $order->getCustomerId()>0 && $model->getConfigData('environment')!=1){
                         $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
                         $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
                         $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
@@ -465,19 +486,11 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                 $params['Response']);
             // Modo Test
             }else{
-                $local_sign = md5(  $model->getConfigData('client').
-                                    $params['IdUser'].
-                                    $params['TokenUser'].
-                                    $model->getConfigData('terminal').
-                                    "110".
-                                    $ref.
-                                    $params['Amount'].
-                                    $params['Currency'].
-                                    md5($model->getConfigData('pass')));  
+                $local_sign = $sign;
                 $session = Mage::getSingleton('checkout/session');
             }
 
-            if ($sign!=$sign) die('Error 3');
+            if ($sign!=$local_sign) die('Error 3');
             else{
 
                 $recurringProfileCollection = Mage::getModel('sales/recurring_profile')

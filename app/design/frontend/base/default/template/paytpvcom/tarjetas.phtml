@@ -204,67 +204,72 @@
                 <?php print $this->__('Cancel');?>
         </a>
         <div class="payment_module paytpv_iframe" id="nueva_tarjeta" style="display:none">
-
-            <form name="credit_card" id="credit_card" class="sp-methods">
-
-            <ul class="form-list" id="payment_form_credit_card">
-            <li>
-                <label for="cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
-                <div class="input-box">
-                    <input maxlength="16" type="text" id="cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number required-entry" value=""/>
-                </div>
-            </li>
-            <li>
-                <label for="expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
-                <div class="input-box">
-                    <div class="v-fix">
-                        <select id="expiration" name="payment[cc_exp_month]" class="month required-entry" autocomplete="off">
-                            <option value="1">01</option>
-                            <option value="2">02</option>
-                            <option value="3">03</option>
-                            <option value="4">04</option>
-                            <option value="5">05</option>
-                            <option value="6">06</option>
-                            <option value="7">07</option>
-                            <option value="8">08</option>
-                            <option value="9">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                    </div>
-                    <div class="v-fix">
-                        <select id="expiration_yr" name="payment[cc_exp_year]" class="year required-entry" autocomplete="off">
-                            <?php $date = date("Y");
-                            for($year=$date;$year<$date+11;$year++){
-                                print "<option value=".$year.">".$year."</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-            </li>
+            <?php if ($paytpviframe==1){?>
+                <iframe src="<?php echo $iframeUrl;?>" name="paytpv" style="width: 670px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 450px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>
+            <?php }else{ ?>
             
-            <li>
-                <label for="cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
-                <div class="input-box">
-                    <div class="v-fix">
-                        <input maxlength="4" size="4" type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="cc_cid" name="payment[cc_cid]" value="" />
-                    </div>
-                    <?php echo $this->__('CVC2') ?>
-                </div>
-            </li>
-            <button type="button" class="button" onclick="addCard()"><span><span><?php echo $this->__('Aceptar') ?></span></span></button>
-            <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl();?>">
-            </form>
+                <form name="credit_card" id="credit_card" class="sp-methods">
 
-            <script type="text/javascript">
-                //< ![CDATA[
-                    var customForm = new VarienForm('credit_card');
-                //]]>
-            </script>
+                <ul class="form-list" id="payment_form_credit_card">
+                    <li>
+                        <label for="cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
+                        <div class="input-box">
+                            <input maxlength="16" type="text" id="cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number required-entry" value=""/>
+                        </div>
+                    </li>
+                    <li>
+                        <label for="expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
+                        <div class="input-box">
+                            <div class="v-fix">
+                                <select id="expiration" name="payment[cc_exp_month]" class="month required-entry" autocomplete="off">
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div class="v-fix">
+                                <select id="expiration_yr" name="payment[cc_exp_year]" class="year required-entry" autocomplete="off">
+                                    <?php $date = date("Y");
+                                    for($year=$date;$year<$date+11;$year++){
+                                        print "<option value=".$year.">".$year."</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <label for="cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+                        <div class="input-box">
+                            <div class="v-fix">
+                                <input maxlength="4" size="4" type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="cc_cid" name="payment[cc_cid]" value="" />
+                            </div>
+                            <?php echo $this->__('CVC2') ?>
+                        </div>
+                    </li>
+                    <button type="button" class="button" onclick="addCard()"><span><span><?php echo $this->__('Aceptar') ?></span></span></button>
+                    <input type="hidden" name="base_url" id="base_url" value="<?php print Mage::getBaseUrl();?>">
+                    </form>
 
-        </ul>
+                    <script type="text/javascript">
+                        //< ![CDATA[
+                            var customForm = new VarienForm('credit_card');
+                        //]]>
+                    </script>
+
+                </ul>
+
+            <?php } ?>
 
         </div>
     </div>

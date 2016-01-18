@@ -329,3 +329,4 @@ Test Card is invalid,Tarjeta de prueba no válida
 Test mode does not support confirm preathorize orders placed in Real Mode,En Modo de Pruebas no se pueden confirmar preautorizaciones realizadas en Modo Real
 Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real
 Currency Accepted,Moneda Aceptada
+Credit Card Data PAYTPV Iframe,Iframe PAYTPV para Datos de Tarjeta
