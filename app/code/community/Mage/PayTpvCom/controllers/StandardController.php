@@ -317,7 +317,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                     $remember = $order->getPaytpvSavecard();
-                    if ($remember && $order->getCustomerId()>0 && $model->getConfigData('environment')!=1){
+                    if ($remember && $order->getCustomerId()>0){
                         $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
                         $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
                         $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
