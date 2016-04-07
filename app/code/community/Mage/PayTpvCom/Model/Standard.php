@@ -224,7 +224,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         // NUEVA TARJETA o SUSCRIPCION
         if ($payment_data_card==0){
-            if ($payment_data['cc_number'] && $payment_data['cc_number']) {
+            if (isset($payment_data['cc_number'])) {
                 $res = $this->addUser($payment_data);
                
                 $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
