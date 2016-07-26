@@ -330,19 +330,3 @@ Test mode does not support confirm preathorize orders placed in Real Mode,Test m
 Test mode does not support cancel suscription placed in Real Mode,Test mode does not support cancel suscription placed in Real Mode
 Currency Accepted,Currency Accepted
 Credit Card Data PAYTPV Iframe,Credit Card Data PAYTPV Iframe
-Scoring Configuration,Scoring Configuration
-Send Merchant Data,Send Merchant Data
-Active,Active
-First Purchase,First Purchase
-Complete Session Time,Complete Session Time
-Time (minutes),Time (minutes)
-Critical Product | Critical Product Destination Country,Critical Product | Critical Product Destination Country
-Critical Product,Critical Product
-Products,Products
-Critical Product Destination Country,Critical Product Destination Country
-Destination,Destination
-Destination Country,Destination Country
-Countries,Countries
-IP Change,IP Change
-Browser Unidentified,Browser Unidentified
-Operating System Unidentified,Operating System Unidentified

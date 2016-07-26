@@ -330,3 +330,19 @@ Test mode does not support confirm preathorize orders placed in Real Mode,En Mod
 Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real
 Currency Accepted,Moneda Aceptada
 Credit Card Data PAYTPV Iframe,Iframe PAYTPV para Datos de Tarjeta
+Scoring Configuration,Configuración del Scoring
+Send Merchant Data,Enviar Datos del Comercio
+Active,Activo
+First Purchase,Primera compra
+Complete Session Time,Tiempo Completo de Session
+Time (minutes),Tiempo (minutos)
+Critical Product | Critical Product Destination Country,Producto Crítico | Destino del Producto Crítico
+Critical Product,Producto Crítico
+Products,Productis
+Critical Product Destination Country,Destino del Producto Crítico
+Destination,Destino
+Destination Country,País Destino
+Countries,Países
+IP Change,Cambio de IP
+Browser Unidentified,Navegador No identificado
+Operating System Unidentified,Sistema Operativo No identificado

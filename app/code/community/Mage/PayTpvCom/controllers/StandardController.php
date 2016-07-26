@@ -657,7 +657,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 
                 Mage::getSingleton('checkout/cart')->truncate();
                 Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
-                $this->_redirect('checkout/onepage/success');
+                // check if order has been processed by OPC module
+                $processedOPC   = $session->getProcessedOPC();
+                if ($processedOPC=="paytpv_opc")
+                    $this->_redirect('onepagecheckout/index/success/');
+                else
+                    $this->_redirect('checkout/onepage/success');
             } else {
                 $this->cancelAction();
             }

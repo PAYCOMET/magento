@@ -41,6 +41,15 @@
                             <file name="Redirect.php"/>
                             <file name="Tarjetas.php"/>
                         </dir>
+                        <dir name="Adminhtml">
+                            <dir name="System">
+                                <dir name="Config">
+                                    <dir name="Fieldset">
+                                        <file name="Expanded.php"/>
+                                    </dir>
+                                </dir>
+                            </dir>
+                        </dir>
                     </dir>
                     <dir name="Helper">
                         <file name="Data.php"/>
@@ -54,8 +63,12 @@
                         <dir name="System">
                             <dir name="Config">
                                 <dir name="Source">
+                                    <file name="Country.php"/>
                                     <file name="Environment.php"/>
                                     <file name="Environmentcomment.php"/>
+                                    <file name="Product.php"/>
+                                    <file name="Scoring.php"/>
+                                    <file name="Sessiontime.php"/>
                                     <file name="Terminales.php"/>
                                     <file name="Transactions.php"/>
                                 </dir>

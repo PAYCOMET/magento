@@ -20,202 +20,612 @@
                     <comment>This module allows you to accept card payments via paytpv.com<![CDATA[<a href="https://www.paytpv.com/altaempresa.php" target="_blank">Click here to sign up for an PayTPV account</a>]]></comment>
 
                     <fields>
-                        <!-- is this payment method active for the website? -->
-                        <active translate="label">
-                            <!-- label for the field -->
-                            <label>Enabled</label>
-                            <!-- input type for configuration value -->
-                            <frontend_type>select</frontend_type>
-                            <!-- model to take the option values from -->
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <!-- field position -->
-                            <sort_order>10</sort_order>
-                            <!-- do not show this field in store scope -->
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </active>
-                        <title translate="label">
-                            <label>Title</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </title>
-                        <environment translate="label">
-                            <label>Environment</label>
-                            <comment>
-                                <model>paytpvcom/system_config_source_environmentcomment</model>
-                            </comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>paytpvcom/system_config_source_environment</source_model>
-                            <sort_order>21</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </environment>
-                        <transaction_type translate="label">
-                            <label>Transaction type</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>paytpvcom/system_config_source_transactions</source_model>
-                            <sort_order>31</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </transaction_type>
-                        <client translate="label">
-                            <label>Client Code</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>32</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-                        </client>
 
-                        <terminal translate="label">
-                            <label>Terminal number</label>
+                        <module_settings type="group" translate="label" >
+                            <label>PAYTPV Module Configuration</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>33</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-                        </terminal>
-                        <pass translate="label">
-                            <label>User Password</label>
+                            <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <sort_order>1</sort_order>
+                            <fields>
+                                <!-- is this payment method active for the website? -->
+                                <active translate="label">
+                                    <!-- label for the field -->
+                                    <label>Enabled</label>
+                                    <config_path>payment/paytpvcom/active</config_path>
+                                    <!-- input type for configuration value -->
+                                    <frontend_type>select</frontend_type>
+                                    <!-- model to take the option values from -->
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <!-- field position -->
+                                    
+                                    <sort_order>10</sort_order>
+                                    <!-- do not show this field in store scope -->
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </active>
+                                <title translate="label">
+                                    <label>Title</label>
+                                    <config_path>payment/paytpvcom/title</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>20</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </title>
+                                <environment translate="label">
+                                    <label>Environment</label>
+                                    <config_path>payment/paytpvcom/environment</config_path>
+                                    <comment>
+                                        <model>paytpvcom/system_config_source_environmentcomment</model>
+                                    </comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>paytpvcom/system_config_source_environment</source_model>
+                                    <sort_order>21</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </environment>
+                                <transaction_type translate="label">
+                                    <label>Transaction type</label>
+                                    <config_path>payment/paytpvcom/transaction_type</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>paytpvcom/system_config_source_transactions</source_model>
+                                    <sort_order>31</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </transaction_type>
+                                <client translate="label">
+                                    <label>Client Code</label>
+                                    <config_path>payment/paytpvcom/client</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>32</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <depends><environment>0</environment></depends>
+                                </client>
+
+                                <terminal translate="label">
+                                    <label>Terminal number</label>
+                                    <config_path>payment/paytpvcom/terminal</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>33</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <depends><environment>0</environment></depends>
+                                </terminal>
+                                <pass translate="label">
+                                    <label>User Password</label>
+                                    <config_path>payment/paytpvcom/pass</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>34</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <depends><environment>0</environment></depends>
+                                </pass>
+                                
+                                <terminales translate="label">
+                                    <label>Terminals available</label>
+                                    <config_path>payment/paytpvcom/terminales</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>paytpvcom/system_config_source_terminales</source_model>
+                                    <sort_order>35</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </terminales>
+                                <secure_first translate="label">
+                                    <label>Use 3D Secure first purchase</label>
+                                    <config_path>payment/paytpvcom/secure_first</config_path>
+                                    <comment>Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>36</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </secure_first>
+
+                                <currency translate="label">
+                                    <label>Currency Accepted</label>
+                                    <config_path>payment/paytpvcom/currency</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_currency</source_model>
+                                    <sort_order>37</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </currency>
+
+                                <secure_amount translate="label">
+                                    <label>Use 3D Secure in purchases above</label>
+                                    <config_path>payment/paytpvcom/secure_amount</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <validate>validate-number</validate>
+                                    <sort_order>38</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <depends><terminales>2</terminales></depends>
+                                </secure_amount>
+                               
+                                
+
+                                <commerce_password translate="label">
+                                    <label>Commerce password required in saved cards purchase</label>
+                                    <config_path>payment/paytpvcom/commerce_password</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>86</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </commerce_password>
+                                
+                                <sendmailinvoicecreation translate="label">
+                                    <label>Send Invoice Mail</label>
+                                    <config_path>payment/paytpvcom/sendmailinvoicecreation</config_path>
+                                    <comment>Send invoice mail automatically to the customer when invoice is created</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>87</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </sendmailinvoicecreation>
+                                <operationcall translate="label">
+                                    <label>Operation call</label>
+                                    <config_path>payment/paytpvcom/operationcall</config_path>
+                                    <comment>Get CardBrand and BicCode</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>88</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <depends><environment>0</environment></depends>
+                                </operationcall>
+                                <show_nameoncard translate="label">
+                                    <label>Show Name on Card</label>
+                                    <config_path>payment/paytpvcom/show_nameoncard</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>89</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </show_nameoncard>
+                                <show_cctypes translate="label">
+                                    <label>Show Credit Card Types</label>
+                                    <config_path>payment/paytpvcom/show_cctypes</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>90</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </show_cctypes>
+                                <cctypes translate="label">
+                                    <label>Credit Card Types</label>
+                                    <config_path>payment/paytpvcom/cctypes</config_path>
+                                    <frontend_type>multiselect</frontend_type>
+                                    <source_model>adminhtml/system_config_source_payment_cctype</source_model>
+                                    <sort_order>91</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <can_be_empty>1</can_be_empty>
+                                    <depends><show_cctypes>1</show_cctypes></depends>
+                                </cctypes>
+
+                                <paytpviframe translate="label">
+                                    <label>Credit Card Data PAYTPV Iframe</label>
+                                    <config_path>payment/paytpvcom/paytpviframe</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>92</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </paytpviframe>
+                                        
+                                <sort_order translate="label">
+                                    <label>Sort Order</label>
+                                    <config_path>payment/paytpvcom/sort_order</config_path>
+                                    <comment>Payment method position</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>1000</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </sort_order>
+
+
+                            </fields>
+                        </module_settings>
+
+
+                        <scoring_settings type="group" translate="label" module="paytpvcom">
+                            <label>Scoring Configuration</label>
+                            <config_path>payment/paytpvcom/scoring_settings</config_path>
                             <frontend_type>text</frontend_type>
-                            <sort_order>34</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-                        </pass>
-                        
-                        <terminales translate="label">
-                            <label>Terminals available</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>paytpvcom/system_config_source_terminales</source_model>
-                            <sort_order>35</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </terminales>
-                        <secure_first translate="label">
-                            <label>Use 3D Secure first purchase</label>
-                            <comment>Secure Terminal: all purchases with 3D Secure. No Secure Terminal: all purchases without 3D Secure.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>36</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </secure_first>
+                            <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <sort_order>99</sort_order>
+                            <fields>
 
-                        <currency translate="label">
-                            <label>Currency Accepted</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_currency</source_model>
-                            <sort_order>37</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </currency>
+                                <merchantdata translate="label">
+                                    <label>Send Merchant Data</label>
+                                    <config_path>payment/paytpvcom/merchantdata</config_path>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>100</sort_order>
 
-                        <secure_amount translate="label">
-                            <label>Use 3D Secure in purchases above</label>
-                            <frontend_type>text</frontend_type>
-                            <validate>validate-number</validate>
-                            <sort_order>38</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><terminales>2</terminales></depends>
-                        </secure_amount>
-                       
-                        
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </merchantdata>
 
-                        <commerce_password translate="label">
-                            <label>Commerce password required in saved cards purchase</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>86</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </commerce_password>
-                        
-                        <sendmailinvoicecreation translate="label">
-                            <label>Send Invoice Mail</label>
-                            <comment>Send invoice mail automatically to the customer when invoice is created</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>87</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </sendmailinvoicecreation>
-                        <operationcall translate="label">
-                            <label>Operation call</label>
-                            <comment>Get CardBrand and BicCode</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>88</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends><environment>0</environment></depends>
-                        </operationcall>
-                        <show_nameoncard translate="label">
-                            <label>Show Name on Card</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>89</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_nameoncard>
-                        <show_cctypes translate="label">
-                            <label>Show Credit Card Types</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_cctypes>
-                        <cctypes translate="label">
-                            <label>Credit Card Types</label>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>adminhtml/system_config_source_payment_cctype</source_model>
-                            <sort_order>91</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                            <depends><show_cctypes>1</show_cctypes></depends>
-                        </cctypes>
+                                <s_first_purchase type="group" translate="label">
+                                <label>First Purchase</label>
+                                <config_path>payment/paytpvcom/s_first_purchase</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>101</sort_order>
+                                    <fields>
+                                        <firstpurchase_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/firstpurchase_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>102</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </firstpurchase_scoring>
 
-                        <paytpviframe translate="label">
-                            <label>Credit Card Data PAYTPV Iframe</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>92</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </paytpviframe>
-                        
-                        <sort_order translate="label">
-                            <label>Sort Order</label>
-                            <comment>Payment method position</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>1000</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </sort_order>
+                                        <firstpurchase_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/firstpurchase_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>103</sort_order>
+                                            <depends><firstpurchase_scoring>1</firstpurchase_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </firstpurchase_scoring_score>
+                                    </fields>
+                                </s_first_purchase>
+
+                                <s_sessiontime_scoring type="group" translate="label">
+                                <label>Complete Session Time</label>
+                                <config_path>payment/paytpvcom/s_sessiontime_scoring</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>104</sort_order>
+                                    <fields>
+
+                                        <sessiontime_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/sessiontime_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>105</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </sessiontime_scoring>
+
+                                        <sessiontime_scoring_val translate="label">
+                                            <label>Time (minutes)</label>
+                                            <config_path>payment/paytpvcom/sessiontime_scoring_val</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_sessiontime</source_model>
+                                            <sort_order>106</sort_order>
+                                            <validate>validate-number</validate>
+                                            <depends><sessiontime_scoring>1</sessiontime_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </sessiontime_scoring_val>
+
+                                        <sessiontime_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/sessiontime_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>107</sort_order>
+                                            <depends><sessiontime_scoring>1</sessiontime_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </sessiontime_scoring_score>
+                                    </fields>
+                                </s_sessiontime_scoring>
+
+
+                                <s_critical_product_scoring type="group" translate="label">
+                                <label>Critical Product | Critical Product Destination Country</label>
+                                <config_path>payment/paytpvcom/s_critical_product_scoring</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>108</sort_order>
+                                    <fields>
+
+                                        <heading_critical_product translate="label">
+                                            <label>Critical Product</label>
+                                            <config_path>payment/paytpvcom/heading_critical_product</config_path>
+                                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                            <sort_order>109</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </heading_critical_product>
+
+                                        <critical_product_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/critical_product_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>110</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </critical_product_scoring>
+
+                                        <critical_product_scoring_val translate="label">
+                                            <label>Products</label>
+                                            <config_path>payment/paytpvcom/critical_product_scoring_val</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_product</source_model>
+                                            <frontend_type>multiselect</frontend_type>
+                                            <sort_order>111</sort_order>
+                                            <depends><critical_product_scoring>1</critical_product_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </critical_product_scoring_val>
+                                        
+                                        <critical_product_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/critical_product_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>112</sort_order>
+                                            <depends><critical_product_scoring>1</critical_product_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </critical_product_scoring_score>
+
+                                        <heading_critical_dcountry translate="label">
+                                            <label>Critical Product Destination Country</label>
+                                            <config_path>payment/paytpvcom/heading_critical_dcountry</config_path>
+                                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                            <sort_order>113</sort_order>
+                                            <depends><critical_product_scoring>1</critical_product_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </heading_critical_dcountry>
+
+                                        <critical_product_dcountry_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/critical_product_dcountry_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>114</sort_order>
+                                            <depends><critical_product_scoring>1</critical_product_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </critical_product_dcountry_scoring>
+
+                                        <critical_product_dcountry_scoring_val translate="label">
+                                            <label>Destination</label>
+                                            <config_path>payment/paytpvcom/critical_product_dcountry_scoring_val</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_country</source_model>
+                                            <frontend_type>multiselect</frontend_type>
+                                            <sort_order>115</sort_order>
+                                            <depends><critical_product_dcountry_scoring>1</critical_product_dcountry_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </critical_product_dcountry_scoring_val>
+                                        
+                                        <critical_product_dcountry_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/critical_product_dcountry_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>116</sort_order>
+                                            <depends><critical_product_dcountry_scoring>1</critical_product_dcountry_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </critical_product_dcountry_scoring_score>
+                                    </fields>
+                                </s_critical_product_scoring>
+
+
+                                
+
+                                <s_dcountry_scoring type="group" translate="label">
+                                <label>Destination Country</label>
+                                <config_path>payment/paytpvcom/s_dcountry_scoring</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>117</sort_order>
+                                    <fields>
+
+                                        <dcountry_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/dcountry_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>118</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </dcountry_scoring>
+
+                                        <dcountry_scoring_val translate="label">
+                                            <label>Countries</label>
+                                            <config_path>payment/paytpvcom/dcountry_scoring_val</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_country</source_model>
+                                            <frontend_type>multiselect</frontend_type>
+                                            <sort_order>119</sort_order>
+                                            <depends><dcountry_scoring>1</dcountry_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </dcountry_scoring_val>
+                                        
+                                        <dcountry_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/dcountry_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>120</sort_order>
+                                            <depends><dcountry_scoring>1</dcountry_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </dcountry_scoring_score>
+                                    </fields>
+                                </s_dcountry_scoring>
+
+                                <s_ip_change_scoring type="group" translate="label">
+                                <label>IP Change</label>
+                                <config_path>payment/paytpvcom/s_ip_change_scoring</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>121</sort_order>
+                                    <fields>
+                                        <ip_change_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/ip_change_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>122</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </ip_change_scoring>
+
+                                        <ip_change_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/ip_change_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>123</sort_order>
+                                            <depends><ip_change_scoring>1</ip_change_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </ip_change_scoring_score>
+                                    </fields>
+                                </s_ip_change_scoring>
+
+                                <s_browser_scoring type="group" translate="label">
+                                <label>Browser Unidentified</label>
+                                <config_path>payment/paytpvcom/s_browser_scoring</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>124</sort_order>
+                                    <fields>
+                                        <browser_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/browser_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>125</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </browser_scoring>
+
+                                        <browser_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/browser_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>126</sort_order>
+                                            <depends><browser_scoring>1</browser_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </browser_scoring_score>
+                                    </fields>
+                                </s_browser_scoring>
+
+                                <s_so_scoring type="group" translate="label">
+                                <label>Operating System Unidentified</label>
+                                <config_path>payment/paytpvcom/s_so_scoring</config_path>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                                <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                <sort_order>127</sort_order>
+                                    <fields>
+
+                                        <so_scoring translate="label">
+                                            <label>Active</label>
+                                            <config_path>payment/paytpvcom/so_scoring</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                            <sort_order>128</sort_order>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </so_scoring>
+
+                                        <so_scoring_score translate="label">
+                                            <label>Score</label>
+                                            <config_path>payment/paytpvcom/so_scoring_score</config_path>
+                                            <frontend_type>select</frontend_type>
+                                            <source_model>paytpvcom/system_config_source_scoring</source_model>
+                                            <sort_order>129</sort_order>
+                                            <depends><so_scoring>1</so_scoring></depends>
+                                            <show_in_default>1</show_in_default>
+                                            <show_in_website>1</show_in_website>
+                                            <show_in_store>0</show_in_store>
+                                        </so_scoring_score>
+                                    </fields>
+                                </s_so_scoring>
+                            </fields>
+                        </scoring_settings>
+
                     </fields>
                 </paytpvcom>
             </groups>

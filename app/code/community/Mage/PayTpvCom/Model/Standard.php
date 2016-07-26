@@ -200,6 +200,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function authorize(Varien_Object $payment, $amount)
     {
+
+        // IWD Checkout Compatibility
+        $sess = Mage::getSingleton('checkout/session');
+        $processedOPC   = $sess->getProcessedOPC();
+        if($processedOPC == 'opc')  $sess->setProcessedOPC('paytpv_opc');
+
+        // Score
+        $sess->setPaytpvOriginalIp($this->getOriginalIp());
+
         $order = $payment->getOrder();
         $amount = $order->getGrandTotal();
 
@@ -220,11 +229,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         }
 
         parent::authorize($payment, $amount);
-        
 
         // NUEVA TARJETA o SUSCRIPCION
         if ($payment_data_card==0){
-            if (isset($payment_data['cc_number'])) {
+            if ($payment_data['cc_number']) {
                 $res = $this->addUser($payment_data);
                
                 $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
@@ -345,6 +353,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         }
         return $this;
     }
+
 
     public function _isPreauthorizeCapture($payment){
         $idtran = (int)$payment->getTransactionId();
@@ -508,6 +517,184 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return $this->_clientoperation;
     }
 
+    public function getMerchantData($order){
+        /*Datos Scoring*/
+        $s_cid = $order->getCustomerId();
+        $customerData = Mage::getModel('customer/customer')->load($s_cid); // then load customer by customer id
+
+        //if ($order->getCustomerIsGuest()) $s_cid = 0;
+    
+
+        $Merchant_Data["scoring"]["customer"]["id"] = $s_cid;
+        $Merchant_Data["scoring"]["customer"]["name"] = $order->getCustomerFirstname();
+        $Merchant_Data["scoring"]["customer"]["surname"] = $order->getCustomerLastname();    
+        $Merchant_Data["scoring"]["customer"]["email"] = $order->getCustomerEmail();
+
+        $phone = "";
+
+        $billing = $order->getBillingAddress();
+        if (!empty($billing))   $phone = $billing->getTelephone();
+
+        $Merchant_Data["scoring"]["customer"]["phone"] = $phone;
+        $Merchant_Data["scoring"]["customer"]["mobile"] = "";
+        $Merchant_Data["scoring"]["customer"]["firstBuy"] = ($this->isFirstPurchaseToken($order->getPaytpvIduser()))?1:0;
+        
+
+        // Shipping
+        // Address
+        $shippingAddressData = $order->getShippingAddress();
+        if ($shippingAddressData){
+            $streetData = $shippingAddressData->getStreet();
+            $street0 = strtolower($streetData[0]);
+            $street1 = strtolower($streetData[1]);
+        }
+
+        $Merchant_Data["scoring"]["shipping"]["address"]["streetAddress"] = ($shippingAddressData)?$street0:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["extraAddress"] = ($shippingAddressData)?$street1:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["city"] = ($shippingAddressData)?$shippingAddressData->getCity():"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["postalCode"] = ($shippingAddressData)?$shippingAddressData->getPostcode():"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["state"] = ($shippingAddressData)?$shippingAddressData->getRegion():"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["country"] = ($shippingAddressData)?$shippingAddressData->getCountry():"";
+
+       
+        // Time
+        $Merchant_Data["scoring"]["shipping"]["time"] = "";
+
+        // Billing
+        $billingAddressData = $order->getBillingAddress();
+        if ($billingAddressData){
+            $streetData = $billingAddressData->getStreet();
+            $street0 = strtolower($streetData[0]);
+            $street1 = strtolower($streetData[1]);
+        }
+        
+
+        $Merchant_Data["scoring"]["billing"]["address"]["streetAddress"] = ($billingAddressData)?$street0:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["extraAddress"] = ($billingAddressData)?$street1:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["city"] = ($billingAddressData)?$billingAddressData->getCity():"";
+        $Merchant_Data["scoring"]["billing"]["address"]["postalCode"] = ($billingAddressData)?$billingAddressData->getPostcode():"";
+        $Merchant_Data["scoring"]["billing"]["address"]["state"] = ($billingAddressData)?$billingAddressData->getRegion():"";
+        $Merchant_Data["scoring"]["billing"]["address"]["country"] = ($billingAddressData)?$billingAddressData->getCountry():"";
+
+        $Merchant_Data["futureData"] = "";
+
+        return $Merchant_Data;
+    }
+
+
+
+    public function transactionScore($order){
+        $api = $this->getApi();
+
+       
+        // Initialize array Score
+        $arrScore = array();
+        $arrScore["score"] = null;
+        $arrScore["merchantdata"] = null;
+
+        if ($this->getConfigData('merchantdata')){
+            $merchantData = $this->getMerchantData($order);
+            $arrScore["merchantdata"] = json_encode($merchantData);
+        }
+
+        $shippingAddressData = $order->getShippingAddress();
+        $shipping_address_country = ($shippingAddressData)?$shippingAddressData->getCountry():"";
+
+        // First Purchase 
+        if ($this->getConfigData('firstpurchase_scoring')){
+            $firstpurchase_scoring_score = $this->getConfigData('firstpurchase_scoring_score');
+            if ($this->isFirstPurchaseToken($order->getPaytpvIduser())){
+                $arrScore["scoreCalc"]["firstpurchase"] = $firstpurchase_scoring_score;
+            }
+        }
+
+        // Complete Session Time
+        if ($this->getConfigData('sessiontime_scoring')){
+            $sessiontime_scoring_val = $this->getConfigData('sessiontime_scoring_val');
+            $sessiontime_scoring_score = $this->getConfigData('sessiontime_scoring_score');
+
+            $VisitorData = Mage::getSingleton('core/session')->getVisitorData();
+            if ($VisitorData && $VisitorData["first_visit_at"]){
+                $first_visit_at = $VisitorData["first_visit_at"];
+                $now = now();
+
+                $time_ss = strtotime($now) - strtotime($first_visit_at);
+                $time_mm = floor($time_ss / 60);
+
+                if ($sessiontime_scoring_val>=$time_mm){
+                    $arrScore["scoreCalc"]["completesessiontime"] = $sessiontime_scoring_score;
+                }
+            }
+        }
+
+        // Critical Product | Destination
+        if ($this->getConfigData('critical_product_scoring')){
+
+            $items = $order->getAllVisibleItems();
+            foreach($items as $i)
+                $arrProducts[] = $i->getProductId();
+
+            $critical_product_scoring_val = explode(",",$this->getConfigData('critical_product_scoring_val'));
+            $critical_product_scoring_score = $this->getConfigData('critical_product_scoring_score');
+
+            if (count(array_intersect($critical_product_scoring_val, $arrProducts))>0)
+                $arrScore["scoreCalc"]["criticalproduct"] = $critical_product_scoring_score;
+
+
+            if ($this->getConfigData('critical_product_dcountry_scoring')){
+                $critical_product_dcountry_scoring_val = explode(",",$this->getConfigData('critical_product_dcountry_scoring_val'));
+                $critical_product_dcountry_scoring_score = $this->getConfigData('critical_product_dcountry_scoring_score');
+
+                if (in_array($shipping_address_country,$critical_product_dcountry_scoring_val))
+                    $arrScore["scoreCalc"]["criticaldestination"] = $critical_product_dcountry_scoring_score;
+            }
+        }
+
+        // Destination 
+        if ($this->getConfigData('dcountry_scoring')){
+            $dcountry_scoring_val = explode(",",$this->getConfigData('dcountry_scoring_val'));
+            $dcountry_scoring_score = $this->getConfigData('dcountry_scoring_score');
+
+            if (in_array($shipping_address_country,$dcountry_scoring_val))
+                $arrScore["scoreCalc"]["destination"] = $dcountry_scoring_score;
+        }
+
+        // Ip Change 
+        if ($this->getConfigData('ip_change_scoring')){
+            $sess = Mage::getSingleton('checkout/session');
+            $ip_change_scoring = $this->getConfigData('ip_change_scoring');
+            $ip = $this->getOriginalIp();
+
+            if ($ip!=$sess->getPaytpvOriginalIp())
+                $arrScore["scoreCalc"]["ipchange"] = $ip_change_scoring;
+        }
+
+        // Browser Unidentified 
+        if ($this->getConfigData('browser_scoring')){
+            $browser_scoring_score = $this->getConfigData('browser_scoring_score');
+            if ($api->browser_detection('browser_name')=="")
+                $arrScore["scoreCalc"]["browser_unidentified"] = $browser_scoring_score;
+
+        }
+
+        // Operating System Unidentified 
+        if ($this->getConfigData('so_scoring')){
+            $so_scoring_score = $this->getConfigData('so_scoring_score');
+            if ($api->browser_detection('os')=="")
+                $arrScore["scoreCalc"]["operating_system_unidentified"] = $so_scoring_score;
+        }
+
+        // CALC ORDER SCORE
+        if (sizeof($arrScore["scoreCalc"])>0){
+            $score = floor(array_sum($arrScore["scoreCalc"]) / sizeof($arrScore["scoreCalc"]));
+            $arrScore["score"] = $score;
+        }
+
+        
+        return $arrScore;
+
+    }
+
     public function infoUser($DS_IDUSER, $DS_TOKEN_USER, $CC_NUMBER=0)
     {
         // Test Mode
@@ -522,7 +709,23 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
 
         return $this->getClient()->info_user(
-            $DS_MERCHANT_MERCHANTCODE, $DS_MERCHANT_TERMINAL, $DS_IDUSER, $DS_TOKEN_USER, $DS_MERCHANT_MERCHANTSIGNATURE, $_SERVER['REMOTE_ADDR']);
+            $DS_MERCHANT_MERCHANTCODE, $DS_MERCHANT_TERMINAL, $DS_IDUSER, $DS_TOKEN_USER, $DS_MERCHANT_MERCHANTSIGNATURE, $this->getOriginalIp());
+    }
+
+    // Function to get the client ip address
+    public function getOriginalIp(){
+        $ip = Mage::helper('core/http')->getRemoteAddr();
+        if($ip){
+            if (!empty($_SERVER["HTTP_CLIENT_IP"])){
+                $ip = $_SERVER["HTTP_CLIENT_IP"];
+            } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
+                $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $ip = trim($ips[count($ips) - 1]);
+            }
+            return $ip;
+        }
+        // There might not be any data
+        return "";
     }
 
     private function executePurchase($order, $amount, $original_ip = '')
@@ -542,9 +745,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $this->getOriginalIp();
+
         $DS_MERCHANT_PRODUCTDESCRIPTION = $order->getIncrementId();
         $DS_MERCHANT_OWNER = ''; /*@TODO: Set owner*/
+
+        $score = $this->transactionScore($order);
+        $DS_MERCHANT_SCORING = $score["score"];
+        $DS_MERCHANT_DATA = $score["merchantdata"];
+
         return $this->getClient()->execute_purchase(
             $DS_MERCHANT_MERCHANTCODE,
             $DS_MERCHANT_TERMINAL,
@@ -556,7 +765,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_MERCHANT_MERCHANTSIGNATURE,
             $DS_ORIGINAL_IP,
             $DS_MERCHANT_PRODUCTDESCRIPTION,
-            $DS_MERCHANT_OWNER
+            $DS_MERCHANT_OWNER,
+            $DS_MERCHANT_SCORING,
+            $DS_MERCHANT_DATA
         );
     }
 
@@ -639,9 +850,14 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $this->getOriginalIp();
         $DS_MERCHANT_PRODUCTDESCRIPTION = $order->getIncrementId();
         $DS_MERCHANT_OWNER = ''; /*@TODO: Set owner*/
+
+        $score = $this->transactionScore($order);
+        $DS_MERCHANT_SCORING = $score["score"];
+        $DS_MERCHANT_DATA = $score["merchantdata"];
+
         return $this->getClient()->create_preauthorization(
             $DS_MERCHANT_MERCHANTCODE,
             $DS_MERCHANT_TERMINAL,
@@ -653,7 +869,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $DS_MERCHANT_MERCHANTSIGNATURE,
             $DS_ORIGINAL_IP,
             $DS_MERCHANT_PRODUCTDESCRIPTION,
-            $DS_MERCHANT_OWNER
+            $DS_MERCHANT_OWNER,
+            $DS_MERCHANT_SCORING,
+            $DS_MERCHANT_DATA
         );
     }
 
@@ -682,7 +900,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_MERCHANT_ORDER = $order->getIncrementId();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL .  $DS_MERCHANT_ORDER . $DS_MERCHANT_AMOUNT . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $this->getOriginalIp();
         return $this->getClient()->preauthorization_confirm(
             $DS_MERCHANT_MERCHANTCODE,
             $DS_MERCHANT_TERMINAL,
@@ -798,7 +1016,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_MERCHANT_EXPIRYDATE = str_pad($payment_data['cc_exp_month'], 2, "0", STR_PAD_LEFT) . substr($payment_data['cc_exp_year'], 2, 2);
         $DS_MERCHANT_CVV2 = $payment_data['cc_cid'];
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_MERCHANT_PAN . $DS_MERCHANT_CVV2 . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $this->getOriginalIp();
         return $this->getClient()->add_user(
             $DS_MERCHANT_MERCHANTCODE,
             $DS_MERCHANT_TERMINAL,
@@ -847,7 +1065,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_IDUSER = $idUser;
         $DS_TOKEN_USER = $tokeUser;
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = $this->getOriginalIp();
         if ($DS_ORIGINAL_IP=="::1") $DS_ORIGINAL_IP = "127.0.0.1";
 
         return $this->getClient()->remove_user(
@@ -868,7 +1086,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_IDUSER = $idUser;
         $DS_TOKEN_USER = $tokeUser;
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = $this->getOriginalIp();
         
         if ($DS_ORIGINAL_IP=="::1") $DS_ORIGINAL_IP = "127.0.0.1";
 
@@ -986,6 +1204,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         $Secure = ($this->isSecureTransaction())?1:0;
 
+
+        $score = $this->transactionScore($order);
+        $MERCHANT_SCORING = $score["score"];
+        $MERCHANT_DATA = $score["merchantdata"];
+
+
         // execute purchase
         if ($operation == 1){
             $signature = md5($client . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
@@ -1003,6 +1227,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'MERCHANT_MERCHANTSIGNATURE' => $signature,
                 '3DSECURE' => $Secure
             );
+            if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+            if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
 
 
@@ -1040,6 +1266,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
                 'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
             );
+            if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+            if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
 
         return $sArr;
@@ -1069,6 +1297,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $paytpv_iduser = $order->getPaytpvIduser();
         $paytpv_tokenuser = $order->getPaytpvTokenuser();
 
+        
+        $score = $this->transactionScore($order);
+        $MERCHANT_SCORING = $score["score"];
+        $MERCHANT_DATA = $score["merchantdata"];
+
+
         // execute_purchase_token
         if ($operation == 109){
             $signature = md5($client . $paytpv_iduser . $paytpv_tokenuser . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
@@ -1088,6 +1322,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
                 'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
             );
+            if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+            if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
 
         // execute_preauthorization_token
@@ -1109,8 +1345,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
                 'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
             );
+            if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+            if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
-
 
         return $sArr;
     }
@@ -1121,6 +1358,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $operation=110; // create_subscription_token;
 
         $order_id = $arrDatos["MERCHANT_ORDER"];
+        $order = Mage::getModel('sales/order');
+        $order->loadByIncrementId($order_id);
 
         $client = $this->getConfigData('client');
         $pass = $this->getConfigData('pass');
@@ -1146,6 +1385,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $subscription_enddate = $arrDatos["DS_SUBSCRIPTION_ENDDATE"];
 
 
+        $score = $this->transactionScore($order);
+        $MERCHANT_SCORING = $score["score"];
+        $MERCHANT_DATA = $score["merchantdata"];
+
+
         $signature = md5($client . $paytpv_iduser . $paytpv_tokenuser . $terminal . $operation . $order_id . $amount . $currency . md5($pass));
         $sArr = array
         (
@@ -1166,6 +1410,9 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             'URLOK' => Mage::getUrl('paytpvcom/standard/reciboBankstore'),
             'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
         );
+
+        if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+        if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         
 
         return $sArr;
