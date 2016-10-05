@@ -329,7 +329,7 @@ Test Card is invalid,Test Card is invalid
 Test mode does not support confirm preathorize orders placed in Real Mode,Test mode does not support confirm preathorize orders placed in Real Mode
 Test mode does not support cancel suscription placed in Real Mode,Test mode does not support cancel suscription placed in Real Mode
 Currency Accepted,Currency Accepted
-Credit Card Data PAYTPV Iframe,Credit Card Data PAYTPV Iframe
+Payment New Page (PAYTPV Iframe / Jet),Payment New Page (PAYTPV Iframe / Jet)
 Scoring Configuration,Scoring Configuration
 Send Merchant Data,Send Merchant Data
 Active,Active
@@ -346,3 +346,8 @@ Countries,Countries
 IP Change,IP Change
 Browser Unidentified,Browser Unidentified
 Operating System Unidentified,Operating System Unidentified
+Expiration,Expiration
+The CVV is a numerical code, usually 3 digits behind the card,The CVV is a numerical code, usually 3 digits behind the card
+Make Payment,Make Payment
+Credit Card Operation,Credit Card Operation
+Enter your card,Enter your card

@@ -9,7 +9,7 @@ class Mage_PayTpvCom_Model_System_Config_Source_EnvironmentComment extends Mage_
             function render_comment()
             {
                
-                var field_value = $('payment_paytpvcom_environment').getValue();
+                var field_value = $('payment_module_settings_environment').getValue();
                 var comment = $('dynamic_comment');
                     switch (field_value)
                     {
@@ -30,7 +30,7 @@ class Mage_PayTpvCom_Model_System_Config_Source_EnvironmentComment extends Mage_
             function init_comment()
             {
                 render_comment();
-                $('payment_paytpvcom_environment').observe('change', function(){
+                $('payment_module_settings_environment').observe('change', function(){
                     render_comment();
                 });
             }

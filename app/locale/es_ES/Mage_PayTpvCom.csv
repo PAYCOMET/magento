@@ -31,7 +31,7 @@ Maximum Order Total,Importe máximo del pedido
 Sort Order,Orden
 Position of payment method,Posición el methodo de pago
 Selected currency (%s) is not compatible with this payment method,La moneda seleccionada (%s) no es compatible con este método de pago
-Authorization failed. %s - %s,Fallo la pre-autorización. %s - %s
+Authorization failed. %s - %s,Fallo la autorización. %s - %s
 Payment failed. %s - %s,Falló el pago. %s - %s
 Subscriber name is too long.,El nombre del suscriptor es demasiado largo.
 Merchant reference ID format is not supported.,Merchant reference ID format is not supported.
@@ -329,7 +329,7 @@ Test Card is invalid,Tarjeta de prueba no válida
 Test mode does not support confirm preathorize orders placed in Real Mode,En Modo de Pruebas no se pueden confirmar preautorizaciones realizadas en Modo Real
 Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real
 Currency Accepted,Moneda Aceptada
-Credit Card Data PAYTPV Iframe,Iframe PAYTPV para Datos de Tarjeta
+Payment New Page (PAYTPV Iframe / Jet),Pago en nueva página (Iframe PAYTPV / Jet)
 Scoring Configuration,Configuración del Scoring
 Send Merchant Data,Enviar Datos del Comercio
 Active,Activo
@@ -346,3 +346,8 @@ Countries,Países
 IP Change,Cambio de IP
 Browser Unidentified,Navegador No identificado
 Operating System Unidentified,Sistema Operativo No identificado
+Expiration,Caducidad
+"The CVV is a numerical code, usually 3 digits behind the card","El código CVV es un código numérico, normalmente de 3 dígitos detrás de la tarjeta"
+Make Payment,Realizar Pago
+Credit Card Operation,Operación mediante tarjeta de crédito
+Enter your card,Introduce tu tarjeta

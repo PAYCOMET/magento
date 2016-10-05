@@ -13,11 +13,6 @@
     </description>
     <authors>
         <author>
-            <name>Mikel Martin</name>
-            <user>m1k3lm</user>
-            <email>mmartin@paytpv.com</email>
-        </author>
-        <author>
             <name>Jose Ramón García</name>
             <user>txerragh</user>
             <email>jrgarcia@paytpv.com</email>
@@ -66,6 +61,7 @@
                                     <file name="Country.php"/>
                                     <file name="Environment.php"/>
                                     <file name="Environmentcomment.php"/>
+                                    <file name="Integration.php"/>
                                     <file name="Product.php"/>
                                     <file name="Scoring.php"/>
                                     <file name="Sessiontime.php"/>
@@ -112,15 +108,24 @@
                         <dir name="images">
                             <dir name="paytpvcom">
                                 <file name="2100candau256.png"/>
+                                <file name="amex.png"/>
                                 <file name="clockpayblue.gif"/>
                                 <file name="cvv2.png"/>
                                 <file name="error.gif"/>
+                                <file name="jcb.png"/>
+                                <file name="loader.gif"/>
                                 <file name="maestro.png"/>
                                 <file name="mastercard_secuercode.png"/>
+                                <file name="mastercard_secure_code.png"/>
                                 <file name="mastercard.png"/>
+                                <file name="paytpv_logo.svg"/>
                                 <file name="paytpv.png"/>
+                                <file name="pci.png"/>
+                                <file name="thawte.png"/>
                                 <file name="verifiedbyvisa.png"/>
-                                
+                                <file name="veryfied_by_visa.png"/>
+                                <file name="visa_electron.png"/>
+                                <file name="visa.png"/>
                             </dir>
                         </dir>
                         <dir name="js">
@@ -134,11 +139,13 @@
                         <dir name="css">
                             <dir name="paytpvcom">
                                 <file name="2100.css"/>
+                                <file name="cards.css"/>
                                 <file name="fancybox_loading.gif"/>
                                 <file name="fancybox_loading@2x.gif"/>
                                 <file name="fancybox_overlay.png"/>
                                 <file name="fancybox_sprite.png"/>
                                 <file name="fancybox_sprite@2x.png"/>
+                                <file name="fullscreen.css"/>
                                 <file name="jquery.fancybox.css"/>
                                 <file name="payment.css"/>
                                 <file name="tarjetas.css"/>
@@ -216,6 +223,11 @@
                     </dir>
                 </dir>
                 <file name="Mage_PayTpvCom.csv"/>
+            </dir>
+        </target>
+        <target name="magelib">
+            <dir name="paytpv">
+                <file name="Minifier.php"/>
             </dir>
         </target>
     </contents>

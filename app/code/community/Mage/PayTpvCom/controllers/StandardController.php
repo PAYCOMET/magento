@@ -184,6 +184,22 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 print json_encode($response);
                 
                 break;
+
+            case "saveTokenCard":
+                $order_id = $_POST["order_id"];
+                $remember = $_POST["remember"];
+
+                $order = Mage::getModel('sales/order');
+                $order->loadByIncrementId($order_id);
+
+                $ses_customer_id = Mage::getSingleton('customer/session')->getCustomer()->getId();
+                if ($order->getCustomerId()==$ses_customer_id){
+                    $order->setPaytpvSavecard($remember);
+                    $order->save();
+                    
+                }
+                
+                break;
         }       
         return;
     }
@@ -209,6 +225,165 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         print(file_get_contents($file));
 
     }
+
+
+    /**
+     * When a customer chooses PayTpvCom on User/Cards page BANKSTORE JET
+     *
+     */
+    public function bkjetadduserAction()
+    {
+        $model = Mage::getModel('paytpvcom/standard');
+
+        $params = $this->getRequest()->getParams();
+
+        $res = $model->addUser($params);
+               
+        $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
+        $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
+        $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';
+
+        try{
+            if ((int)$DS_ERROR_ID == 0){
+                $result2 = $model->infoUser($DS_IDUSER,$DS_TOKEN_USER,0);
+                $model->save_card($DS_IDUSER,$DS_TOKEN_USER,$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],Mage::getSingleton('customer/session')->getCustomer()->getId());
+                $arrResp["error"] = 0;
+            }else{
+                if (!isset($res['DS_ERROR_ID']))
+                    $res['DS_ERROR_ID'] = -1;
+                $message = Mage::helper('payment')->__('Error. %s - %s', $res['DS_ERROR_ID'], $model->getErrorDesc($res['DS_ERROR_ID']));
+                throw new Mage_Payment_Model_Info_Exception($message);
+                $arrResp["error"] = 1;
+                $arrResp["errorText"] = $message;
+            }
+        }catch (exception $e){
+            $arrResp["error"] = 1;
+            $arrResp["errorText"] = $e->getMessage();
+        }
+        print json_encode($arrResp);
+
+
+    }
+
+    /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page BANKSTORE JET
+     *
+     */
+    public function bkjetAction()
+    {
+
+        $model = Mage::getModel('paytpvcom/standard');
+        $order_id = $model->getCheckout()->getLastRealOrderId();
+
+        
+        $order = Mage::getModel('sales/order');
+        $order->loadByIncrementId($order_id);
+        $amount = $order->getGrandTotal();
+
+        
+        $params = $this->getRequest()->getParams();
+        $res = $model->addUser($params);
+               
+        $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
+        $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
+        $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';
+
+        try{
+
+            if ((int)$DS_ERROR_ID == 0){
+
+                $card["paytpv_iduser"] = $DS_IDUSER;
+                $card["paytpv_tokenuser"] = $DS_TOKEN_USER;
+
+
+                $order->setPaytpvIduser($card["paytpv_iduser"])
+                  ->setPaytpvTokenuser($card["paytpv_tokenuser"]);
+                $order->save();
+
+                $Secure = ($model->isSecureTransaction($order->getGrandTotal()))?1:0;
+
+                switch ($Secure){
+                    // PAGO NO SEGURO
+                    case 0:
+
+                        $res = $model->executePurchase($order);
+
+                        if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
+                            $DS_IDUSER = $order->getPaytpvIduser();
+                            $DS_TOKEN_USER = $order->getPaytpvTokenuser();
+
+                            $remember = $order->getPaytpvSavecard();
+                            // Si es un pago NO Seguro, ha pulsado en el acuerdo, es una tarjeta nueva y es un usuario registrado guardamos el token
+                            if ($remember && $order->getCustomerId()>0){
+                                $result = $model->infoUser($order->getPaytpvIduser(),$order->getPaytpvTokenuser(),"");
+                                $card = $model->save_card($order->getPaytpvIduser(),$order->getPaytpvTokenuser(),$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$order->getCustomerId());
+                            }
+
+                            // Creamos la factura
+                            $payment = $order->getPayment();
+
+                            $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+                            $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
+                                ->setCurrencyCode($order->getBaseCurrencyCode())
+                                ->setPreparedMessage("PayTPV Pago Correcto.")
+                                ->setIsTransactionPending(false)
+                                ->setIsTransactionClosed(1)
+                                ->registerCaptureNotification($order->getBaseGrandTotal());
+
+
+                            // Obtener CardBrand y BicCode
+                            if ($model->getConfigData('operationcall')==1 && $model->getConfigData('environment')!=1){         
+                                $res = $model->operationCall($order);
+                                if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
+                                    $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
+                                    $BicCode =  $res[0]->PAYTPV_OPERATION_BICCODE;
+                                    $order->setPaytpvCardBrand($CardBrand)
+                                    ->setPaytpvBicCode($BicCode);
+                                }
+                            }
+
+                            $order->save();
+                            $model->processSuccess($order,null,$params);
+
+                            $arrResp["error"] = 0;
+                            $arrResp["url"] = Mage::getUrl('checkout/onepage/success');
+                            
+
+                        } else {
+                            if (!isset($res['DS_ERROR_ID']))
+                                $res['DS_ERROR_ID'] = -1;
+                            $message = Mage::helper('payment')->__('Payment failed. %s - %s', $res['DS_ERROR_ID'], $model->getErrorDesc($res['DS_ERROR_ID']));
+                            throw new Mage_Payment_Model_Info_Exception($message);
+                            $arrResp["error"] = 1;
+                            $arrResp["errorText"] = $message;
+                        }
+                        break;
+                    case 1: // Pago Seguro
+                        
+                        // Set status Payment Review
+                        $order->setState(Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW, Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW, Mage::helper('payment')->__('3D Secure'), true);
+                        $order->save();
+
+                        $iframeUrl = $model->getPayTpvBankStoreUrl()."?" .http_build_query( $model->getBankStoreTokenFormFields(109) );
+                        $arrResp["error"] = 0;
+                        $arrResp["url"] = $iframeUrl;
+
+                        break;
+                }
+            }else{
+                $message = Mage::helper('payment')->__('Authorization failed. %s - %s', $res['DS_ERROR_ID'], $model->getErrorDesc($res['DS_ERROR_ID']));
+                $arrResp["error"] = 1;
+                $arrResp["errorText"] = $message;
+            }
+        }catch (exception $e){
+            $arrResp["error"] = 1;
+            $arrResp["errorText"] = $e->getMessage();
+        }
+
+        print json_encode($arrResp);
+    }
+
+    
 
 
 
@@ -249,7 +424,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
      */
     public function callbackAction()
     {
-        Mage::log(http_build_query($_REQUEST), null, 'paytpvcom.log', true);
+        
         $model = Mage::getModel('paytpvcom/standard');
         $order = Mage::getModel('sales/order');
         $params = $this->getRequest()->getParams();
@@ -563,7 +738,6 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     $order
                     ->setPaytpvCardBrand($params['CardBrand'])
                     ->setPaytpvBicCode($params['BicCode']);
-                    $order->save();
                 }
 
                 $order->save();
