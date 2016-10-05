@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.3.8</version>
+    <version>5.5.0</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -18,7 +18,7 @@
             <email>jrgarcia@paytpv.com</email>
         </author>
     </authors>
-    <date>2016-01-15</date>
+    <date>2016-10-05</date>
     <time>15:30:00</time>
     <contents>
         <target name="magecommunity">
