@@ -829,7 +829,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $comment = Mage::helper('payment')->__('Successful payment');
                 $session->addSuccess($comment);
                 
-                Mage::getSingleton('checkout/cart')->truncate();
+                Mage::getSingleton('checkout/cart')->truncate()->save();
                 Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
                 // check if order has been processed by OPC module
                 $processedOPC   = $session->getProcessedOPC();

@@ -92,7 +92,7 @@ li .paytpv_jet ul li{
 }
 
 .paytpv_jet{
-	max-width: 360px;
+    max-width: 360px;
 }
 
 .paytpv_jet .paytpv_merchant_pan {
@@ -233,6 +233,7 @@ li .paytpv_jet ul li{
     display: block;
     font-family: Montserrat,sans-serif;
     font-weight: 700;
+    padding-top: 10px;
 }
 
 .operation_data p.ref_num {
@@ -241,6 +242,7 @@ li .paytpv_jet ul li{
     font-size: 18px;
     margin-bottom: 0;
     padding: 20px;
+    min-width: 150px;
 }
 
 .operation_data h3.cost_num {
@@ -250,7 +252,7 @@ li .paytpv_jet ul li{
 .operation_data p b {
     display: block;
     font-weight: 700;
-    margin-top: 0;
+    padding-top: 10px;
     word-break: break-all;
 }
 

@@ -63,9 +63,9 @@ $integration = $standard->getConfigData('integration');
             </li>
 
             <li>
-            	<input type="submit" class="button" value="<?php echo $this->__('Make Payment') ?>" id="btnforg" style="" onclick="buildED();">
+              <input type="submit" class="button" value="<?php echo $this->__('Make Payment') ?>" id="btnforg" style="" onclick="buildED();">
               <div class="button" id="clockwait" style="display:none;"><img src="<?php echo $this->getSkinUrl('images/paytpvcom/loader.gif') ?>" title="<?php echo $this->__('Wait');?>" /></div>
-        	  </li>
+            </li>
 
             <span style="color:red;font-weight:bold;" id="paymentErrorMsg"></span>
             <input type="hidden" name="payment[paytpvToken]" id="paytpvToken">
@@ -445,7 +445,7 @@ $integration = $standard->getConfigData('integration');
       </script>
 <?php endif; ?>
       
-      <div id="storingStep" style="padding:0px 10px;" class="alert alert-info">
+      <div id="storingStep" style="margin:10px 20px;" class="alert alert-info">
         <input type="checkbox" name="payment[remember]" id="remember" class="input-checkbox" style="width:auto;margin-right:5px;" <?php print $remember;?>> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
       </div>
 
