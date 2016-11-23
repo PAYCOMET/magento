@@ -4,10 +4,10 @@ Pago no realizado : %s,Pago no realizado : %s
 Data succesfully saved,Data succesfully saved
 Incorrect input data,Incorrect input data
 Successful payment,Successful payment
-Tarjeta de credito paytpv,Tarjeta de credito paytpv
+Tarjeta de credito paytpv,Credit Card PAYTPV
 Enabled,Enabled
 Title,Title
-Credit Card Paytpv,Credit Card Paytpv
+Credit Card PAYTPV,Credit Card PAYTPV
 "Operation method","Operation method"
 Integration method,Integration method
 Client Code,Client Code
@@ -78,7 +78,7 @@ Number zero or invalid,Number zero or invalid
 Operation canceled,Operation canceled
 Authentication Error,Authentication Error
 Denied due to security level,Denied due to security level
-PUC error message. Contact PayTPV,PUC error message. Contact PayTPV
+PUC error message. Contact PayTPV,PUC error message. Contact PAYTPV
 System Error,System Error
 Duplicate transaction,Duplicate transaction
 MAC Error,MAC Error
@@ -329,7 +329,7 @@ Test Card is invalid,Test Card is invalid
 Test mode does not support confirm preathorize orders placed in Real Mode,Test mode does not support confirm preathorize orders placed in Real Mode
 Test mode does not support cancel suscription placed in Real Mode,Test mode does not support cancel suscription placed in Real Mode
 Currency Accepted,Currency Accepted
-Payment New Page (PAYTPV Iframe / Jet),Payment New Page (PAYTPV Iframe / Jet)
+Payment New Page (PAYTPV Iframe / Jet),Payment New Page (PAYTPV Iframe / JET)
 Scoring Configuration,Scoring Configuration
 Send Merchant Data,Send Merchant Data
 Active,Active

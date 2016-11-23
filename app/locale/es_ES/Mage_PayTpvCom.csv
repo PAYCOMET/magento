@@ -2,12 +2,12 @@ Payment failed (Err. code %s),Pago fallido (Cód. Error %s)
 Payment refused from PayTPV.com. Reason: #%s - %s,Pago denegado en PayTPV.com. Razón: #%s - %s
 Pago no realizado : %s,Pago no realizado : %s
 Data succesfully saved,Datos guardados con éxito
-Incorrect input data,Datos de entrada incorectos
+Incorrect input data,Datos de entrada incorrectos
 Successful payment,Pago exitoso
-Tarjeta de credito paytpv,Tarjeta de credito paytpv
+Credit Card PAYTPV,Tarjeta de crédito PAYTPV
 Enabled,Habilitado
 Title,Título
-Credit Card Paytpv,Tarjeta de credito Paytpv
+Credit Card PAYTPV,Tarjeta de crédito PAYTPV
 "Operation method","Tipo de operativa"
 Integration method,Tipo de integración
 Client Code,Código de cliente
@@ -29,13 +29,13 @@ Credit Card Types,Tipos de tarjeta
 Minimum Order Total,Importe mínimo del pedido
 Maximum Order Total,Importe máximo del pedido
 Sort Order,Orden
-Position of payment method,Posición el methodo de pago
+Position of payment method,Posición del método de pago
 Selected currency (%s) is not compatible with this payment method,La moneda seleccionada (%s) no es compatible con este método de pago
-Authorization failed. %s - %s,Fallo la autorización. %s - %s
+Authorization failed. %s - %s,Falló la autorización. %s - %s
 Payment failed. %s - %s,Falló el pago. %s - %s
 Subscriber name is too long.,El nombre del suscriptor es demasiado largo.
-Merchant reference ID format is not supported.,Merchant reference ID format is not supported.
-Schedule description is too long.,Schedule description is too long.
+Merchant reference ID format is not supported.,El formato del Código de Comercio no está soportado.
+Schedule description is too long.,La descripción es demasiado larga.
 Error,Error
 Expired Card,Tarjeta caducada
 Blacklisted Card,Tarjeta en lista negra
@@ -283,12 +283,12 @@ BANK STORE,BANK STORE
 OFFSITE,OFFSITE
 IFRAME,IFRAME
 "Use stored one","Utilizar mi tarjeta almacenada"
-"You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está rgistrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
+"You have already %s credit card stored in you account<br/>press continue to use it or&hellip;","La tarjeta terminada en %s está registrada en su cuenta.<br/>Pulse en CONTINUAR para utilizarla en esta compra o haz click para "
 "Remember this information for next purchase","Recordar esta información en la próxima compra"
 "use another","usar otra"
 STREAMLINE YOUR FUTURE PURCHASES!,¡AGILICE SUS FUTURAS COMPRAS!
 Link a card to your account to make all procedures easily and quickly.,Vincule una tarjeta a su cuenta para poder hacer todos los trámites de forma ágil y rápida.
-When you link a Tarjet accepts ,Al vincular una tarjet acepta los 
+When you link a Tarjet accepts ,Al vincular una tarjeta acepta los 
 terms and conditions of service,términos y condiciones del servicio
 Link card,Vincular tarjeta
 Available Cards,Tarjetas disponibles
@@ -303,7 +303,7 @@ Remove Card, Eliminar Tarjeta
 "You will be redirected to your bank for secure payment. Wait a moment, please ...","Va a ser redirigido a su banco para realizar el pago seguro. Espere un momento, por favor..."
 There is still no card associated.,No tiene asociado todavía ninguna tarjeta.
 BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,SE LE REDIRIGIRA A LA PASARELA DE PAGO EN EL PASO FINAL DEL CHECKOUT
-"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.","Los datos de introducidos se almacenarán en los servidores de PayTpv, empresa con certificación PCI/DSS de nivel 1, lo que hace los pagos 100% seguros."
+"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.","Los datos de introducidos se almacenarán en los servidores de PAYTPV, empresa con certificación PCI/DSS de nivel 1, lo que hace los pagos 100% seguros."
 You must accept the terms and conditions of service,Debe aceptar los términos y condiciones del servicio
 Yes,Si
 Accept,Aceptar
@@ -329,12 +329,12 @@ Test Card is invalid,Tarjeta de prueba no válida
 Test mode does not support confirm preathorize orders placed in Real Mode,En Modo de Pruebas no se pueden confirmar preautorizaciones realizadas en Modo Real
 Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real
 Currency Accepted,Moneda Aceptada
-Payment New Page (PAYTPV Iframe / Jet),Pago en nueva página (Iframe PAYTPV / Jet)
+Payment New Page (PAYTPV Iframe / Jet),Pago en nueva página (Iframe PAYTPV / JET)
 Scoring Configuration,Configuración del Scoring
 Send Merchant Data,Enviar Datos del Comercio
 Active,Activo
 First Purchase,Primera compra
-Complete Session Time,Tiempo Completo de Session
+Complete Session Time,Tiempo Completo de Sesión
 Time (minutes),Tiempo (minutos)
 Critical Product | Critical Product Destination Country,Producto Crítico | Destino del Producto Crítico
 Critical Product,Producto Crítico
