@@ -1,6 +1,7 @@
 <?php
 $standard = Mage::getSingleton('paytpvcom/standard');
 $integration = $standard->getConfigData('integration');
+$paytpviframe_height = $standard->getConfigData('paytpviframe_height');
 ?>
 
 <section id="banner">
@@ -21,6 +22,7 @@ $integration = $standard->getConfigData('integration');
       </div>
     </div>
 
+    <div class="operation_card">
     <div class="paytpv_jet">
 
     <?php
@@ -28,7 +30,7 @@ $integration = $standard->getConfigData('integration');
     if ($integration!=1):?>
       
         <h4 class="title"><?php echo $this->__('Enter your card'); ?></h4>
-        <iframe title="titulo" src="<?php echo $iframeUrl; ?>" id="iframe_paytpv" frameborder="0" height="300">
+        <iframe title="titulo" src="<?php echo $iframeUrl; ?>" id="iframe_paytpv" frameborder="0" height="<?php print $paytpviframe_height;?>">
         </iframe>
     <?php      // BANKSTORE JET/XML
     elseif ($integration==1):?>
@@ -445,10 +447,11 @@ $integration = $standard->getConfigData('integration');
       </script>
 <?php endif; ?>
       
-      <div id="storingStep" style="margin:10px 20px;" class="alert alert-info">
+      <div id="storingStep" style="margin:0px 20px 10px;" class="alert alert-info">
         <input type="checkbox" name="payment[remember]" id="remember" class="input-checkbox" style="width:auto;margin-right:5px;" <?php print $remember;?>> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
       </div>
 
+    </div>
     </div>
   </div>
 </section>

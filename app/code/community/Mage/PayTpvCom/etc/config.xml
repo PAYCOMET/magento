@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.5.1</version>
+            <version>5.5.2</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -169,12 +169,14 @@
                 <environment>0</environment>
                 <transaction_type>0</transaction_type>
                 <secure_first>1</secure_first>
-                <secure_amount>100000</secure_amount>
+                <secure_amount>1000</secure_amount>
                 <show_nameoncard>1</show_nameoncard>
                 <show_cctypes>1</show_cctypes>
                 <operationcall>0</operationcall>
                 <currency>EUR</currency>
                 <paytpviframe>0</paytpviframe>
+                <paytpviframe_height>340</paytpviframe_height>
+                <remembercardselected>1</remembercardselected>
             </paytpvcom>
         </payment>
     </default>

@@ -352,3 +352,6 @@ Make Payment,Realizar Pago
 Credit Card Operation,Operación mediante tarjeta de crédito
 Enter your card,Introduce tu tarjeta
 Total Amount,Importe Total
+Remember Card (Selected),Recordar Tarjeta (seleccionado)
+"<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>","<b>Atención: Este entorno no efectúa llamadas a los sistemas de PAYTPV. Si dispone de una cuenta Sandbox en PAYTPV use el Modo Real</b><br/>"
+Iframe PAYTPV - Height,Iframe PAYTPV - Altura

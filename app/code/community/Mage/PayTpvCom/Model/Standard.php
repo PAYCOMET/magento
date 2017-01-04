@@ -203,7 +203,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             if ($this->new_page_payment()){
                 $paymentInfo = $this->getInfoInstance();
                 $order = $paymentInfo->getOrder();
-                $order->setPaytpvSavecard(1); // Save Card as default
+                $remembercardselected = ($this->getConfigData('remembercardselected'))?1:0;
+                $order->setPaytpvSavecard($remembercardselected); // Save Card as default
                 return '';
             // Only Authorize
             }else if ($this->isSecureTransaction() || ($transaction_type==self::PREAUTHORIZATION)){
@@ -496,8 +497,13 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order->save();
         $order->sendOrderUpdateEmail(true, $message);
 
-        $session->addError($message);
-        Mage::app()->getResponse()->setRedirect(Mage::getUrl('sales/order/reorder', array('order_id' => $order->getIncrementId())));
+        if ($message!="")   $session->addError($message);
+
+        if ($order->getCustomerId()>0)
+            Mage::app()->getResponse()->setRedirect(Mage::getUrl('sales/order/reorder', array('order_id' => $order->getIncrementId())));
+        else
+            Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/cart'));     
+        
     }
 
 
@@ -1172,6 +1178,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 return "it";
             case "de_DE":
                 return "de";
+            case "pt_PT":
+                return "pt";
         }
         return "es";
     }

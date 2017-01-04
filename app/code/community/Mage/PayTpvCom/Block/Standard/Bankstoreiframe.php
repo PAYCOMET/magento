@@ -21,6 +21,13 @@ class Mage_PayTpvCom_Block_Standard_Bankstoreiframe extends Mage_Core_Block_Temp
         $amount = $currency='';
         $total_amount = number_format($order->getGrandTotal(),2);
 
+        // If Status not PENDING OR PAYMENT_REVIEW go to HOME.
+        $order_status = $order->getStatus();
+        if ($order_status!= 'pending' && $order_status != Mage_Sales_Model_Order::STATE_PENDING_PAYMENT && $order_status != Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW){
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
+            return;
+        }
+
         $currency_code = $order->getOrderCurrencyCode();
 
         $currency_symbol = Mage::app()->getLocale()->currency( $currency_code )->getSymbol();

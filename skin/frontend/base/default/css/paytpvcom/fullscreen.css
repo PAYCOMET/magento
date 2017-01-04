@@ -16,17 +16,6 @@ li .paytpv_jet ul li{
 
 }
 
-.paytpv_jet{
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.3);
-    -moz-box-shadow: 0 1px 3px rgba(0,0,0,.3);
-    box-shadow: 0 1px 3px rgba(0,0,0,.3);
-    background-color: #fff;
-    border-top: 7px solid;
-    float:right;
-}
 
 .paytpv_jet.user{
      -webkit-border-radius: 5px;
@@ -41,9 +30,6 @@ li .paytpv_jet ul li{
     float:none;
 }
 
-.paytpv_jet form, .paytpv_jet iframe, .paytpv_jet .title, .paytpv_jet .bloque_jet{
-    padding: 10px 20px;
-}
 
 .paytpv_jet form>ul>li{
     padding: 10px 0;
@@ -55,7 +41,6 @@ li .paytpv_jet ul li{
     
     font-size: 19px;
     font-weight: 100;
-    min-width: 320px;
     font-weight: bold;
     margin: 0px;
 }
@@ -151,39 +136,6 @@ li .paytpv_jet ul li{
     float: left;
 }
 
-@media (min-width: 360px){
-    .paytpv_jet, .operation_data {
-        margin: 0 auto;
-        width: 330px;
-    }
-}
-
-@media (min-width: 768px){
-.operation, .operation_data {
-    float: left;
-}
-}
-
-@media (min-width: 920px){
-.operation_data {
-    margin: 0;
-}
-}
-
-@media (min-width: 1080px){
-.operation_data {
-    width: 580px;
-}
-}
-
-
-@media (min-width: 1200px){
-.operation_data {
-    width: 700px;
-}
-}
-
-
 
 .operation_data h2 {
     font-size: 24px;
@@ -202,7 +154,6 @@ li .paytpv_jet ul li{
 .operation_data .info_paytpv{
     padding: 40px 5px;
     text-align: center;
-    float: left;
     
 }
 
@@ -260,19 +211,6 @@ li .paytpv_jet ul li{
     border-left: 1px solid #404046;
 }
 
-@media (max-width: 920px){
-    .mobile div {
-        float: none;
-    }
-}
-
-.paytpv_wrapper {
-    float: none!important;
-    margin: 0 auto;
-    padding: 10px 10px;
-   
-}
-
 
 .footer_line {
     width: 100%;
@@ -322,3 +260,99 @@ footer ul {
 .input-checkbox{
     float: left;
 }
+
+
+.paytpv_jet form, .paytpv_jet iframe, .paytpv_jet .title, .paytpv_jet .bloque_jet{
+    padding: 10px 0px;
+}
+
+.paytpv_jet{
+    -moz-box-shadow: 0 0px 0px;
+    box-shadow: 0 0px 0px);
+    background-color: #fff;
+    float:right;
+}
+
+.paytpv_wrapper {
+    float: none!important;
+    margin: 0 auto;
+    padding: 10px 0px;
+}
+
+@media (min-width: 360px){
+    .paytpv_jet form, .paytpv_jet iframe, .paytpv_jet .title, .paytpv_jet .bloque_jet{
+        padding: 10px 20px;
+    }
+
+    .paytpv_jet, .operation_data {
+        margin: 0 auto;
+        width: 330px;
+    }
+
+    .paytpv_jet{
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.3);
+        -moz-box-shadow: 0 1px 3px rgba(0,0,0,.3);
+        box-shadow: 0 1px 3px rgba(0,0,0,.3);
+        background-color: #fff;
+        border-top: 7px solid;
+        float:right;
+    }
+
+    .paytpv_wrapper {
+        float: none!important;
+        margin: 0 auto;
+        padding: 10px 10px;
+       
+    }
+
+}
+
+@media (min-width: 700px){
+    .operation_data {
+        width: 40%;
+    }
+    .operation_card {
+       
+        float: right;
+    }
+}
+
+@media (min-width: 920px){
+    .operation_data {
+        width: 50%;
+    }
+    .operation_card {
+        float: right;
+    }
+}
+
+@media (max-width: 700px){
+    .mobile div {
+        float: none;
+    }
+    
+}
+
+@media (min-width: 1080px){
+    .operation_data {
+        width: 60%;
+    }
+    .operation_card {
+        float: right;
+    }
+}
+
+
+@media (min-width: 1200px){
+    .operation_data {
+        width: 60%;
+    }
+    .operation_card {
+        width: 40%;
+        float: right;
+    }
+}
+

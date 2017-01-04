@@ -4,6 +4,7 @@ $standard = Mage::getSingleton('paytpvcom/standard');
 
 $iframe_src = $standard->getPayTpvBankStoreUrl().'?'.$standard->getStandardAddUserFields();
 $_code=$this->getMethodCode();
+$remember = ($standard->getConfigData('remembercardselected'))?"checked":"";
 
 ?>
 
@@ -546,7 +547,7 @@ $_code=$this->getMethodCode();
                     <?php print $this->__('Link a card to your account to make all procedures easily and quickly.');?>
                     <br>
                     -->
-                    <input type="checkbox" name="payment[remember]" id="savecard" class="input-checkbox" checked> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
+                    <input type="checkbox" name="payment[remember]" id="savecard" class="input-checkbox" <?php print $remember;?>> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
                 </div>
                 </div>
             <li>
@@ -562,12 +563,6 @@ $_code=$this->getMethodCode();
 
     <?php
     // END IF paytpviframe=0
-    }   else{
-        ?>
-        <div id="storingStep_hidden" class="alert alert-info" style="display:none">
-            <input type="checkbox" name="payment[remember]" id="savecard" class="input-checkbox" checked> <?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
-        </div>
-    <?php
     }
     ?>
 

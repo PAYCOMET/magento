@@ -20,7 +20,7 @@ class Mage_PayTpvCom_Model_System_Config_Source_EnvironmentComment extends Mage_
                             
                         case '1':
                        		comment.setStyle({display: 'block'});
-                            comment.innerHTML = '".__('Test Mode Credit Cards (MASTERCARD): 5325298401138208 / 5392661198415436 / 5534958931200656.<br>Expiration Date: Month: 5 / Year: 2020<br>CVC2: 123 / 3DSecure: 1234')."';
+                            comment.innerHTML = '".__('<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>')."' + '".__('Test Mode Credit Cards (MASTERCARD): 5325298401138208 / 5392661198415436 / 5534958931200656.<br>Expiration Date: Month: 5 / Year: 2020<br>CVC2: 123 / 3DSecure: 1234')."';
                             
                             break;
                             

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.5.1</version>
+    <version>5.5.2</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -139,7 +139,7 @@
                         <dir name="css">
                             <dir name="paytpvcom">
                                 <file name="2100.css"/>
-                                <file name="cards.css"/>
+                                <file name="cards.png"/>
                                 <file name="fancybox_loading.gif"/>
                                 <file name="fancybox_loading@2x.gif"/>
                                 <file name="fancybox_overlay.png"/>
@@ -217,6 +217,30 @@
                 <file name="Mage_PayTpvCom.csv"/>
             </dir>
             <dir name="en_US">
+                <dir name="template">
+                    <dir name="paytpvcom">
+                         <file name="conditions.html"/>
+                    </dir>
+                </dir>
+                <file name="Mage_PayTpvCom.csv"/>
+            </dir>
+            <dir name="en_GB">
+                <dir name="template">
+                    <dir name="paytpvcom">
+                         <file name="conditions.html"/>
+                    </dir>
+                </dir>
+                <file name="Mage_PayTpvCom.csv"/>
+            </dir>
+            <dir name="pt_PT">
+                <dir name="template">
+                    <dir name="paytpvcom">
+                         <file name="conditions.html"/>
+                    </dir>
+                </dir>
+                <file name="Mage_PayTpvCom.csv"/>
+            </dir>
+            <dir name="fr_FR">
                 <dir name="template">
                     <dir name="paytpvcom">
                          <file name="conditions.html"/>

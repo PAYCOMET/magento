@@ -215,7 +215,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $model = Mage::getModel('paytpvcom/standard');
 
         $locale = Mage::app()->getLocale()->getLocaleCode();
-        $arr_Locale = array("es_ES","en_US");
+        $arr_Locale = array("es_ES","en_US","en_GB","pt_PT","fr_FR");
 
         if (!in_array($locale,$arr_Locale))
             $locale = "es_ES";
@@ -413,8 +413,14 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
         $session = Mage::getSingleton('checkout/session');
         $order = Mage::getModel('sales/order')->load($session->getLastOrderId());
-
-        $model->processFail($order,$session,$message,$comment);
+        
+        // If order not processed Cancel Order
+        $order_status = $order->getStatus();
+        if ($order_status == 'pending' || $order_status == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT || $order_status == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW){
+            $model->processFail($order,$session,$message,$comment);
+        }else{
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
+        }
 
         return;
     }
@@ -479,8 +485,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
-                $order->addStatusHistoryComment("PayTPV Pago Incorrecto. Error [" . $params['ErrorID'] . "]: " . $params['ErrorDescription']);
-                $order->save();
+                // If order not in state processing, log Error.
+                $order_status = $order->getStatus();
+                if ($order_status == 'pending' || $order_status == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT || $order_status == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW){
+                    $order->addStatusHistoryComment("PayTPV Pago Incorrecto. Error [" . $params['ErrorID'] . "]: " . $params['ErrorDescription']);
+                    $order->save();
+                }
             }
             
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en el pago');
