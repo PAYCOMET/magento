@@ -281,12 +281,13 @@ footer ul {
 
 @media (min-width: 360px){
     .paytpv_jet form, .paytpv_jet iframe, .paytpv_jet .title, .paytpv_jet .bloque_jet{
-        padding: 10px 20px;
+        padding: 10px 20px 10px 20px;
+        width: 100%;
     }
 
     .paytpv_jet, .operation_data {
         margin: 0 auto;
-        width: 330px;
+        width: 360px;
     }
 
     .paytpv_jet{
