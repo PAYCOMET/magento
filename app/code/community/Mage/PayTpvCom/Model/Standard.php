@@ -282,6 +282,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             }
             $paytpv_iduser =  $payment_data_card;
             $card = $this->getToken($paytpv_iduser);
+            if (!isset($card["paytpv_iduser"])){
+                $message = Mage::helper('payment')->__($this->getErrorDesc(110), $this->getErrorDesc(110));
+                throw new Mage_Payment_Model_Info_Exception($message);
+            }
         }
 
         $order->setPaytpvIduser($card["paytpv_iduser"])
@@ -1517,7 +1521,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
     public function getToken($paytpv_iduser){
         $model = Mage::getModel('paytpvcom/customer');
-        $card = $model->getCollection()->addFilter("paytpv_iduser",$paytpv_iduser,"and")->getFirstItem()->getData();
+        $card = $model->getCollection()
+                        ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+                        ->addFilter("paytpv_iduser",$paytpv_iduser,"and")
+                        ->getFirstItem()->getData();
         return $card;
     }
 
