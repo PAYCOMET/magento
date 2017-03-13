@@ -1564,16 +1564,24 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
      */
     function saveDescriptionCard($customer_id,$card_desc){
 
-        $paytpv_cc = $card_name;
-        $data = array("customer_id"=>$customer_id,"card_desc"=>$card_desc);
-        $model = Mage::getModel('paytpvcom/customer')->setData($data);
-        try {
-            $insertId = $model->save()->getId();
-            //echo "CUSTOMER Data successfully inserted. Insert ID: ".$insertId;
-        } catch (Exception $e){
+        $model = Mage::getModel('paytpvcom/customer');
+        $collection = $model->getCollection()
+            ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+            ->addFilter("customer_id",$customer_id,"and");
+        if ($collection->getSize()==0) {
             return false;
+        }else{
+            $paytpv_cc = $card_name;
+            $data = array("customer_id"=>$customer_id,"card_desc"=>$card_desc);
+            $model = Mage::getModel('paytpvcom/customer')->setData($data);
+            try {
+                $insertId = $model->save()->getId();
+                //echo "CUSTOMER Data successfully inserted. Insert ID: ".$insertId;
+            } catch (Exception $e){
+                return false;
+            }
+            return true;
         }
-        return true;
     }
 
 

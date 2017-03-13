@@ -63,9 +63,10 @@ $remember = ($standard->getConfigData('remembercardselected'))?"checked":"";
 
     $paytpviframe = $standard->getConfigData('paytpviframe');
     $integration = $standard->getConfigData('integration');
+    $paytpvfullscreen = $standard->getConfigData('paytpvfullscreen');
 
     // Begin IF paytpviframe=0
-    if ($paytpviframe!="1"){ 
+    if ($paytpviframe!="1"){
     
     ?>
 
@@ -563,6 +564,12 @@ $remember = ($standard->getConfigData('remembercardselected'))?"checked":"";
 
     <?php
     // END IF paytpviframe=0
+    }else if ($paytpvfullscreen==1){
+    ?>
+        <div id="storingStep" class="alert alert-info"  <?php if ($saveCard==1) print "style='display:none'";?>>
+            <input type="checkbox" name="payment[remember]" id="savecard" class="input-checkbox" <?php print $remember;?>>&nbsp;<?php print $this->__('Yes, remember my card accepting ');?><a class="open_conditions" href="#conditions"><?php print $this->__('terms and conditions of service');?></a>.
+        </div>
+    <?php
     }
     ?>
 

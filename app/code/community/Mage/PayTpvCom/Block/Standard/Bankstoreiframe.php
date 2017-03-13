@@ -32,11 +32,18 @@ class Mage_PayTpvCom_Block_Standard_Bankstoreiframe extends Mage_Core_Block_Temp
 
         $currency_symbol = Mage::app()->getLocale()->currency( $currency_code )->getSymbol();
 
+        
         $this->assign( "iframeUrl", $iframeUrl );
         $this->assign( "remember", ($order->getPaytpvSavecard())?"checked":"");
         $this->assign( "order_id", $order_id );
         $this->assign( "total_amount", $total_amount );
         $this->assign( "currency_symbol", $currency_symbol );
+
+
+        $paytpvfullscreen = $standard->getConfigData('paytpvfullscreen');
+        if ($paytpvfullscreen==1)
+            Mage::app()->getResponse()->setRedirect($iframeUrl);
+
     }
 
 }

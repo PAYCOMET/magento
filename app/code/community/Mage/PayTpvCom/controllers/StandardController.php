@@ -461,18 +461,20 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $sign = $params['ExtendedSignature'];
             $esURLOK = false;
             $session = null;
+            $order->loadByIncrementId($params['Order']);
+            $storeId = $order->getStoreId();
 
 
             if ($model->getConfigData('environment')!=1){
-                $local_sign = md5(  $model->getConfigData('client').
-                                    $model->getConfigData('terminal').
+                $local_sign = md5(  $model->getConfigData('client', $storeId).
+                                    $model->getConfigData('terminal', $storeId).
                                     $params['TransactionType'].
                                     $ref.
                                     $params['Amount'].
                                     $params['Currency'].
-                                    md5($model->getConfigData('pass')).
+                                    md5($model->getConfigData('pass', $storeId)).
                                     $params['BankDateTime'].
-                                    $params['Response']);  
+                                    $params['Response']);
             // Modo Test
             }else{
                 $local_sign = $sign;
@@ -480,6 +482,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 if ($_POST["TestNoSecure"]!=1)
                     $session = Mage::getSingleton('checkout/session');
             }
+
 
             if ($sign==$local_sign && $params['Response']!="OK"){
                 $id_order = $ref;
@@ -548,14 +551,17 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $sign = $params['ExtendedSignature'];
             $session = null;
 
+            $order->loadByIncrementId($params['Order']);
+            $storeId = $order->getStoreId();
+
             if ($model->getConfigData('environment')!=1){
-                $local_sign = md5(  $model->getConfigData('client').
-                                $model->getConfigData('terminal').
+                $local_sign = md5(  $model->getConfigData('client', $storeId).
+                                $model->getConfigData('terminal', $storeId).
                                 $params['TransactionType'].
                                 $ref.
                                 $params['Amount'].
                                 $params['Currency'].
-                                md5($model->getConfigData('pass')).
+                                md5($model->getConfigData('pass', $storeId)).
                                 $params['BankDateTime'].
                                 $params['Response']);
             // Modo Test
@@ -658,15 +664,18 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $sign = $params['ExtendedSignature'];
             $esURLOK = false;
             $session = null;
+
+            $order->loadByIncrementId($params['Order']);
+            $storeId = $order->getStoreId();
             
             if ($model->getConfigData('environment')!=1){
-                $local_sign = md5(  $model->getConfigData('client').
-                                $model->getConfigData('terminal').
+                $local_sign = md5(  $model->getConfigData('client', $storeId).
+                                $model->getConfigData('terminal', $storeId).
                                 $params['TransactionType'].
                                 $params['Order'].
                                 $params['Amount'].
                                 $params['Currency'].
-                                md5($model->getConfigData('pass')).
+                                md5($model->getConfigData('pass', $storeId)).
                                 $params['BankDateTime'].
                                 $params['Response']);
             // Modo Test

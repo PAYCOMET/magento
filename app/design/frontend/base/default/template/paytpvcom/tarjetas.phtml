@@ -65,10 +65,19 @@
 
     function vincularTarjeta(){
         if ($jq("#savecard").is(':checked')){
+            // if Bankstore Iframe/XML and Fullscreen
+            <?php if ($integration==0 && $paytpviframe==1 && $paytpvfullscreen==1){ ?>
+                window.open("<?php echo $iframeUrl;?>","_self");
+                return;
+            <?php
+            }
+            ?>
+
             $jq('#savecard').attr("disabled", true);
             $jq('#close_vincular').show();
             $jq('#open_vincular').hide();
             $jq('#nueva_tarjeta').show();
+
         }else{
             alert("<?php print $this->__('You must accept the terms and conditions of service');?>");
         }
@@ -653,9 +662,9 @@
 
 
 
-            <?php } else if ($paytpviframe==1){?>
+            <?php } else if ($paytpviframe==1 && $paytpvfullscreen==0){?>
                 <iframe src="<?php echo $iframeUrl;?>" name="paytpv" style="width: 670px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 450px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>
-            <?php } else{ ?>
+            <?php } else if ($paytpviframe==0){ ?>
             
                 <form name="credit_card" id="credit_card" class="sp-methods">
 

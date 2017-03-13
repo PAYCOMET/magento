@@ -21,6 +21,7 @@ class Mage_PayTpvCom_Block_Standard_Tarjetas extends Mage_Core_Block_Template
         $this->assign( "iframeUrl", $iframeUrl );
         $this->assign( "paytpviframe", $model->getConfigData('paytpviframe') );
         $this->assign( "integration", $model->getConfigData('integration') );
+        $this->assign( "paytpvfullscreen", $model->getConfigData('paytpvfullscreen') );
         $this->assign( "show_nameoncard", $model->getConfigData('show_nameoncard'));
         $this->setTemplate("paytpvcom/tarjetas.phtml");
 
