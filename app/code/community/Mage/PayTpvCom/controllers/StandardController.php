@@ -343,7 +343,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                             }
 
                             $order->save();
-                            $model->processSuccess($order,null,$params);
+                            $model->processSuccess($order,null);
 
                             $arrResp["error"] = 0;
                             $arrResp["url"] = Mage::getUrl('checkout/onepage/success');
@@ -443,7 +443,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $session = Mage::getSingleton('checkout/session');
             $session->setQuoteId($session->getPayTpvComStandardQuoteId());
             if ($firmaValida && $params['ret'] == 0) {
-                $model->processSuccess($order,$session,$params);
+                $model->processSuccess($order,$session);
             } else {
                 $this->cancelAction();
             }
@@ -501,6 +501,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
+                // If status PROCESSING it has already been procesed before. 
+                $order_status = $order->getStatus();
+                if ($order_status == Mage_Sales_Model_Order::STATE_PROCESSING){
+                    return;
+                }
+
+
                 if(isset($params['IdUser']) && isset($params['TokenUser'])){
 
                     // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
@@ -526,7 +533,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                         ->setPaytpvTokenuser($params['TokenUser']);
                     $order->save();
 
-                    $model->processSuccess($order,$session,$params);
+                    $model->processSuccess($order,$session);
                 }
 
                 if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
@@ -575,6 +582,13 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
+                // If status PROCESSING it has already been procesed before. 
+                $order_status = $order->getStatus();
+                if ($order_status == Mage_Sales_Model_Order::STATE_PROCESSING){
+                    return;
+                }
+
+
                 if(isset($params['IdUser']) && isset($params['TokenUser'])){
                     
                     $payment = $order->getPayment();
@@ -603,7 +617,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                         ->setPaytpvTokenuser($params['TokenUser']);
                     $order->save();
 
-                    $model->preauthSuccess($order,$session,$params);
+                    $model->preauthSuccess($order,$session);
                 }
 
                 if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
@@ -761,7 +775,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                 $order->save();
 
-                $model->processSuccess($order,$session,$params);
+                $model->processSuccess($order,$session);
             }
         
         }

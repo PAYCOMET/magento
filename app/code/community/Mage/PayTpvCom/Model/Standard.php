@@ -288,20 +288,26 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             }
         }
 
-        $order->setPaytpvIduser($card["paytpv_iduser"])
-              ->setPaytpvTokenuser($card["paytpv_tokenuser"])
-              ->setPaytpvSavecard($remember);
-        $order->save();
+        if (isset($card["paytpv_iduser"], $card["paytpv_tokenuser"])) {
+            $order->setPaytpvIduser($card["paytpv_iduser"])
+                  ->setPaytpvTokenuser($card["paytpv_tokenuser"])
+                  ->setPaytpvSavecard($remember);
+            $order->save();
+        }
 
         if ($this->getConfigData("payment_action")=="authorize"){
             $transaction_type = $this->getConfigData('transaction_type');
             if (!$Secure && $transaction_type == self::PREAUTHORIZATION){
                 $res = $this->create_preauthorization($order, $amount);
-                if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {
-                    $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE']);
-                    $payment->setIsTransactionClosed(0);
-                    $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
-                    $payment->unsLastTransId();
+                if ('' == $res['DS_ERROR_ID'] || 0 == $res['DS_ERROR_ID']) {                
+                   
+                    $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
+                        ->setCurrencyCode($order->getBaseCurrencyCode())
+                        ->setIsTransactionPending(false)
+                        ->setIsTransactionClosed(0)
+                        ->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
+
+
                 }else {
                     if (!isset($res['DS_ERROR_ID']))
                         $res['DS_ERROR_ID'] = -1;
@@ -447,7 +453,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         }
     }
 
-    public function processSuccess(&$order, $session, $params=null)
+    public function processSuccess(&$order, $session)
     {
         $orderStatus = $this->getConfigData('paid_status');
         if($session){
@@ -467,7 +473,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         }
     }
 
-    public function preauthSuccess(&$order, $session,$params=null)
+    public function preauthSuccess(&$order, $session)
     {
         $orderStatus = $this->getConfigData('paid_status');
         if($session){
@@ -501,7 +507,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $order->save();
         $order->sendOrderUpdateEmail(true, $message);
 
-        if ($message!="")   $session->addError($message);
+        if ($message!=""){
+            $session->addError($message);
+            Mage::getSingleton("customer/session")->addError($message);
+        }
 
         if ($order->getCustomerId()>0)
             Mage::app()->getResponse()->setRedirect(Mage::getUrl('sales/order/reorder', array('order_id' => $order->getIncrementId())));
@@ -626,10 +635,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $arrScore = array();
         $arrScore["score"] = null;
         $arrScore["merchantdata"] = null;
+        $arrScore["scoreCalc"] = null;
 
         if ($this->getConfigData('merchantdata')){
             $merchantData = $this->getMerchantData($order);
-            $arrScore["merchantdata"] = json_encode($merchantData);
+            $arrScore["merchantdata"] = urlencode(base64_encode(json_encode($merchantData)));
         }
 
         $shippingAddressData = $order->getShippingAddress();
@@ -763,7 +773,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         return "";
     }
 
-    public function executePurchase($order, $amount, $original_ip = '')
+    public function executePurchase($order, $original_ip = '')
     {
        
         // Test Mode
@@ -1214,6 +1224,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         $signature = md5($client . $user . $terminal . $operation . $order->getIncrementId() . $amount . $currency . md5($pass));
 
+        $score = $this->transactionScore($order);
+        $MERCHANT_SCORING = $score["score"];
+        $MERCHANT_DATA = $score["merchantdata"];
+
         $sArr = array
         (
             'ACCOUNT' => $client,
@@ -1229,6 +1243,16 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             'URLOK' => Mage::getUrl('paytpvcom/standard/recibo'),
             'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')
         );
+
+        if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+        if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
+
+
+        $query = http_build_query($sArr);
+        $vhash = hash('sha512', md5($query.md5($pass)));
+
+        $sArr["VHASH"] = $vhash;
+
         //
         // Make into request data
         //
@@ -1330,7 +1354,14 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
 
+
+        $query = http_build_query($sArr);
+        $vhash = hash('sha512', md5($query.md5($pass)));
+
+        $sArr["VHASH"] = $vhash;
+
         return $sArr;
+
     }
 
 
@@ -1404,6 +1435,12 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
 
+
+        $query = http_build_query($sArr);
+        $vhash = hash('sha512', md5($query.md5($pass)));
+
+        $sArr["VHASH"] = $vhash;
+
         return $sArr;
     }
 
@@ -1463,9 +1500,14 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         if ($MERCHANT_SCORING!=null)        $sArr["MERCHANT_SCORING"] = $MERCHANT_SCORING;
         if ($MERCHANT_DATA!=null)           $sArr["MERCHANT_DATA"] = $MERCHANT_DATA;
-        
+
+        $query = http_build_query($sArr);
+        $vhash = hash('sha512', md5($query.md5($pass)));
+
+        $sArr["VHASH"] = $vhash;
 
         return $sArr;
+        
     }
 
     
@@ -1571,7 +1613,6 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         if ($collection->getSize()==0) {
             return false;
         }else{
-            $paytpv_cc = $card_name;
             $data = array("customer_id"=>$customer_id,"card_desc"=>$card_desc);
             $model = Mage::getModel('paytpvcom/customer')->setData($data);
             try {
@@ -1915,7 +1956,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
                     $profile->setState(Mage_Sales_Model_Recurring_Profile::STATE_ACTIVE);
 
-                    $this->processSuccess($order,null,$params);
+                    $this->processSuccess($order,null);
                 }
            
                 return $this;
