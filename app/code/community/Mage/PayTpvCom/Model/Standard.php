@@ -231,7 +231,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $sess->setPaytpvOriginalIp($this->getOriginalIp());
 
         $order = $payment->getOrder();
-        $amount = $order->getGrandTotal();
+        $amount = $order->getBaseGrandTotal();
 
         $payment_data = Mage::app()->getRequest()->getParam('payment', array());
         $card = array();
@@ -256,7 +256,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         // NUEVA TARJETA o SUSCRIPCION
         if ($payment_data_card==0){
-            if ($payment_data['cc_number'] || $payment_data['paytpvToken']) {
+            if (isset($payment_data['cc_number']) || $payment_data['paytpvToken']){
                 $res = $this->addUser($payment_data);
                
                 $DS_IDUSER = isset($res['DS_IDUSER']) ? $res['DS_IDUSER'] : '';
@@ -326,7 +326,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     {
 
         $order = $payment->getOrder();
-        $amount = $order->getGrandTotal();
+        $amount = $order->getBaseGrandTotal();
         if ($this->_isPreauthorizeCapture($payment)){
             $this->_preauthorizeCapture($payment, $amount);
         }else{
@@ -782,7 +782,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
             $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
             return $res;
         }
-        $amount = $order->getGrandTotal();
+        $amount = $order->getBaseGrandTotal();
 
 
         $DS_MERCHANT_MERCHANTCODE = $this->getConfigData('client');
@@ -790,7 +790,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
         $DS_MERCHANT_AMOUNT = round($amount * 100);
         $DS_MERCHANT_ORDER = $order->getIncrementId();
-        $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
+        $DS_MERCHANT_CURRENCY = $order->getBaseCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
         $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $this->getOriginalIp();
@@ -840,7 +840,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $arrDatos["PAYTPV_OPERATIONS_STATE"]           = 1;
         $arrDatos["PAYTPV_OPERATIONS_FROMDATE"]        = date('YmdH', mktime(0, 0, 0, date("n")-1)) . "0000";
         $arrDatos["PAYTPV_OPERATIONS_TODATE"]          = date('YmdH', mktime(0, 0, 0, date("n")+1)) . "0000";
-        $arrDatos["PAYTPV_OPERATIONS_CURRENCY"]        = $order->getOrderCurrencyCode();
+        $arrDatos["PAYTPV_OPERATIONS_CURRENCY"]        = $order->getBaseCurrencyCode();
 
         $arrDatos["PAYTPV_OPERATIONS_VERSION"]         = "1.10";
 
@@ -896,7 +896,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
         $DS_MERCHANT_AMOUNT = round($amount * 100);
         $DS_MERCHANT_ORDER = $order->getIncrementId();
-        $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
+        $DS_MERCHANT_CURRENCY = $order->getBaseCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
         $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $this->getOriginalIp();
@@ -989,7 +989,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $DS_IDUSER = $order->getPaytpvIduser();
         $DS_TOKEN_USER = $order->getPaytpvTokenuser();
         $DS_MERCHANT_ORDER = $order->getIncrementId();
-        $DS_MERCHANT_CURRENCY = $order->getOrderCurrencyCode();
+        $DS_MERCHANT_CURRENCY = $order->getBaseCurrencyCode();
         $DS_MERCHANT_TERMINAL = $this->getConfigData('terminal');
         $DS_MERCHANT_AUTHCODE = $payment->getLastTransId();
         $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->getConfigData('pass'));
@@ -1207,10 +1207,10 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         $convertor = Mage::getModel('sales/convert_order');
         $invoice = $convertor->toInvoice($order);
-        $currency = $order->getOrderCurrencyCode();
-        $amount = round($order->getGrandTotal() * 100);
+        $currency = $order->getBaseCurrencyCode();
+        $amount = round($order->getBaseGrandTotal() * 100);
         if ($currency == 'JPY')
-            $amount = round($order->getGrandTotal());
+            $amount = round($order->getBaseGrandTotal());
 
        
         $client = $this->getConfigData('client');
@@ -1283,16 +1283,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $language = $this->calcLanguage(Mage::app()->getLocale()->getLocaleCode());
 
         $amount = $currency='';
-        $amount = round($order->getGrandTotal() * 100);
-        $currency = $order->getOrderCurrencyCode();
+        $amount = round($order->getBaseGrandTotal() * 100);
+        $currency = $order->getBaseCurrencyCode();
 
-        $Secure = ($this->isSecureTransaction($order->getGrandTotal()))?1:0;
+        $Secure = ($this->isSecureTransaction($order->getBaseGrandTotal()))?1:0;
 
 
         $score = $this->transactionScore($order);
         $MERCHANT_SCORING = $score["score"];
         $MERCHANT_DATA = $score["merchantdata"];
-
 
         // execute purchase
         if ($operation == 1){
@@ -1377,8 +1376,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $language = $this->calcLanguage(Mage::app()->getLocale()->getLocaleCode());
 
         $amount = $currency='';
-        $amount = round($order->getGrandTotal() * 100);
-        $currency = $order->getOrderCurrencyCode();
+        $amount = round($order->getBaseGrandTotal() * 100);
+        $currency = $order->getBaseCurrencyCode();
 
         $paytpv_iduser = $order->getPaytpvIduser();
         $paytpv_tokenuser = $order->getPaytpvTokenuser();
@@ -1699,7 +1698,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     function getCurrentOrderAmount()
     {
         $order = Mage::helper('checkout/cart')->getQuote();
-        return $order->getGrandTotal();
+        return $order->getBaseGrandTotal();
     }
 
 //
@@ -1773,7 +1772,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     public function refund(Varien_Object $payment, $amount)
     {
         $order = $payment->getOrder();
-        //$amount = $order->getGrandTotal();
+        //$amount = $order->getBaseGrandTotal();
 
         parent::refund($payment, $amount);
         

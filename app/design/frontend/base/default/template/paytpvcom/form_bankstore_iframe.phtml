@@ -13,7 +13,7 @@ $paytpviframe_height = $standard->getConfigData('paytpviframe_height');
         <div style="display:inline-table;">
           <div class="operation">
               <p class="ref_num"><?php echo $this->__('Order') ?>:<span><b><?php echo $order_id; ?></b></span></p>
-              <h3 class="cost_num"><?php echo $this->__('Total Amount') ?>:<b><?php echo $total_amount; ?><?php echo $currency_symbol; ?></b></h3>
+              <h3 class="cost_num"><?php echo $this->__('Total Amount') ?>:<b><?php echo $total_amount; ?><?php echo $currency_symbol; ?> <?php echo $base_amount;?></b></h3>
           </div>
         </div>
       </div>

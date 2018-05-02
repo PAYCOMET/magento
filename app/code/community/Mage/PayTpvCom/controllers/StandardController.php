@@ -278,7 +278,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         
         $order = Mage::getModel('sales/order');
         $order->loadByIncrementId($order_id);
-        $amount = $order->getGrandTotal();
+        $amount = $order->getBaseGrandTotal();
 
         
         $params = $this->getRequest()->getParams();
@@ -698,7 +698,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $session = Mage::getSingleton('checkout/session');
             }
 
-            if ($sign!=$local_sign) die('Error 3');
+            if ($sign!=$local_sign || $params['Response']!="OK") die('Error 3');
             else{
 
                 $recurringProfileCollection = Mage::getModel('sales/recurring_profile')
