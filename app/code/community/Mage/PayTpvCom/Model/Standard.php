@@ -1317,6 +1317,11 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
 
         // add_user
         if ($operation == 107){
+
+            $secure = 0;
+            $terminales = $this->getConfigData('terminales');
+            if ($terminales==0) $secure = 1;
+
             $order = Mage::getSingleton('customer/session')->getCustomer()->getId();
             $signature = md5($client . $terminal . $operation . $order . md5($pass));
             $sArr = array
@@ -1328,7 +1333,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 'MERCHANT_MERCHANTSIGNATURE' => $signature,
                 'MERCHANT_ORDER' => $order,
                 'URLOK' => Mage::getUrl('paytpvcom/standard/tarjetas'),
-                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel')                
+                'URLKO' => Mage::getUrl('paytpvcom/standard/cancel'),
+                '3DSECURE' => $secure                
             );
         }
 
@@ -1884,6 +1890,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                     case 'month':       $subs_periodicity = 30; break;
                     case 'year':        $subs_periodicity = 365; break;
                 }
+
+                $subs_periodicity = $subs_periodicity * $freq;
 
                 // Si es indefinido, ponemos como fecha tope la fecha + 5 años.
                 if ($subs_cycles==0){

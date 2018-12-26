@@ -269,6 +269,8 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
             case 'year':        $subs_periodicity = 365; break;
         }
 
+        $subs_periodicity = $subs_periodicity * $freq;
+
         $subs_cycles = 0;
         if ($this->_recurringProfile->getPeriodMaxCycles())
             $subs_cycles = $this->_recurringProfile->getPeriodMaxCycles();
