@@ -7,35 +7,13 @@ Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las ti
 ## Instalación
  
 ### Método manual:
- 
-1. Desactivar la cache: Sistema-> Gestión de cache.
-2. Subir los ficheros por FTP
-3. Acceder a la configuración del módulo: sistema -> Configuración -> métodos de pago -> PAYCOMET
-4. Introducir los datos del producto asociado en nuestra cuenta de PAYCOMET
 
-### Vía Magento Connect Manager
-#### Versión estable
-- Descargamos el fichero Mage_PayTpv-xxx.tgz desde [https://github.com/PayTpv/Mage_PayTpv/releases/latest] 
-- Desde la administración de magento accedemos a Sistema -> Magento Connect -> Magento Connect Manager -> Direct package file upload Seleccionamos el fichero recién descargado y lo subimos.
+1. Descargamos el fichero Mage_PayComet-xxx.tgz desde [https://github.com/PAYCOMET/magento/releases/latest]  
+2. Desactivar la cache: Sistema-> Gestión de cache.
+3. Subir los ficheros por FTP
+4. Acceder a la configuración del módulo: sistema -> Configuración -> métodos de pago -> PAYCOMET
+5. Introducir los datos del producto asociado en nuestra cuenta de PAYCOMET
 
-#### Versión en desarrollo
-- Para crear el paquete que instalaremos a través de Magento Connect Manager, primero clonamos el repositorio
-```  shell-script
-$ git clone https://github.com/PayTpv/Mage_PayTpv.git
-```
-- Añadimos a un fichero comprimido el fihero package.xml y los direcotiros app y skin. En línux podríamos usar el script build_package.sh
-```  shell-script
-$ cd Mage_PayTpv
-$ ./build_package.sh
-```   
-- Desde la administración de magento accedemos a Sistema -> Magento Connect -> Magento Connect Manager -> Direct package file upload Seleccionamos el fichero comprimido que acabamos de crear y le damos a "upload".
-  
-### Vía modman
-- Instalar [modman](https://github.com/colinmollenhour/modman)
-- Usar el siguiente comando de línea desde el directorio de instalación de Magento:
-```
-$ modman clone https://github.com/PayTpv/Mage_PayTpv.git
-```
 
 ## Configuración del producto en PAYCOMET
 
