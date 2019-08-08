@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.5.7</version>
+    <version>5.6.0</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
     <extends/>
-    <summary>PayTpv payment gateway</summary>
-    <description>PayTpv is a PCI/DSS Level 1 certified payment service processor.&#xD;
+    <summary>PAYCOMET payment gateway</summary>
+    <description>PAYCOMET is a PCI/DSS Level 1 certified payment service processor.&#xD;
         &#xD;
-        This module makes possible to use PayTpv services in Magento
+        This module makes possible to use PAYCOMET services in Magento
     </description>
     <authors>
         <author>
-            <name>Jose Ramón García</name>
-            <user>txerragh</user>
-            <email>jrgarcia@paytpv.com</email>
+            <name>PAYCOMET</name>
+            <user>paycomet</user>
+            <email>info@paycomet.com</email>
         </author>
     </authors>
-    <date>2018-12-26</date>
+    <date>2019-08-08</date>
     <time>09:00:00</time>
     <contents>
         <target name="magecommunity">
@@ -26,14 +26,10 @@
                 <dir name="PayTpvCom">
                     <dir name="Block">
                         <dir name="Standard">
-                            <file name="Bankstore.php"/>
-                            <file name="Bankstore3dstest.php"/>
+                            <file name="Bankstore.php"/>                           
                             <file name="Bankstoreiframe.php"/>
-                            <file name="Bankstorerecurring.php"/>
-                            <file name="Bankstoretest.php"/>
+                            <file name="Bankstorerecurring.php"/>                            
                             <file name="Form.php"/>
-                            <file name="Iframe.php"/>
-                            <file name="Redirect.php"/>
                             <file name="Tarjetas.php"/>
                         </dir>
                         <dir name="Adminhtml">
@@ -58,9 +54,7 @@
                         <dir name="System">
                             <dir name="Config">
                                 <dir name="Source">
-                                    <file name="Country.php"/>
-                                    <file name="Environment.php"/>
-                                    <file name="Environmentcomment.php"/>
+                                    <file name="Country.php"/>                                   
                                     <file name="Integration.php"/>
                                     <file name="Product.php"/>
                                     <file name="Scoring.php"/>
@@ -183,9 +177,7 @@
                                 <file name="form_bankstore_iframe.phtml"/>
                                 <file name="form_bankstore_test.phtml"/>
                                 <file name="form_bankstore_ws.phtml"/>
-                                <file name="form.phtml"/>
-                                <file name="iframe.phtml"/>
-                                <file name="redirect.phtml"/>
+                                <file name="form.phtml"/>                                
                                 <file name="tarjetas.phtml"/>
                             </dir>
                         </dir>

@@ -7,7 +7,7 @@
                 <!-- newmodule fieldset -->
                 <paytpvcom translate="label" module="paytpvcom">
                     <!-- will have title 'New Module' -->
-                    <label>Credit Card Paytpv</label>
+                    <label>Credit Card PAYCOMET</label>
 
                     <!-- position between other payment methods -->
                     <sort_order>671</sort_order>
@@ -15,12 +15,12 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment>This module allows you to accept card payments via paytpv.com<![CDATA[<a href="https://www.paytpv.com/altaempresa.php" target="_blank">Click here to sign up for an PayTPV account</a>]]></comment>
+                    <comment>This module allows you to accept card payments via www.paycomet.com<![CDATA[<a href="https://www.paycomet.com/crear-una-cuenta" target="_blank">Click here to sign up for an PAYCOMET account</a>]]></comment>
 
                     <fields>
 
                         <module_settings type="group" translate="label" >
-                            <label>PAYTPV Module Configuration</label>
+                            <label>PAYCOMET Module Configuration</label>
                             <frontend_type>text</frontend_type>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -53,20 +53,7 @@
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
-                                </title>
-                                <environment translate="label">
-                                    <label>Environment</label>
-                                    <config_path>payment/paytpvcom/environment</config_path>
-                                    <comment>
-                                        <model>paytpvcom/system_config_source_environmentcomment</model>
-                                    </comment>
-                                    <frontend_type>select</frontend_type>
-                                    <source_model>paytpvcom/system_config_source_environment</source_model>
-                                    <sort_order>21</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </environment>
+                                </title>                                
                                 <transaction_type translate="label">
                                     <label>Transaction type</label>
                                     <config_path>payment/paytpvcom/transaction_type</config_path>
@@ -94,8 +81,7 @@
                                     <sort_order>32</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                    <depends><environment>0</environment></depends>
+                                    <show_in_store>0</show_in_store>                                    
                                 </client>
 
                                 <terminal translate="label">
@@ -105,8 +91,7 @@
                                     <sort_order>33</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                    <depends><environment>0</environment></depends>
+                                    <show_in_store>0</show_in_store>                                   
                                 </terminal>
                                 <pass translate="label">
                                     <label>User Password</label>
@@ -115,8 +100,7 @@
                                     <sort_order>34</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                    <depends><environment>0</environment></depends>
+                                    <show_in_store>0</show_in_store>                                    
                                 </pass>
                                 <jetid translate="label">
                                     <label>JET ID</label>
@@ -207,8 +191,7 @@
                                     <sort_order>88</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                    <depends><environment>0</environment></depends>
+                                    <show_in_store>0</show_in_store>                                   
                                 </operationcall>
                                 <show_nameoncard translate="label">
                                     <label>Show Name on Card</label>
@@ -244,7 +227,7 @@
                                 </cctypes>
 
                                 <paytpviframe translate="label">
-                                    <label>Payment New Page (PAYTPV Iframe / Jet)</label>
+                                    <label>Payment New Page (PAYCOMET Iframe / Jet)</label>
                                     <config_path>payment/paytpvcom/paytpviframe</config_path>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -267,7 +250,7 @@
                                 </paytpvfullscreen>
 
                                 <paytpviframe_height translate="label">
-                                    <label>Iframe PAYTPV - Height</label>
+                                    <label>Iframe PAYCOMET - Height</label>
                                     <config_path>payment/paytpvcom/paytpviframe_height</config_path>
                                     <frontend_type>text</frontend_type>
                                     <validate>validate-number</validate>
@@ -316,19 +299,7 @@
                             <show_in_store>0</show_in_store>
                             <frontend_model>paytpvcom/adminhtml_system_config_fieldset_expanded</frontend_model>
                             <sort_order>99</sort_order>
-                            <fields>
-
-                                <merchantdata translate="label">
-                                    <label>Send Merchant Data</label>
-                                    <config_path>payment/paytpvcom/merchantdata</config_path>
-                                    <frontend_type>select</frontend_type>
-                                    <source_model>adminhtml/system_config_source_yesno</source_model>
-                                    <sort_order>100</sort_order>
-
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </merchantdata>
+                            <fields>                                
 
                                 <s_first_purchase type="group" translate="label">
                                 <label>First Purchase</label>

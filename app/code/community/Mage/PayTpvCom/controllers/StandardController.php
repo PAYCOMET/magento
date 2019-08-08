@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PayTPV Standard Checkout Controller
+ * PAYCOMET Standard Checkout Controller
  *
  */
 class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Action implements Mage_Payment_Model_Recurring_Profile_MethodInterface
@@ -19,7 +19,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
     }
 
     /**
-     * Get singleton with PayTPV strandard order transaction information
+     * Get singleton with PAYCOMET strandard order transaction information
      *
      * @return PayTpvCom_Model_Standard
      */
@@ -92,33 +92,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $this->renderLayout();
         }
         return;
-    }
-
-    /**
-     * When a customer chooses PayTpvCom on Checkout/Payment page
-     *
-     */
-    public function BankstoretestAction()
-    {
-        $session = Mage::getSingleton('checkout/session');
-        $this->loadLayout();
-        $this->renderLayout();
-        
-        return;
-    }
-
-    /**
-     * When a customer chooses PayTpvCom on Checkout/Payment page
-     *
-     */
-    public function Bankstore3dstestAction()
-    {
-        $session = Mage::getSingleton('checkout/session');
-        $this->loadLayout();
-        $this->renderLayout();
-        
-        return;
-    }
+    }    
 
      /**
      * When a customer chooses PayTpvCom on Checkout/Payment page
@@ -156,7 +130,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $params = $this->getRequest()->getParams();
         $model = Mage::getModel('paytpvcom/standard');
 
-        switch ($params["action"]){
+        switch ($params["action"]) {
             case "removeCard":
                 if ($model->removeCard($params["customer_id"]))
                     die('0');
@@ -193,7 +167,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $order->loadByIncrementId($order_id);
 
                 $ses_customer_id = Mage::getSingleton('customer/session')->getCustomer()->getId();
-                if ($order->getCustomerId()==$ses_customer_id){
+                if ($order->getCustomerId()==$ses_customer_id) {
                     $order->setPaytpvSavecard($remember);
                     $order->save();
                     
@@ -243,12 +217,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $DS_TOKEN_USER = isset($res['DS_TOKEN_USER']) ? $res['DS_TOKEN_USER'] : '';
         $DS_ERROR_ID = isset($res['DS_ERROR_ID']) ? $res['DS_ERROR_ID'] : '';
 
-        try{
-            if ((int)$DS_ERROR_ID == 0){
-                $result2 = $model->infoUser($DS_IDUSER,$DS_TOKEN_USER,0);
+        try {
+            if ((int)$DS_ERROR_ID == 0) {
+                $result2 = $model->infoUser($DS_IDUSER,$DS_TOKEN_USER);
                 $model->save_card($DS_IDUSER,$DS_TOKEN_USER,$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],Mage::getSingleton('customer/session')->getCustomer()->getId());
                 $arrResp["error"] = 0;
-            }else{
+            } else {
                 if (!isset($res['DS_ERROR_ID']))
                     $res['DS_ERROR_ID'] = -1;
                 $message = Mage::helper('payment')->__('Error. %s - %s', $res['DS_ERROR_ID'], $model->getErrorDesc($res['DS_ERROR_ID']));
@@ -256,7 +230,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $arrResp["error"] = 1;
                 $arrResp["errorText"] = $message;
             }
-        }catch (exception $e){
+        } catch (exception $e) {
             $arrResp["error"] = 1;
             $arrResp["errorText"] = $e->getMessage();
         }
@@ -290,7 +264,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
         try{
 
-            if ((int)$DS_ERROR_ID == 0){
+            if ((int)$DS_ERROR_ID == 0) {
 
                 $card["paytpv_iduser"] = $DS_IDUSER;
                 $card["paytpv_tokenuser"] = $DS_TOKEN_USER;
@@ -302,7 +276,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                 $Secure = ($model->isSecureTransaction($order->getGrandTotal()))?1:0;
 
-                switch ($Secure){
+                switch ($Secure) {
                     // PAGO NO SEGURO
                     case 0:
 
@@ -314,8 +288,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                             $remember = $order->getPaytpvSavecard();
                             // Si es un pago NO Seguro, ha pulsado en el acuerdo, es una tarjeta nueva y es un usuario registrado guardamos el token
-                            if ($remember && $order->getCustomerId()>0){
-                                $result = $model->infoUser($order->getPaytpvIduser(),$order->getPaytpvTokenuser(),"");
+                            if ($remember && $order->getCustomerId()>0) {
+                                $result = $model->infoUser($order->getPaytpvIduser(),$order->getPaytpvTokenuser());
                                 $card = $model->save_card($order->getPaytpvIduser(),$order->getPaytpvTokenuser(),$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$order->getCustomerId());
                             }
 
@@ -325,14 +299,14 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                             $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$res);
                             $payment->setTransactionId($res['DS_MERCHANT_AUTHCODE'])
                                 ->setCurrencyCode($order->getBaseCurrencyCode())
-                                ->setPreparedMessage("PayTPV Pago Correcto.")
+                                ->setPreparedMessage("PAYCOMET Pago Correcto.")
                                 ->setIsTransactionPending(false)
                                 ->setIsTransactionClosed(1)
                                 ->registerCaptureNotification($order->getBaseGrandTotal());
 
 
                             // Obtener CardBrand y BicCode
-                            if ($model->getConfigData('operationcall')==1 && $model->getConfigData('environment')!=1){         
+                            if ($model->getConfigData('operationcall')==1) {
                                 $res = $model->operationCall($order);
                                 if ('' == $res[0]->PAYTPV_ERROR_ID || 0 == $res[0]->PAYTPV_ERROR_ID) {
                                     $CardBrand = $res[0]->PAYTPV_OPERATION_CARDBRAND;
@@ -370,12 +344,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                         break;
                 }
-            }else{
+            } else {
                 $message = Mage::helper('payment')->__('Authorization failed. %s - %s', $res['DS_ERROR_ID'], $model->getErrorDesc($res['DS_ERROR_ID']));
                 $arrResp["error"] = 1;
                 $arrResp["errorText"] = $message;
             }
-        }catch (exception $e){
+        } catch (exception $e) {
             $arrResp["error"] = 1;
             $arrResp["errorText"] = $e->getMessage();
         }
@@ -396,29 +370,19 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $model = Mage::getModel('paytpvcom/standard');
 
         $message = '';
-        if (count($params) > 0) {
-            if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
-                $firmaValida = true;
-
-            if ($firmaValida && $params['ret'] != "0") {
-                $message = Mage::helper('payment')->__("Payment failed (Err. code %s)",$params['ret']);
-                $comment = Mage::helper('payment')->__('Payment refused from PayTPV.com. Reason: #%s - %s', $params['ret'], $message);
-            }
-        }
-
-        if (!$message) { // Informacion devuelta no valida
-            $message = Mage::helper('payment')->__("Payment failed (Err. code %s)",-1);
-            $comment = Mage::helper('payment')->__("Payment failed (Err. code %s)",-1);
-        }
+    
+        $message = Mage::helper('payment')->__("Payment failed (Err. code %s)",-1);
+        $comment = Mage::helper('payment')->__("Payment failed (Err. code %s)",-1);
+        
 
         $session = Mage::getSingleton('checkout/session');
         $order = Mage::getModel('sales/order')->load($session->getLastOrderId());
         
         // If order not processed Cancel Order
         $order_status = $order->getStatus();
-        if ($order_status == 'pending' || $order_status == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT || $order_status == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW){
+        if ($order_status == 'pending' || $order_status == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT || $order_status == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {
             $model->processFail($order,$session,$message,$comment);
-        }else{
+        } else {
             Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
         }
 
@@ -434,87 +398,62 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $model = Mage::getModel('paytpvcom/standard');
         $order = Mage::getModel('sales/order');
         $params = $this->getRequest()->getParams();
-        $firmaValida = false;
-
-        if (isset($params['h'])) {//Notificación TPV WEB
-            if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
-                $firmaValida = true;
-            $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
-            $session = Mage::getSingleton('checkout/session');
-            $session->setQuoteId($session->getPayTpvComStandardQuoteId());
-            if ($firmaValida && $params['ret'] == 0) {
-                $model->processSuccess($order,$session);
-            } else {
-                $this->cancelAction();
-            }
-        }
+       
         // NOTIFICACIÓN BANK STORE
         // (execute_purchase)
-        if (($params['TransactionType']==="1" || $params['TransactionType']==="109_TEST" || $params['TransactionType']==="1_TEST")
+        if (($params['TransactionType']==="1")
             AND $params['Order']
             AND $params['Response']
-            AND $params['ExtendedSignature'])
+            AND $params['NotificationHash'])
         {
             $importe  = number_format($params['Amount']/ 100, 2);
             $ref = $params['Order'];
             $result = $params['Response']=='OK'?0:-1;
-            $sign = $params['ExtendedSignature'];
+            $sign = $params['NotificationHash'];
             $esURLOK = false;
             $session = null;
             $order->loadByIncrementId($params['Order']);
             $storeId = $order->getStoreId();
 
+            $local_sign = hash('sha512', $model->getConfigData('client', $storeId).
+                                $model->getConfigData('terminal', $storeId).
+                                $params['TransactionType'].
+                                $ref.
+                                $params['Amount'].
+                                $params['Currency'].
+                                md5($model->getConfigData('pass', $storeId)).
+                                $params['BankDateTime'].
+                                $params['Response']);
 
-            if ($model->getConfigData('environment')!=1){
-                $local_sign = md5(  $model->getConfigData('client', $storeId).
-                                    $model->getConfigData('terminal', $storeId).
-                                    $params['TransactionType'].
-                                    $ref.
-                                    $params['Amount'].
-                                    $params['Currency'].
-                                    md5($model->getConfigData('pass', $storeId)).
-                                    $params['BankDateTime'].
-                                    $params['Response']);
-            // Modo Test
-            }else{
-                $local_sign = $sign;
-
-                if ($_POST["TestNoSecure"]!=1)
-                    $session = Mage::getSingleton('checkout/session');
-            }
-
-
-            if ($sign==$local_sign && $params['Response']!="OK"){
+            if ($sign==$local_sign && $params['Response']!="OK") {
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
                 // If order not in state processing, log Error.
                 $order_status = $order->getStatus();
-                if ($order_status == 'pending' || $order_status == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT || $order_status == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW){
-                    $order->addStatusHistoryComment("PayTPV Pago Incorrecto. Error [" . $params['ErrorID'] . "]: " . $params['ErrorDescription']);
+                if ($order_status == 'pending' || $order_status == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT || $order_status == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {
+                    $order->addStatusHistoryComment("PAYCOMET Pago Incorrecto. Error [" . $params['ErrorID'] . "]: " . $params['ErrorDescription']);
                     $order->save();
                 }
             }
             
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en el pago');
-            else{
+            else {
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
                 // If status PROCESSING it has already been procesed before. 
                 $order_status = $order->getStatus();
-                if ($order_status == Mage_Sales_Model_Order::STATE_PROCESSING){
+                if ($order_status == Mage_Sales_Model_Order::STATE_PROCESSING) {
                     return;
                 }
 
-
-                if(isset($params['IdUser']) && isset($params['TokenUser'])){
+                if(isset($params['IdUser']) && isset($params['TokenUser'])) {
 
                     // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                     $remember = $order->getPaytpvSavecard();
-                    if ($remember && $order->getCustomerId()>0){
-                        $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
-                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
+                    if ($remember && $order->getCustomerId()>0) {                        
+                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser']);
                         $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
                     }
                     
@@ -524,7 +463,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
                     $payment->setTransactionId($params['AuthCode'])
                         ->setCurrencyCode($order->getBaseCurrencyCode())
-                        ->setPreparedMessage("PayTPV Pago Correcto.")
+                        ->setPreparedMessage("PAYCOMET Pago Correcto.")
                         ->setIsTransactionClosed(1)
                         ->registerCaptureNotification($order->getBaseGrandTotal());
 
@@ -536,7 +475,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     $model->processSuccess($order,$session);
                 }
 
-                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))) {
                     $order
                     ->setPaytpvCardBrand($params['CardBrand'])
                     ->setPaytpvBicCode($params['BicCode']);
@@ -545,51 +484,43 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
             }
         // (preathorization)       
-        }else if (($params['TransactionType']==="3" || $params['TransactionType']==="111_TEST")
+        } else if (($params['TransactionType']==="3")
             AND $params['Order']
             AND $params['Response']
             AND $params['ExtendedSignature'])
         {
             $importe  = number_format($params['Amount']/ 100, 2);
             $ref = $params['Order'];
-            $result = $params['Response']=='OK'?0:-1;
-            $sign = $params['ExtendedSignature'];
+            $result = $params['Response']=='OK'?0:-1;            
             $esURLOK = false;
-            $sign = $params['ExtendedSignature'];
+            $sign = $params['NotificationHash'];
             $session = null;
 
             $order->loadByIncrementId($params['Order']);
             $storeId = $order->getStoreId();
 
-            if ($model->getConfigData('environment')!=1){
-                $local_sign = md5(  $model->getConfigData('client', $storeId).
-                                $model->getConfigData('terminal', $storeId).
-                                $params['TransactionType'].
-                                $ref.
-                                $params['Amount'].
-                                $params['Currency'].
-                                md5($model->getConfigData('pass', $storeId)).
-                                $params['BankDateTime'].
-                                $params['Response']);
-            // Modo Test
-            }else{
-                $local_sign = $sign;  
-                $session = Mage::getSingleton('checkout/session');
-            }
+            $local_sign = hash('sha512', $model->getConfigData('client', $storeId).
+                            $model->getConfigData('terminal', $storeId).
+                            $params['TransactionType'].
+                            $ref.
+                            $params['Amount'].
+                            $params['Currency'].
+                            md5($model->getConfigData('pass', $storeId)).
+                            $params['BankDateTime'].
+                            $params['Response']);
 
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error en preauthorization');
-            else{
+            else {
                 $id_order = $ref;
                 $order->loadByIncrementId($id_order);
 
                 // If status PROCESSING it has already been procesed before. 
                 $order_status = $order->getStatus();
-                if ($order_status == Mage_Sales_Model_Order::STATE_PROCESSING){
+                if ($order_status == Mage_Sales_Model_Order::STATE_PROCESSING) {
                     return;
                 }
 
-
-                if(isset($params['IdUser']) && isset($params['TokenUser'])){
+                if(isset($params['IdUser']) && isset($params['TokenUser'])) {
                     
                     $payment = $order->getPayment();
                     $newTransactionType = Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH;
@@ -597,9 +528,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                     // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
                     $remember = $order->getPaytpvSavecard();
-                    if ($remember && $order->getCustomerId()>0 && $model->getConfigData('environment')!=1){
-                        $merchan_pan = ($params['merchan_pan'])?$params['merchan_pan']:0; // Solo viene en Test Mode
-                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser'],$merchan_pan);
+                    if ($remember && $order->getCustomerId()>0) {
+                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser']);
                         $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
                     }
                     
@@ -620,7 +550,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     $model->preauthSuccess($order,$session);
                 }
 
-                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                if ($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))) {
                     $order
                     ->setPaytpvCardBrand($params['CardBrand'])
                     ->setPaytpvBicCode($params['BicCode']);
@@ -629,12 +559,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             } 
  
         // (add_user)
-        }else if ($params['TransactionType']==="107"){
+        } else if ($params['TransactionType']==="107") {
             
             $ref = $params['Order'];
-            $sign = $params['Signature'];
+            $sign = $params['NotificationHash'];
             $esURLOK = false;
-            $local_sign = md5(  $model->getConfigData('client').
+            $local_sign = hash('sha512',$model->getConfigData('client').
                                 $model->getConfigData('terminal').
                                 $params['TransactionType'].
                                 $ref.
@@ -643,12 +573,12 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             if ($sign!=$local_sign) die('Error 2');
 
             $id_customer = $ref;
-            $result = $model->infoUser($params['IdUser'],$params['TokenUser'],0);
+            $result = $model->infoUser($params['IdUser'],$params['TokenUser']);
             $model->save_card($params['IdUser'],$params['TokenUser'],$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND'],$id_customer);
             
             die('Usuario Registrado');
         // (create_subscription)
-        }else if ($params['TransactionType']==="9" || $params['TransactionType']=="110_TEST"){
+        } else if ($params['TransactionType']==="9") {
             $suscripcion = 1;  // Inicio Suscripcion
             $importe  = number_format($params['Amount']/ 100, 2);
             $ref = $params['Order'];
@@ -657,7 +587,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $datos = explode("[",$ref);
             $ref = $datos[0];
 
-            if (sizeof($datos)>1){
+            if (sizeof($datos)>1) {
                 $datos2 = explode("]",$params['Order']);
                 $fecha = $datos2[sizeof($datos2)-1];
 
@@ -668,22 +598,21 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
 
                 $datos3 = explode("]",$datos[1]);
                 $paytpv_iduser = $datos3[0];
-            }else{
+            } else {
                 $paytpv_iduser = $params['IdUser'];
             }
 
 
             // Por si es un pago de suscripcion.
             $result = $params['Response']=='OK'?0:-1;
-            $sign = $params['ExtendedSignature'];
+            $sign = $params['NotificationHash'];
             $esURLOK = false;
             $session = null;
 
             $order->loadByIncrementId($params['Order']);
             $storeId = $order->getStoreId();
             
-            if ($model->getConfigData('environment')!=1){
-                $local_sign = md5(  $model->getConfigData('client', $storeId).
+            $local_sign = hash('sha512', $model->getConfigData('client', $storeId).
                                 $model->getConfigData('terminal', $storeId).
                                 $params['TransactionType'].
                                 $params['Order'].
@@ -692,14 +621,9 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                                 md5($model->getConfigData('pass', $storeId)).
                                 $params['BankDateTime'].
                                 $params['Response']);
-            // Modo Test
-            }else{
-                $local_sign = $sign;
-                $session = Mage::getSingleton('checkout/session');
-            }
 
             if ($sign!=$local_sign || $params['Response']!="OK") die('Error 3');
-            else{
+            else {
 
                 $recurringProfileCollection = Mage::getModel('sales/recurring_profile')
                     ->getCollection()
@@ -712,7 +636,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $paytpv_tokenuser = substr($profile->getReferenceId(),2);
 
                 // Pago cuota suscripcion
-                if ($suscripcion==2){
+                if ($suscripcion==2) {
 
                     $order = $this->_createOrder($profile);
 
@@ -727,7 +651,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     $profile->addOrderRelation($order->getId());
                     
                 // Suscripcion
-                }else{
+                } else {
                     //$profile->load();
                     // add order assigned to the recurring profile with initial fee
 
@@ -758,7 +682,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
                 $payment->setTransactionId($params['AuthCode'])
                 ->setCurrencyCode($order->getBaseCurrencyCode())
-                ->setPreparedMessage("PayTPV")
+                ->setPreparedMessage("PAYCOMET")
                 ->setParentTransactionId($params['AuthCode'])
                 ->setShouldCloseParentTransaction(true)
                 ->setIsTransactionClosed(1)
@@ -767,7 +691,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                 $order->setPaytpvIduser($paytpv_iduser)
                       ->setPaytpvTokenuser($paytpv_tokenuser);
 
-                if($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))){
+                if ($order->getId()>0 && (isset($params['CardBrand']) || isset($params['BicCode']))) {
                     $order
                     ->setPaytpvCardBrand($params['CardBrand'])
                     ->setPaytpvBicCode($params['BicCode']);
@@ -805,43 +729,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         echo $block->toHtml();
     }
 
-    /**
-     * Página a la que vuelvge el usuario
-     */
-    public function reciboAction()
-    {
-        $model = Mage::getModel('paytpvcom/standard');
-        $session = Mage::getSingleton('checkout/session');
-
-        $order = Mage::getModel('sales/order');
-        $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
-        $session->setQuoteId($session->getPayTpvComStandardQuoteId());
-        $params = $this->getRequest()->getParams();
-
-        $firmaValida = false;
-
-        if (count($params) > 0) {
-            if ($params['h'] == md5($model->getConfigData('user').$params['r'].$model->getConfigData('pass').$params["ret"]))
-                $firmaValida = true;
-
-            if ($firmaValida && $params['ret'] == 0) {
-                $orderStatus = $model->getConfigData('paid_status');
-                $session->unsErrorMessage();
-                $comment = Mage::helper('payment')->__('Successful payment');
-                $session->addSuccess($comment);
-                $order->setState($orderStatus, $orderStatus, $comment, true);
-                $order->sendNewOrderEmail();
-                $order->setEmailSent(true);
-                $order->save();
-                Mage::getSingleton('checkout/session')->getQuote()->setIsActive(true)->save();
-                $this->_redirect('checkout/onepage/success');
-            } else {
-                $this->cancelAction();
-            }
-        }
-    }
-
-
+    
     /**
      * Página a la que vuelvge el usuario
      */
@@ -855,7 +743,7 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         $session->setQuoteId($session->getPayTpvComStandardQuoteId());
         $params = $this->getRequest()->getParams();
 
-        if (count($params) > 0){
+        if (count($params) > 0) {
             if ($params['ret'] == 0) {
                 $orderStatus = $model->getConfigData('paid_status');
                 $session->unsErrorMessage();
@@ -876,7 +764,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
         }
     }
 
-    protected function _createOrder(Mage_Sales_Model_Recurring_Profile $profile){
+    protected function _createOrder(Mage_Sales_Model_Recurring_Profile $profile)
+    {
         
         $orderInfo          = is_string($profile->getOrderInfo())           ? unserialize($profile->getOrderInfo()) : $profile->getOrderInfo();
         $orderItemInfo      = is_string($profile->getOrderItemInfo())       ? unserialize($profile->getOrderItemInfo()) : $profile->getOrderItemInfo();

@@ -1,4 +1,4 @@
-# Módulo de pago de PayTpv para Magento
+# Módulo de pago de PAYCOMET para Magento
 
 
 Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las tiendas Magento.
@@ -10,8 +10,8 @@ Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las ti
  
 1. Desactivar la cache: Sistema-> Gestión de cache.
 2. Subir los ficheros por FTP
-3. Acceder a la configuración del módulo: sistema -> Configuración -> métodos de pago -> PayTPV
-4. Introducir los datos del producto asociado en nuestra cuenta de PayTPV
+3. Acceder a la configuración del módulo: sistema -> Configuración -> métodos de pago -> PAYCOMET
+4. Introducir los datos del producto asociado en nuestra cuenta de PAYCOMET
 
 ### Vía Magento Connect Manager
 #### Versión estable
@@ -37,9 +37,9 @@ $ ./build_package.sh
 $ modman clone https://github.com/PayTpv/Mage_PayTpv.git
 ```
 
-## Configuración del producto en PayTPV
+## Configuración del producto en PAYCOMET
 
-Accedemos a nuestro area de clientes en https://paytpv.com/ → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda magento.
+Accedemos a nuestro area de clientes en https://www.paycomet.com → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda magento.
 
 En _tipo de notificación_ Marcamos _Notificación por URL_ o _Notificación por URL y por email_, finalmente en _URL Notificación_ ponemos lo siguiente:
 ```
@@ -50,7 +50,7 @@ Poniendo nuestro dominio en lugar de {tudominio.com} y el directorio en el que e
 
 ## Configuración del Módulo
 
-Accederemos a la configuración del módulo a través de Administración → Sistema → Configuración → Métodos de Pago → "Tarjeta de crédito paytpv". Ahí tendremos que indicar el Código de cliente, Número de terminal y Contraseña de usuario de nuestro producto en PayTPV.com.
+Accederemos a la configuración del módulo a través de Administración → Sistema → Configuración → Métodos de Pago → "Tarjeta de crédito PAYCOMET". Ahí tendremos que indicar el Código de cliente, Número de terminal y Contraseña de usuario de nuestro producto en www.paycomet.com.
 
 
 ### Operativa BANKSTORE

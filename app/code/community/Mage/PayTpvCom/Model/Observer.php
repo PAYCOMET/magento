@@ -39,7 +39,7 @@ class Mage_PayTpvCom_Model_Observer{
                 $this->_invoice->sendEmail();
             }
        } catch (Mage_Core_Exception $e) {
-           Mage::log("PAYTPV AutomaticallyInvoice Error: " . $e->getMessage());
+           Mage::log("PAYCOMET AutomaticallyInvoice Error: " . $e->getMessage());
        }
 
        return $this;

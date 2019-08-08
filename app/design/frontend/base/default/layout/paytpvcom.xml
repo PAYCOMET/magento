@@ -120,89 +120,11 @@
     </paytpvcom_standard_bankstore>
 
 
-    <paytpvcom_standard_bankstore3dstest>
-
-        <remove name="header" />
-        <remove name="footer" />
-        <remove name="right"/>
-        <remove name="left"/>
-        <remove name="cart_sidebar" />
-        <remove name="checkout.cart" />
-        <remove name="sale.reorder.sidebar" />
-        
-        
-        <reference name="head">
-            <action method="removeItem">
-                <type>skin_css</type>
-                <name>css/styles.css</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/paytpv.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/2100.css</name>
-            </action>
-        </reference>
-        
-        <reference name="content">
-            <block type="paytpvcom/standard_bankstore3dstest" name="bankstore3ds" template="paytpvcom/form_bankstore_3ds_test.phtml"/>
-        </reference>
-        
-    </paytpvcom_standard_bankstore3dstest>
+    
 
 
 
-    <paytpvcom_standard_bankstoretest>
-
-        <remove name="header" />
-        <remove name="footer" />
-        <remove name="right"/>
-        <remove name="left"/>
-        <remove name="cart_sidebar" />
-        <remove name="checkout.cart" />
-        <remove name="sale.reorder.sidebar" />
-        
-        
-        <reference name="head">
-            <action method="removeItem">
-                <type>skin_css</type>
-                <name>css/styles.css</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/jquery-1.10.2.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/noconflict.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/paytpvcom/paytpv.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/paytpvcom/2100.css</name>
-            </action>
-        </reference>
-        
-        <reference name="content">
-            <block type="paytpvcom/standard_bankstoretest" name="bankstoretest" template="paytpvcom/form_bankstore_test.phtml"/>
-        </reference>
-        
-    </paytpvcom_standard_bankstoretest>
-
-
+    
     <paytpvcom_standard_bankstorerecurring>
         <remove name="right.reports.product.viewed"/>
         <remove name="sale.reorder.sidebar"/>
@@ -219,23 +141,7 @@
         </reference>
     </paytpvcom_standard_bankstorerecurring>
 
-    <paytpvcom_standard_redirect>
-    	<reference name="content">
-    	    <block type="paytpvcom/standard_redirect" name="redirect" template="paytpvcom/redirect.phtml"/>
-    	</reference>
-    </paytpvcom_standard_redirect>
-
-    <paytpvcom_standard_iframe>
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
-            <!-- Mark root page block that template is applied -->
-            <action method="setIsHandle"><applied>1</applied></action>
-        </reference>
-        <reference name="content">
-    	    <block type="paytpvcom/standard_iframe" name="iframe" template="paytpvcom/iframe.phtml"/>
-    	</reference>
-    </paytpvcom_standard_iframe>
-
+        
 
     <paytpvcom_standard_bankstoreiframe>
         <reference name="head">

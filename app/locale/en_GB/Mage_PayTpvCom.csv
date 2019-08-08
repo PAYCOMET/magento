@@ -1,13 +1,13 @@
 Payment failed (Err. code %s),Payment failed (Err. code %s)
-Payment refused from PayTPV.com. Reason: #%s - %s,Payment refused from PayTPV.com. Reason: #%s - %s
+Payment refused from www.paycomet.com. Reason: #%s - %s,Payment refused from www.paycomet.com. Reason: #%s - %s
 Pago no realizado : %s,Pago no realizado : %s
 Data succesfully saved,Data succesfully saved
 Incorrect input data,Incorrect input data
 Successful payment,Successful payment
-Tarjeta de credito paytpv,Credit Card PAYTPV
+Tarjeta de credito PAYCOMET,Credit Card PAYCOMET
 Enabled,Enabled
 Title,Title
-Credit Card PAYTPV,Credit Card PAYTPV
+Credit Card PAYCOMET,Credit Card PAYCOMET
 "Operation method","Operation method"
 Integration method,Integration method
 Client Code,Client Code
@@ -78,7 +78,7 @@ Number zero or invalid,Number zero or invalid
 Operation canceled,Operation canceled
 Authentication Error,Authentication Error
 Denied due to security level,Denied due to security level
-PUC error message. Contact PayTPV,PUC error message. Contact PAYTPV
+PUC error message. Contact PAYCOMET,PUC error message. Contact PAYCOMET
 System Error,System Error
 Duplicate transaction,Duplicate transaction
 MAC Error,MAC Error
@@ -104,8 +104,8 @@ Confirmation data inconsistency,Confirmation data inconsistency
 Undefined return operation correctly,Undefined return operation correctly
 Operation denied,Operation denied
 Account not found. Review your settings,Account not found. Review your settings
-User not found. Contact PAYTPV,User not found. Contact PAYTPV
-Gateway error response. Contact PAYTPV,Gateway error response. Contact PAYTPV
+User not found. Contact PAYCOMET,User not found. Contact PAYCOMET
+Gateway error response. Contact PAYCOMET,Gateway error response. Contact PAYCOMET
 Invalid signature. Please check your settings,Invalid signature. Please check your settings
 Access not allowed,Access not allowed
 Credit Card Format Invalid,Credit Card Format Invalid
@@ -131,8 +131,8 @@ The user in the URL is improperly formatted,The user in the URL is improperly fo
 Could not register any resources available to complete the operation,Could not register any resources available to complete the operation
 Duplicate xref,Duplicate xref
 The total return can not exceed the original transaction,The total return can not exceed the original transaction
-The account is not active. Contact PAYTPV,The account is not active. Contact PAYTPV
-The account is not certified. Contact PAYTPV,The account is not certified. Contact PAYTPV
+The account is not active. Contact PAYCOMET,The account is not active. Contact PAYCOMET
+The account is not certified. Contact PAYCOMET,The account is not certified. Contact PAYCOMET
 The product is marked for deletion and can not be used,The product is marked for deletion and can not be used
 Insufficient permissions,Insufficient permissions
 The product can not be used in the test environment,The product can not be used in the test environment
@@ -303,7 +303,7 @@ Remove Card,Remove Card
 "You will be redirected to your bank for secure payment. Wait a moment, please ...","You will be redirected to your bank for secure payment. Wait a moment, please ...
 There is still no card associated.,There is still no card associated.
 BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT
-"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.",The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.""
+"The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.",The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.""
 You must accept the terms and conditions of service,You must accept the terms and conditions of service
 Yes,Yes
 Accept,Accept
@@ -329,7 +329,7 @@ Test Card is invalid,Test Card is invalid
 Test mode does not support confirm preathorize orders placed in Real Mode,Test mode does not support confirm preathorize orders placed in Real Mode
 Test mode does not support cancel suscription placed in Real Mode,Test mode does not support cancel suscription placed in Real Mode
 Currency Accepted,Currency Accepted
-Payment New Page (PAYTPV Iframe / Jet),Payment New Page (PAYTPV Iframe / JET)
+Payment New Page (PAYCOMET Iframe / Jet),Payment New Page (PAYCOMET Iframe / JET)
 Scoring Configuration,Scoring Configuration
 Send Merchant Data,Send Merchant Data
 Active,Active
@@ -353,5 +353,5 @@ Credit Card Operation,Credit Card Operation
 Enter your card,Enter your card
 Total Amount,Total Amount
 Remember Card (Selected),Remember Card (Selected)
-"<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>","<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>"
-Iframe PAYTPV - Height,Iframe PAYTPV - Height
+"<b>Attention: This environment does not make calls to PAYCOMET systems. If you have Sandbox account in PAYCOMET use Real Mode</b><br/>","<b>Attention: This environment does not make calls to PAYCOMET systems. If you have Sandbox account in PAYCOMET use Real Mode</b><br/>"
+Iframe PAYCOMET - Height,Iframe PAYCOMET - Height

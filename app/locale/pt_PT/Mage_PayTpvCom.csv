@@ -1,13 +1,13 @@
 Payment failed (Err. code %s),Falha no pagamento (Cód. Erro %s)
-Payment refused from PayTPV.com. Reason: #%s - %s,Pagamento negado em PayTPV.com. Razão: #%s - %s
+Payment refused from www.paycomet.com. Reason: #%s - %s,Pagamento negado em www.paycomet.com. Razão: #%s - %s
 Pago no realizado : %s,Pagamento não realizado: %s
 Data succesfully saved,Dados guardados com êxito
 Incorrect input data,Dados introduzidos incorretos
 Successful payment,Pagamento efetuado corretamente
-Credit Card PAYTPV,Cartão de crédito PAYTPV
+Credit Card PAYCOMET,Cartão de crédito PAYCOMET
 Enabled,Ativado
 Title,Título
-Credit Card PAYTPV,Cartão de crédito PAYTPV
+Credit Card PAYCOMET,Cartão de crédito PAYCOMET
 Operation method,Tipo de operativa
 Integration method,Tipo de integração
 Client Code,Código de cliente
@@ -78,7 +78,7 @@ Number zero or invalid,Quantidade zero ou não válida
 Operation canceled,Operação cancelada
 Authentication Error,Erro de autenticação
 Denied due to security level,Negado devido ao nível de segurança
-PUC error message. Contact PayTPV,Erro na mensagem PUC. Contacte a PAYTPV
+PUC error message. Contact PAYCOMET,Erro na mensagem PUC. Contacte a PAYCOMET
 System Error,Erro do sistema
 Duplicate transaction,Transação duplicada
 MAC Error,Erro de MAC
@@ -104,8 +104,8 @@ Confirmation data inconsistency,Inconsistência de dados em confirmação
 Undefined return operation correctly,Operação de devolução não definida corretamente
 Operation denied,Operação negada
 Account not found. Review your settings,Conta não encontrada. Reveja a sua configuração
-User not found. Contact PAYTPV,Utilizador não encontrado. Contacte a PAYTPV
-Gateway error response. Contact PAYTPV,Erro na resposta de gateway. Contacte a PAYTPV
+User not found. Contact PAYCOMET,Utilizador não encontrado. Contacte a PAYCOMET
+Gateway error response. Contact PAYCOMET,Erro na resposta de gateway. Contacte a PAYCOMET
 Invalid signature. Please check your settings,Assinatura não válida. Por favor reveja a sua configuração
 Access not allowed,Acesso não permitido
 Credit Card Format Invalid,Formato de cartão de crédito não válido
@@ -131,8 +131,8 @@ The user in the URL is improperly formatted,O utilizador na URL foi mal formatad
 Could not register any resources available to complete the operation,Não foi possível registar nenhum recurso disponível para completar a operação
 Duplicate xref,Referência externa duplicada
 The total return can not exceed the original transaction,O total das devoluções não pode exceder a operação original
-The account is not active. Contact PAYTPV,A conta não está ativa. Contacte a PAYTPV
-The account is not certified. Contact PAYTPV,A conta não está certificada. Contacte a PAYTPV
+The account is not active. Contact PAYCOMET,A conta não está ativa. Contacte a PAYCOMET
+The account is not certified. Contact PAYCOMET,A conta não está certificada. Contacte a PAYCOMET
 The product is marked for deletion and can not be used,O produto está marcado para eliminar e não pode ser utilizado
 Insufficient permissions,Autorizações insuficientes
 The product can not be used in the test environment,O produto não pode ser utilizado no ambiente de testes
@@ -303,7 +303,7 @@ By subscribing you agree to the ,Ao subscrever, está a aceitar os 
 You will be redirected to your bank for secure payment. Wait a moment, please ...,Será redirecionado para o seu banco para realizar o pagamento seguro. Aguarde um momento, por favor...
 There is still no card associated.,Ainda não tem nenhum cartão associado.
 BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,SERÁ REDIRECIONADO PARA A GATEWAY DE PAGAMENTO NO PASSO FINAL DO CHECKOUT
-"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.","Os dados introduzidos serão guardados nos servidores da PAYTPV, empresa com certificação PCI/DSS de nível 1, o que torna os pagamentos 100% seguros."
+"The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.","Os dados introduzidos serão guardados nos servidores da PAYCOMET, empresa com certificação PCI/DSS de nível 1, o que torna os pagamentos 100% seguros."
 You must accept the terms and conditions of service,Tem de aceitar os termos e condições do serviço
 Yes,Sim
 Accept,Aceitar
@@ -329,7 +329,7 @@ Test Card is invalid,Cartão de teste não válido
 "Test mode does not support confirm preathorize orders placed in Real Mode","Em Modo de Testes, não se pode confirmar pré-autorizações realizadas em Modo Real"
 "Test mode does not support cancel suscription placed in Real Mode","Em Modo de Testes, não se pode cancelar subscrições realizadas em Modo Real"
 Currency Accepted,Moeda Aceite
-Payment New Page (PAYTPV Iframe / Jet),Pagamento numa nova página (Iframe PAYTPV / JET)
+Payment New Page (PAYCOMET Iframe / Jet),Pagamento numa nova página (Iframe PAYCOMET / JET)
 Scoring Configuration,Configuração do Scoring
 Send Merchant Data,Enviar Dados da Loja
 Active,Ativo
@@ -353,5 +353,5 @@ Credit Card Operation,Pagamento por cartão de crédito
 Enter your card,Introduza o seu cartão
 Total Amount,Montante Total
 Remember Card (Selected),Recordar cartão de crédito (selecionada)
-"<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>","<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>"
-Iframe PAYTPV - Height,Iframe PAYTPV - Altura
+"<b>Attention: This environment does not make calls to PAYCOMET systems. If you have Sandbox account in PAYCOMET use Real Mode</b><br/>","<b>Attention: This environment does not make calls to PAYCOMET systems. If you have Sandbox account in PAYCOMET use Real Mode</b><br/>"
+Iframe PAYCOMET - Height,Iframe PAYCOMET - Altura

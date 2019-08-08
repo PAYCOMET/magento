@@ -4,6 +4,8 @@ class Mage_PayTpvCom_Block_Standard_Bankstoreiframe extends Mage_Core_Block_Temp
 {
     protected function _construct()
     {
+
+        
         parent::_construct();
         $standard = Mage::getModel( 'paytpvcom/standard' );
         $iframeUrl = '';
@@ -51,6 +53,8 @@ class Mage_PayTpvCom_Block_Standard_Bankstoreiframe extends Mage_Core_Block_Temp
 
 
         $paytpvfullscreen = $standard->getConfigData('paytpvfullscreen');
+
+       
         if ($paytpvfullscreen==1)
             Mage::app()->getResponse()->setRedirect($iframeUrl);
 

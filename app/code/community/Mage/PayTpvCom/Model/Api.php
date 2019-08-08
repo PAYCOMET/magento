@@ -21,7 +21,7 @@
  *
  * @category    Mage
  * @package     Mage_PayTpvCom
- * @copyright   Copyright (c) 2012 PayTPV S.L. Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2019 PAYCOMET S.L. Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class Mage_PayTpvCom_Model_Api extends Varien_Object
@@ -47,7 +47,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
     private function getClient()
     {
         if (null == $this->_client)
-            $this->_client = new Zend_Soap_Client('https://secure.paytpv.com/gateway/xml_bankstore.php?wsdl');
+            $this->_client = new Zend_Soap_Client('https://api.paycomet.com/gateway/xml-bankstore?wsdl');
         $this->_client->setSoapVersion(SOAP_1_1);
         return $this->_client;
     }
@@ -56,18 +56,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
     public function callManageRecurringPaymentsProfileStatus($profile,$action)
     {
         $model = Mage::getModel('paytpvcom/standard');
-        // Test Mode
-        if ($model->getConfigData('environment')==1){
-            $additionalInfo = $profile->getAdditionalInfo() ? $profile->getAdditionalInfo() : array();
-
-            if (strstr($additionalInfo["paytpv_tokenuser"],'TESTTOKEN')){
-                $res['DS_ERROR_ID']=0;
-            }else{
-                $res['DS_ERROR_ID']=4003;
-            }
-            return $res;
-        }
-
+        
         $newState = $profile->getNewState();
         $currentState = $profile->getState();
 
@@ -155,67 +144,6 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
         return $this->_merchanttransid;
     }
 
-    /*
-    private function addUser()
-    {
-        $model = Mage::getModel('paytpvcom/standard');
-
-        // Test Mode
-        if ($model->getConfigData('environment')==1){
-            $res = $this->addUserTest();
-            return $res;
-        }
-
-        $DS_MERCHANT_MERCHANTCODE = $model->getConfigData('client');
-        $DS_MERCHANT_TERMINAL = $model->getConfigData('terminal');
-        $DS_MERCHANT_PAN = $this->_payment['cc_number'];
-        $DS_MERCHANT_EXPIRYDATE = str_pad($this->_payment['cc_exp_month'], 2, "0", STR_PAD_LEFT) . substr($this->_payment['cc_exp_year'], 2, 2);
-        $DS_MERCHANT_CVV2 = $this->_payment['cc_cid'];
-        $DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_MERCHANT_PAN . $DS_MERCHANT_CVV2 . $DS_MERCHANT_TERMINAL . $model->getConfigData('pass'));
-        $DS_ORIGINAL_IP = $original_ip != '' ? $original_ip : $_SERVER['REMOTE_ADDR'];
-        return $this->getClient()->add_user(
-            $DS_MERCHANT_MERCHANTCODE,
-            $DS_MERCHANT_TERMINAL,
-            $DS_MERCHANT_PAN,
-            $DS_MERCHANT_EXPIRYDATE,
-            $DS_MERCHANT_CVV2,
-            $DS_MERCHANT_MERCHANTSIGNATURE,
-            $DS_ORIGINAL_IP
-        );
-    }
-
-
-    private function addUserTest()
-    {
-        $model = Mage::getModel('paytpvcom/standard');
-
-        // Test Mode
-        // First 100.000 paytpv_iduser for Test_Mode
-        if (in_array(trim($this->_payment['cc_number']),$model->_arrTestCard) && str_pad($this->_payment['cc_exp_month'], 2, "0", STR_PAD_LEFT)==$model->_TestCard_mm && substr($this->_payment['cc_exp_year'], 2, 2)==$model->_TestCard_yy && $this->_payment['cc_cid']==$model->_TestCard_merchan_cvc2){
-            $model = Mage::getModel('paytpvcom/customer');
-            $collection = $model->getCollection()
-                ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
-                ->addFieldToFilter('paytpv_iduser', array('lt' => 100000))
-                ->setOrder('paytpv_iduser', 'DESC')
-                ->getFirstItem()->getData();
-            if (empty($collection) === true){
-                $paytpv_iduser = 1;
-            }else{
-                $paytpv_iduser = $collection["paytpv_iduser"]+1;
-            }
-            $paytpv_tokenuser = "TESTTOKEN_".date("dmyHis");
-
-            $res["DS_IDUSER"] = $paytpv_iduser;
-            $res["DS_TOKEN_USER"] = $paytpv_tokenuser;
-            $res["DS_ERROR_ID"] = 0;
-        }else{
-            $res["DS_ERROR_ID"] = 4001;
-        }   
-        return $res;
-
-    }
-    */
-
     private function removeSuscription($idUser, $tokeUser)
     {
         
@@ -248,15 +176,7 @@ class Mage_PayTpvCom_Model_Api extends Varien_Object
 
 
         $model = Mage::getModel('paytpvcom/standard');
-        
-        // Test Mode
-        if ($model->getConfigData('environment')==1){
-            $res['DS_ERROR_ID']=0;
-            $res['DS_MERCHANT_AUTHCODE'] = 'TESTAUTHCODE_'.date("dmyHis");
-            return $res;
-        }
-
-
+                
         $amount = $model->_formatAmount($model->getQuote()->getStore()->convertPrice($this->_recurringProfile->getInitAmount()));
 
         $DS_MERCHANT_MERCHANTCODE = $model->getConfigData('client');
