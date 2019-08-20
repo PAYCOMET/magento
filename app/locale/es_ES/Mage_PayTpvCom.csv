@@ -1,13 +1,13 @@
 Payment failed (Err. code %s),Pago fallido (Cód. Error %s)
-Payment refused from PayTPV.com. Reason: #%s - %s,Pago denegado en PayTPV.com. Razón: #%s - %s
+Payment refused from www.paycomet.com. Reason: #%s - %s,Pago denegado en www.paycomet.com. Razón: #%s - %s
 Pago no realizado : %s,Pago no realizado : %s
 Data succesfully saved,Datos guardados con éxito
 Incorrect input data,Datos de entrada incorrectos
 Successful payment,Pago exitoso
-Credit Card PAYTPV,Tarjeta de crédito PAYTPV
+Credit Card PAYCOMET,Tarjeta de crédito PAYCOMET
 Enabled,Habilitado
 Title,Título
-Credit Card PAYTPV,Tarjeta de crédito PAYTPV
+Credit Card PAYCOMET,Tarjeta de crédito PAYCOMET
 "Operation method","Tipo de operativa"
 Integration method,Tipo de integración
 Client Code,Código de cliente
@@ -78,7 +78,7 @@ Number zero or invalid,Cantidad cero o no válida
 Operation canceled,Operación cancelada
 Authentication Error,Error de autenticación
 Denied due to security level,Denegado debido al nivel de seguridad
-PUC error message. Contact PayTPV,Error en el mensaje PUC. Contacte con PAYTPV
+PUC error message. Contact PAYCOMET,Error en el mensaje PUC. Contacte con PAYCOMET
 System Error,Error del sistema
 Duplicate transaction,Transacción duplicada
 MAC Error,Error de MAC
@@ -104,8 +104,8 @@ Confirmation data inconsistency,Inconsistencia de datos en confirmación
 Undefined return operation correctly,Operación de devolución no definida correctamente
 Operation denied,Operación denegada
 Account not found. Review your settings,Cuenta no encontrada. Revise su configuración
-User not found. Contact PAYTPV,Usuario no encontrado. Contacte con PAYTPV
-Gateway error response. Contact PAYTPV,Error en respuesta de pasarela. Contacte con PAYTPV
+User not found. Contact PAYCOMET,Usuario no encontrado. Contacte con PAYCOMET
+Gateway error response. Contact PAYCOMET,Error en respuesta de pasarela. Contacte con PAYCOMET
 Invalid signature. Please check your settings,"Firma no válida. Por favor, revise su configuración"
 Access not allowed,Acceso no permitido
 Credit Card Format Invalid,Formato de tarjeta de crédito no válido
@@ -131,8 +131,8 @@ The user in the URL is improperly formatted,El usuario en la URL se formateó de
 Could not register any resources available to complete the operation,No se pudo registrar ningún recurso disponible para completar la operación
 Duplicate xref,Referencia externa duplicada
 The total return can not exceed the original transaction,El total de las devoluciones no puede superar la operación original
-The account is not active. Contact PAYTPV,La cuenta no se encuentra activa. Contacte con PAYTPV
-The account is not certified. Contact PAYTPV,La cuenta no se encuentra certificada. Contacte con PAYTPV
+The account is not active. Contact PAYCOMET,La cuenta no se encuentra activa. Contacte con PAYCOMET
+The account is not certified. Contact PAYCOMET,La cuenta no se encuentra certificada. Contacte con PAYCOMET
 The product is marked for deletion and can not be used,El producto está marcado para eliminar y no puede ser utilizado
 Insufficient permissions,Permisos insuficientes
 The product can not be used in the test environment,El producto no puede ser utilizado en el entorno de pruebas
@@ -239,7 +239,7 @@ Incorrect token received,Recibido token incorrecto
 Can not perform the operation,No ha sido posible realizar la operación
 providerID not available,providerID no disponible
 operations parameter missing or not in a correct format,Falta el parámetro operaciones o no tiene el formato correcto
-paytpvMerchant parameter missing,Falta el parámetro paytpvMerchant
+paycometMerchant parameter missing,Falta el parámetro paycometMerchant
 merchatID parameter missing,Falta el parámetro merchatID
 terminalID parameter missing,Falta el parámetro terminalID
 tpvID parameter missing,Falta el parámetro tpvID
@@ -303,7 +303,7 @@ Remove Card, Eliminar Tarjeta
 "You will be redirected to your bank for secure payment. Wait a moment, please ...","Va a ser redirigido a su banco para realizar el pago seguro. Espere un momento, por favor..."
 There is still no card associated.,No tiene asociado todavía ninguna tarjeta.
 BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,SE LE REDIRIGIRA A LA PASARELA DE PAGO EN EL PASO FINAL DEL CHECKOUT
-"The input data is stored on servers in PayTPV company with PCI / DSS Level 1 certification, making payments 100% secure.","Los datos de introducidos se almacenarán en los servidores de PAYTPV, empresa con certificación PCI/DSS de nivel 1, lo que hace los pagos 100% seguros."
+"The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.","Los datos de introducidos se almacenarán en los servidores de PAYCOMET, empresa con certificación PCI/DSS de nivel 1, lo que hace los pagos 100% seguros."
 You must accept the terms and conditions of service,Debe aceptar los términos y condiciones del servicio
 Yes,Si
 Accept,Aceptar
@@ -329,7 +329,7 @@ Test Card is invalid,Tarjeta de prueba no válida
 Test mode does not support confirm preathorize orders placed in Real Mode,En Modo de Pruebas no se pueden confirmar preautorizaciones realizadas en Modo Real
 Test mode does not support cancel suscription placed in Real Mode,En Modo de Pruebas no se pueden cancelar suscripciones realizadas en Modo Real
 Currency Accepted,Moneda Aceptada
-Payment New Page (PAYTPV Iframe / Jet),Pago en nueva página (Iframe PAYTPV / JET)
+Payment New Page (PAYCOMET Iframe / Jet),Pago en nueva página (Iframe PAYCOMET / JET)
 Scoring Configuration,Configuración del Scoring
 Send Merchant Data,Enviar Datos del Comercio
 Active,Activo
@@ -353,5 +353,5 @@ Credit Card Operation,Operación mediante tarjeta de crédito
 Enter your card,Introduce tu tarjeta
 Total Amount,Importe Total
 Remember Card (Selected),Recordar Tarjeta (seleccionado)
-"<b>Attention: This environment does not make calls to PAYTPV systems. If you have Sandbox account in PAYTPV use Real Mode</b><br/>","<b>Atención: Este entorno no efectúa llamadas a los sistemas de PAYTPV. Si dispone de una cuenta Sandbox en PAYTPV use el Modo Real</b><br/>"
-Iframe PAYTPV - Height,Iframe PAYTPV - Altura
+"<b>Attention: This environment does not make calls to PAYCOMET systems. If you have Sandbox account in PAYCOMET use Real Mode</b><br/>","<b>Atención: Este entorno no efectúa llamadas a los sistemas de PAYCOMET. Si dispone de una cuenta Sandbox en PAYCOMET use el Modo Real</b><br/>"
+Iframe PAYCOMET - Height,Iframe PAYCOMET - Altura
