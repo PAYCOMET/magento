@@ -24,7 +24,16 @@ Use 3D Secure in purchases above,Usar 3D Secure em pagamentos superiores a
 Commerce password required in saved cards purchase,Password da loja em pagamentos com Cartão Guardado
 Active Subscriptions,Ativar Subscrições
 Show Name on Card,Mostrar Nome no Cartão
-Show Credit Card Types,Mostrar Tipos de Cartão
+Name on Card,Nome no cartão
+Credit Card Type,Tipo de cartão de crédito
+--Please Select--,--Por favor selecione--
+Credit Card Number,Número do Cartão de Crédito
+Expiration Date,Data de validade
+Month,Mês
+Year,Ano
+Card Verification Number,Numero de verificação do cartão
+What is this?,O que é isso?
+Show Credit Card Types,Mostrar tipos de cartão de crédito
 Credit Card Types,Tipos de cartão
 Minimum Order Total,Montante mínimo da encomenda
 Maximum Order Total,Montante máximo da encomenda

@@ -24,6 +24,15 @@ Use 3D Secure in purchases above,Use 3D Secure in purchases above
 Commerce password required in saved cards purchase,Commerce password required in saved cards purchase
 Active Subscriptions,Active Subscriptions
 Show Name on Card,Show Name on Card
+Name on Card,Name on Card
+Credit Card Type,Credit Card Type
+--Please Select--,--Please Select--
+Credit Card Number,Credit Card Number
+Expiration Date,Expiration Date
+Month,Month
+Year,Year
+Card Verification Number,Card Verification Number
+What is this?,What is this?
 Show Credit Card Types,Show Credit Card Types
 Credit Card Types,Credit Card Types
 Minimum Order Total,Minimum Order Total
@@ -303,7 +312,7 @@ Remove Card,Remove Card
 "You will be redirected to your bank for secure payment. Wait a moment, please ...","You will be redirected to your bank for secure payment. Wait a moment, please ...
 There is still no card associated.,There is still no card associated.
 BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT,BE REDIRECTED PAYMENT GATEWAY TO THE FINAL STEP IN THE CHECKOUT
-"The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.",The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.""
+"The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure.","The input data is stored on servers in PAYCOMET company with PCI / DSS Level 1 certification, making payments 100% secure."
 You must accept the terms and conditions of service,You must accept the terms and conditions of service
 Yes,Yes
 Accept,Accept
