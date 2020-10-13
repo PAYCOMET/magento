@@ -448,28 +448,38 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
                     return;
                 }
 
-                if(isset($params['IdUser']) && isset($params['TokenUser'])) {
+                if((isset($params['MethodId']) && $params['MethodId']!=1) || (isset($params['IdUser']) && isset($params['TokenUser']))) {
 
-                    // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
-                    $remember = $order->getPaytpvSavecard();
-                    if ($remember && $order->getCustomerId()>0) {                        
-                        $result2 = $model->infoUser($params['IdUser'],$params['TokenUser']);
-                        $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
+                    $preparedMessage = "PAYCOMET Pago Correcto";
+                    $methodId = $params['MethodId'];
+                    $methodName = $params['MethodName'];
+                    if ($methodId == 1) {
+                        // Si es un pago Seguro, ha pulsado en el acuerdo y es un usuario registrado guardamos el token
+                        $remember = $order->getPaytpvSavecard();
+                        if ($remember && $order->getCustomerId()>0) {                        
+                            $result2 = $model->infoUser($params['IdUser'],$params['TokenUser']);
+                            $model->save_card($params['IdUser'],$params['TokenUser'],$result2['DS_MERCHANT_PAN'],$result2['DS_CARD_BRAND'],$order->getCustomerId());
+                        }
+                    // Si No es pago con tarjeta, indicamos con que se ha pagado
+                    } else {
+                        $preparedMessage .= " (" . $methodName . ")";
                     }
-                    
+
                     // Creamos la factura
                     $payment = $order->getPayment();
 
                     $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$params);
                     $payment->setTransactionId($params['AuthCode'])
                         ->setCurrencyCode($order->getBaseCurrencyCode())
-                        ->setPreparedMessage("PAYCOMET Pago Correcto.")
+                        ->setPreparedMessage($preparedMessage)
                         ->setIsTransactionClosed(1)
                         ->registerCaptureNotification($order->getBaseGrandTotal());
 
-                    $order
-                        ->setPaytpvIduser($params['IdUser'])
-                        ->setPaytpvTokenuser($params['TokenUser']);
+                    if ($methodId == 1) {
+                        $order
+                            ->setPaytpvIduser($params['IdUser'])
+                            ->setPaytpvTokenuser($params['TokenUser']);                        
+                    }
                     $order->save();
 
                     $model->processSuccess($order,$session);

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.6.1</version>
+    <version>5.6.2</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -18,7 +18,7 @@
             <email>info@paycomet.com</email>
         </author>
     </authors>
-    <date>2019-08-08</date>
+    <date>2020-10-13</date>
     <time>09:00:00</time>
     <contents>
         <target name="magecommunity">
