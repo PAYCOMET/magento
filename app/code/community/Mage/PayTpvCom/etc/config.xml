@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.6.1</version>
+            <version>5.6.2</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -174,7 +174,7 @@
                 <operationcall>0</operationcall>
                 <currency>EUR</currency>
                 <paytpviframe>0</paytpviframe>
-                <paytpviframe_height>340</paytpviframe_height>
+                <paytpviframe_height>440</paytpviframe_height>
                 <paytpvfullscreen>0</paytpvfullscreen>
                 <remembercardselected>1</remembercardselected>
             </paytpvcom>
