@@ -1,4 +1,4 @@
-# Módulo de pago de PAYCOMET para Magento
+[DEPRECATED] # Módulo de pago de PAYCOMET para Magento
 
 
 Ofrece la posibilidad de cobrar a tus clientes por tarjeta de crédito en las tiendas Magento.
