@@ -1638,7 +1638,8 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
     {
         $model = Mage::getModel('paytpvcom/customer');
         $collection = $model->getCollection()
-            ->addFilter("id_customer",Mage::getSingleton('customer/session')->getCustomer()->getId(),"and")
+            ->addFieldToFilter('id_customer', array('eq' => array(Mage::getSingleton('customer/session')->getCustomer()->getId())))
+            ->addFieldToFilter('id_customer', array('gt' => 0))
             ->setOrder("paytpv_iduser", 'DESC');
         $arrCards = array();
         foreach($collection as $item) {
@@ -1786,7 +1787,7 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
                 return Mage::helper('payment')->__('%s - %s', $res['DS_ERROR_ID'], $this->getErrorDesc($res['DS_ERROR_ID']));
             }
         }
-        return _("Error");
+        return __("Error");
     }
 
     function isFirstPurchaseToken($IDUSER)
@@ -1872,13 +1873,15 @@ class Mage_PayTpvCom_Model_Standard extends Mage_Payment_Model_Method_Abstract i
         $arrSalida["paytpv_iduser"] = $paytpv_iduser;
         $arrSalida["paytpv_tokenuser"] = $paytpv_tokenuser;
 
-        $data = array("paytpv_iduser"=>$paytpv_iduser,"paytpv_tokenuser"=>$paytpv_tokenuser,"paytpv_cc"=>$paytpv_cc,"paytpv_brand"=>$paytpv_brand,"id_customer"=>$id_customer,"date"=>now());
-        $model = Mage::getModel('paytpvcom/customer')->setData($data);
-        try {
-            $insertId = $model->save()->getId();
-            //echo "CUSTOMER Data successfully inserted. Insert ID: ".$insertId;
-        } catch (Exception $e){
-         echo $e->getMessage();
+        if ((int)$id_customer > 0) {
+            $data = array("paytpv_iduser"=>$paytpv_iduser,"paytpv_tokenuser"=>$paytpv_tokenuser,"paytpv_cc"=>$paytpv_cc,"paytpv_brand"=>$paytpv_brand,"id_customer"=>$id_customer,"date"=>now());
+            $model = Mage::getModel('paytpvcom/customer')->setData($data);
+            try {
+                $insertId = $model->save()->getId();
+                //echo "CUSTOMER Data successfully inserted. Insert ID: ".$insertId;
+            } catch (Exception $e){
+                echo $e->getMessage();
+            }
         }
         return $arrSalida;
     }
