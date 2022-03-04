@@ -100,13 +100,22 @@
                                     <sort_order>34</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>                                    
+                                    <show_in_store>0</show_in_store>
                                 </pass>
+                                <apikey translate="label">
+                                    <label>API Key</label>
+                                    <config_path>payment/paytpvcom/apikey</config_path>
+                                    <frontend_type>password</frontend_type>
+                                    <sort_order>34a</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </apikey>
                                 <jetid translate="label">
                                     <label>JET ID</label>
                                     <config_path>payment/paytpvcom/jetid</config_path>
                                     <frontend_type>text</frontend_type>
-                                    <sort_order>34a</sort_order>
+                                    <sort_order>34b</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
@@ -157,8 +166,6 @@
                                     <show_in_store>0</show_in_store>
                                     <depends><terminales>2</terminales></depends>
                                 </secure_amount>
-                               
-                                
 
                                 <commerce_password translate="label">
                                     <label>Commerce password required in saved cards purchase</label>
@@ -273,7 +280,24 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </remembercardselected>
-                                        
+
+
+                                <active translate="label">
+                                    <!-- label for the field -->
+                                    <label>Bizum</label>
+                                    <config_path>payment/paytpvcombizum/active</config_path>
+                                    <!-- input type for configuration value -->
+                                    <frontend_type>select</frontend_type>
+                                    <!-- model to take the option values from -->
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <!-- field position -->
+                                    <sort_order>95</sort_order>
+                                    <!-- do not show this field in store scope -->
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </active>
+
                                 <sort_order translate="label">
                                     <label>Sort Order</label>
                                     <config_path>payment/paytpvcom/sort_order</config_path>

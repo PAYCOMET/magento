@@ -1,0 +1,10 @@
+<?php
+$standard = Mage::getSingleton('paytpvcom/standardbizum');
+$_code=$standard->getCode();
+?>
+
+<ul id="payment_form_<?php echo $_code ?>" class="form-list" style="display:none;">
+    <li>
+        <span><?php print $this->__('Pay with Bizum');?></span>
+    </li>
+</ul>
