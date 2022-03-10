@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Mage_PayTpvCom</name>
-    <version>5.6.3</version>
+    <version>5.6.4</version>
     <stability>stable</stability>
     <license uri="https://www.gnu.org/licenses/gpl.html">GPL, version 3</license>
     <channel>community</channel>
@@ -26,10 +26,12 @@
                 <dir name="PayTpvCom">
                     <dir name="Block">
                         <dir name="Standard">
-                            <file name="Bankstore.php"/>                           
+                            <file name="Bankstore.php"/>
+                            <file name="Bankstorebizum.php"/>
                             <file name="Bankstoreiframe.php"/>
-                            <file name="Bankstorerecurring.php"/>                            
+                            <file name="Bankstorerecurring.php"/>
                             <file name="Form.php"/>
+                            <file name="FormBizum.php"/>
                             <file name="Tarjetas.php"/>
                         </dir>
                         <dir name="Adminhtml">
@@ -177,7 +179,9 @@
                                 <file name="form_bankstore_iframe.phtml"/>
                                 <file name="form_bankstore_test.phtml"/>
                                 <file name="form_bankstore_ws.phtml"/>
-                                <file name="form.phtml"/>                                
+                                <file name="form_bizum.phtml"/>
+                                <file name="form.phtml"/>
+                                <file name="redirect.phtml"/>
                                 <file name="tarjetas.phtml"/>
                             </dir>
                         </dir>

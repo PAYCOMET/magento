@@ -31,7 +31,7 @@
                 <name>css/paytpvcom/jquery.fancybox.css</name>
             </action>
             <action method="addJs"><script>lib/ccard.js</script></action>
-            
+
         </reference>
     </paytpvcom_handle>
 
@@ -97,7 +97,7 @@
             <action method="addJs"><script>lib/ccard.js</script></action>
         </reference>
         <reference name="content">
-            <block type="paytpvcom/standard_tarjetas" name="tarjetas" template="paytpvcom/tarjetas.phtml"></block>  
+            <block type="paytpvcom/standard_tarjetas" name="tarjetas" template="paytpvcom/tarjetas.phtml"></block>
         </reference>
     </paytpvcom_standard_tarjetas>
 
@@ -106,42 +106,42 @@
         <remove name="sale.reorder.sidebar"/>
         <remove name="catalog.compare.sidebar" />  <!--product compare-->
 
-        
+
         <!--Change root template to 2columns-right.phtml-->
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
         <!--use the right block-->
-        
+
         <reference name="content">
             <block type="paytpvcom/standard_bankstore" name="bankstore" template="paytpvcom/bankstore.phtml"/>
         </reference>
-        
+
     </paytpvcom_standard_bankstore>
 
 
-    
 
 
 
-    
+
+
     <paytpvcom_standard_bankstorerecurring>
         <remove name="right.reports.product.viewed"/>
         <remove name="sale.reorder.sidebar"/>
         <remove name="catalog.compare.sidebar" />  <!--product compare-->
-        
+
         <!--Change root template to 2columns-right.phtml-->
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
         <!--use the right block-->
-        
+
         <reference name="content">
             <block type="paytpvcom/standard_bankstorerecurring" name="bankstorerecurring" template="paytpvcom/bankstorerecurring.phtml"/>
         </reference>
     </paytpvcom_standard_bankstorerecurring>
 
-        
+
 
     <paytpvcom_standard_bankstoreiframe>
         <reference name="head">
@@ -181,7 +181,17 @@
         </reference>
     </paytpvcom_standard_bankstoreiframe>
 
-       
+    <paytpvcom_standard_bankstorebizum>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+            <!-- Mark root page block that template is applied -->
+            <action method="setIsHandle"><applied>1</applied></action>
+        </reference>
+        <reference name="content">
+            <block type="paytpvcom/standard_bankstorebizum" name="bankstorebizum"/>
+        </reference>
+    </paytpvcom_standard_bankstorebizum>
+
     <customer_account>
         <!-- Mage_Wishlist -->
         <reference name="customer_account_navigation">
@@ -194,7 +204,7 @@
     </customer_account>
 
 
-    
+
 
 
 </layout>

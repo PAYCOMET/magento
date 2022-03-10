@@ -44,6 +44,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $session->setPayTpvComStandardQuoteId($session->getQuoteId());
             $this->loadLayout();
             $this->renderLayout();
+        } else {
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
         }
         return;
     }
@@ -59,6 +61,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $session->setPayTpvComStandardQuoteId($session->getQuoteId());
             $this->loadLayout();
             $this->renderLayout();
+        } else {
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
         }
         return;
     }
@@ -75,6 +79,25 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $session->setPayTpvComStandardQuoteId($session->getQuoteId());
             $this->loadLayout();
             $this->renderLayout();
+        } else {
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
+        }
+        return;
+    }
+
+     /**
+     * When a customer chooses PayTpvCom on Checkout/Payment page with Bizum option
+     *
+     */
+    public function bankstorebizumAction()
+    {
+        $session = Mage::getSingleton('checkout/session');
+        if ($session->getLastOrderId()) {
+            $session->setPayTpvComStandardQuoteId($session->getQuoteId());
+            $this->loadLayout();
+            $this->renderLayout();
+        } else {
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
         }
         return;
     }
@@ -90,6 +113,8 @@ class Mage_PayTpvCom_StandardController extends Mage_Core_Controller_Front_Actio
             $session->setPayTpvComStandardQuoteId($session->getQuoteId());
             $this->loadLayout();
             $this->renderLayout();
+        } else {
+            Mage::app()->getResponse()->setRedirect(Mage::getBaseUrl());
         }
         return;
     }    

@@ -16,6 +16,7 @@
                 <class>Mage_PayTpvCom_Model</class>
                 <resourceModel>paytpvcom_resource</resourceModel>
             </paytpvcom>
+
             <paytpvcom_resource>
                 <class>Mage_PayTpvCom_Model_Resource</class>
                 <deprecatedNode>paytpvcom_mysql4</deprecatedNode>
@@ -26,7 +27,6 @@
                 </entities>
             </paytpvcom_resource>
         </models>
-
 
         <!-- declare resource setup for new module -->
         <resources>
@@ -44,6 +44,7 @@
                     <use>core_setup</use>
                 </connection>
             </paytpvcom_setup>
+            
             <paytpvcom_write>
                 <connection>
                     <use>core_write</use>
@@ -176,8 +177,20 @@
                 <paytpviframe>0</paytpviframe>
                 <paytpviframe_height>440</paytpviframe_height>
                 <paytpvfullscreen>0</paytpvfullscreen>
-                <remembercardselected>1</remembercardselected>
+                <remembercardselected>0</remembercardselected>
             </paytpvcom>
+            <paytpvcombizum>
+                <!-- by default this payment method is inactive -->
+                <active>0</active>
+                <!-- model to handle logic for this payment method -->
+                <model>paytpvcom/standardbizum</model>
+                <!-- order status for new orders paid by this payment method -->
+                <order_status>pending</order_status>
+                <paid_status>processing</paid_status>
+                <error_status>canceled</error_status>
+                <!-- default title for payment checkout page and order view page -->
+                <title>Bizum</title>
+            </paytpvcombizum>
         </payment>
     </default>
 </config>
