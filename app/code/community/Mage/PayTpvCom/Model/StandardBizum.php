@@ -35,12 +35,14 @@ class Mage_PayTpvCom_Model_StandardBizum extends Mage_Payment_Model_Method_Abstr
     protected $_canUseForMultishipping = true;
     protected $_isInitializeNeeded = false;
 
-
-    public $hola = "sadklfjkl";
-
     const REST_ENDPOINT = "https://rest.paycomet.com";
 
     protected function _construct(){
+    }
+
+
+    public function isAvailable(){
+        return $this->getConfigData('activebizum');
     }
 
     /**
@@ -110,7 +112,7 @@ class Mage_PayTpvCom_Model_StandardBizum extends Mage_Payment_Model_Method_Abstr
             return '';
         }
 
-        $arrFields = array("title", "active","sort_order","allowspecific","min_order_total","max_order_total");
+        $arrFields = array("title", "activebizum", "sort_order", "allowspecific", "min_order_total", "max_order_total");
         if (in_array($field,$arrFields)) {
             $path = 'payment/paytpvcombizum/' . $field;
         } else {
