@@ -6,7 +6,7 @@ class Mage_PayTpvCom_Block_Standard_Bankstorebizum extends Mage_Core_Block_Templ
     {
         
         parent::_construct();
-        $standard = Mage::getModel( 'paytpvcom/standardbizum' );
+        $standard = Mage::getModel( 'paytpvcom/standardBizum' );
         
         // Obtenemos la URL de pago Bizum
         $url = $standard->getBizumUrl();
