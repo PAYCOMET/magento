@@ -25,7 +25,7 @@ class Mage_PayTpvCom_Model_StandardBizum extends Mage_Payment_Model_Method_Abstr
      * @var string [a-z0-9_]
      */
     protected $_code = 'paytpvcombizum';
-    protected $_formBlockType = 'paytpvcom/standard_formbizum';
+    protected $_formBlockType = 'paytpvcom/standard_formBizum';
     protected $_allowCurrencyCode = array('EUR');
     protected $_canAuthorize = false;
     protected $_canCapture = false;
