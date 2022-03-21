@@ -3,7 +3,7 @@
     <modules>
         <Mage_PayTpvCom>
             <!-- declare module's version information for database updates -->
-            <version>5.6.3</version>
+            <version>5.6.4</version>
         </Mage_PayTpvCom>
     </modules>
 
@@ -181,7 +181,7 @@
             </paytpvcom>
             <paytpvcombizum>
                 <!-- by default this payment method is inactive -->
-                <active>0</active>
+                <activebizum>0</activebizum>
                 <!-- model to handle logic for this payment method -->
                 <model>paytpvcom/standardbizum</model>
                 <!-- order status for new orders paid by this payment method -->

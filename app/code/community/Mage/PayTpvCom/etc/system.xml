@@ -282,10 +282,10 @@
                                 </remembercardselected>
 
 
-                                <active translate="label">
+                                <activebizum translate="label">
                                     <!-- label for the field -->
-                                    <label>Bizum</label>
-                                    <config_path>payment/paytpvcombizum/active</config_path>
+                                    <label>Enable Bizum</label>
+                                    <config_path>payment/paytpvcombizum/activebizum</config_path>
                                     <!-- input type for configuration value -->
                                     <frontend_type>select</frontend_type>
                                     <!-- model to take the option values from -->
@@ -296,7 +296,7 @@
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
-                                </active>
+                                </activebizum>
 
                                 <sort_order translate="label">
                                     <label>Sort Order</label>
