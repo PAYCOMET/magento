@@ -183,7 +183,7 @@
                 <!-- by default this payment method is inactive -->
                 <activebizum>0</activebizum>
                 <!-- model to handle logic for this payment method -->
-                <model>paytpvcom/standardbizum</model>
+                <model>paytpvcom/standardBizum</model>
                 <!-- order status for new orders paid by this payment method -->
                 <order_status>pending</order_status>
                 <paid_status>processing</paid_status>
