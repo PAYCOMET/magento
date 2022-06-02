@@ -30,7 +30,7 @@ $paytpviframe_height = $standard->getConfigData('paytpviframe_height');
     if ($integration!=1):?>
       
         <h4 class="title"><?php echo $this->__('Enter your card'); ?></h4>
-        <iframe title="titulo" src="<?php echo $iframeUrl; ?>" id="iframe_paytpv" frameborder="0" height="<?php print $paytpviframe_height;?>">
+        <iframe title="titulo" src="<?php echo $iframeUrl; ?>" id="iframe_paytpv" frameborder="0" height="<?php print $paytpviframe_height;?>" sandbox="allow-top-navigation allow-scripts allow-same-origin allow-forms">
         </iframe>
     <?php      // BANKSTORE JET/XML
     elseif ($integration==1):?>
